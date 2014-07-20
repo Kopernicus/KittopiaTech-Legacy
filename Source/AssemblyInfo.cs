@@ -5,11 +5,12 @@ using System.Runtime.CompilerServices;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle("PFUtilityAddon")]
+[assembly: KSPAssembly("KittopiaTech Planet Editor", 0, 155)]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("Creator")]
+[assembly: AssemblyCopyright("Creator/Kragrathea")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

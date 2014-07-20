@@ -69,6 +69,22 @@ namespace PFUtilityAddon
             return null;
         }
 		
+		public static PQS FindPQS( string name )
+        {
+			foreach( PSystemBody body in PlanetToolsUiController.Templates )
+			{
+				foreach( PQS pqs in Utils.FindLocal(body.celestialBody.name).GetComponentsInChildren(typeof( PQS )) )
+				{
+					if( pqs.gameObject.name == name )
+					{
+						return pqs;
+					}
+				}
+			}
+			
+			return null;
+		}
+		
         private static Texture2D _defaultTexture=null;
         public static Texture2D defaultTexture { get{
             if(_defaultTexture==null)
@@ -212,6 +228,53 @@ namespace PFUtilityAddon
             MeshRenderer SmallPlanetMeshRenderer = (MeshRenderer)ScaledPlanet.GetComponentInChildren((typeof(MeshRenderer)));
             SmallPlanetMeshRenderer.material.SetTexture("_rimColorRamp", Tex);
         }
+		
+		public static void ExportPlanetMaps( string TemplateName, Texture2D[] texture )
+		{
+			byte[] ExportColourMap = texture[0].EncodeToPNG();
+			if( File.Exists( "GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/colourMap.png" ) )
+			{
+    			File.WriteAllBytes("GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/colourMap.png",  ExportColourMap);
+			}
+			else
+			{
+				File.Create( "GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/colourMap.png" );
+				File.WriteAllBytes("GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/colourMap.png",  ExportColourMap);
+			}
+			
+			ExportColourMap = texture[1].EncodeToPNG();
+			
+			if( File.Exists( "GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/bumpMap.png" ) )
+			{
+				File.WriteAllBytes("GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/bumpMap.png",  ExportColourMap);
+			}
+			else
+			{
+				File.Create( "GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/bumpMap.png" );
+				File.WriteAllBytes("GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/bumpMap.png",  ExportColourMap);
+			}
+		}
+		
+		public static void CreateTextFile( string dir, string io )
+		{
+			if( File.Exists( dir ) )
+			{
+				File.WriteAllText( dir, io );
+			}
+			else
+			{
+				File.Create( dir );
+				File.WriteAllText( dir, io );
+			}
+		}
+		
+		public static Color ParseColour( string input )
+		{
+			string tempColourString = input;
+			tempColourString = tempColourString.Replace( "RGBA(" , "" );
+			tempColourString = tempColourString.Replace( ")" , "" );
+			return ConfigNode.ParseColor(tempColourString);
+		}
 		
 	}
 }

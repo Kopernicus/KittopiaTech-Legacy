@@ -19,7 +19,7 @@ namespace PFUtilityAddon
 		public CustomStar CStar;
 	};
 	
-	public class Detector : MonoBehaviour
+	public class StarDetector : MonoBehaviour
 	{
 		//bool Toggle;
 		
@@ -31,7 +31,11 @@ namespace PFUtilityAddon
 			
 			try
 			{
+				CStar.Enabled = false;
 				CStar.SunlightEnabled( false );
+				
+				Sun.Instance.SunlightEnabled( true );
+				
 			}catch{}
 		}
 		
@@ -61,13 +65,12 @@ namespace PFUtilityAddon
 				{
 					if( dist < LoopedStar.CStar.sun.sphereOfInfluence )
 					{
-						if( LoopedStar.CStar.Toggle == true )
+						if( LoopedStar.CStar.Enabled == false )
 						{
-							print ( "Scaled Enabling "+LoopedStar.Name+" Sun \n");
+							print ( "PlanetUI: Scaled Enabling "+LoopedStar.Name+" Sun \n");
 							LoopedStar.CStar.SunlightEnabled( true ); //Enable OUR stars light!
-							
 							Sun.Instance.SunlightEnabled( false );
-							LoopedStar.CStar.Toggle = false;
+							LoopedStar.CStar.Enabled = true;
 							
 							Planetarium.fetch.Sun = Utils.FindCB( LoopedStar.Name ); //Set the sun to OUR sun!
 							
@@ -77,13 +80,12 @@ namespace PFUtilityAddon
 							}
 						}
 					}
-					else if( LoopedStar.CStar.Toggle == false )
+					else if( LoopedStar.CStar.Enabled == true )
 					{
-							print ( "Scaled Disabling "+LoopedStar.Name+" Sun\n" );
+							print ( "PlanetUI: Scaled Disabling "+LoopedStar.Name+" Sun\n" );
 							LoopedStar.CStar.SunlightEnabled( false ); //Disable our star
 							Sun.Instance.SunlightEnabled( true ); //Enable Kerbol
-							LoopedStar.CStar.Toggle = true;
-							
+							LoopedStar.CStar.Enabled = false;
 							Planetarium.fetch.Sun = Utils.FindCB( "Sun" ); //Reset this
 							foreach( ModuleDeployableSolarPanel panel in FindObjectsOfType( typeof( ModuleDeployableSolarPanel ) ) ) //Reboot solar panels
 							{
@@ -91,48 +93,61 @@ namespace PFUtilityAddon
 							}
 					}
 				}
+				//LocalSpace
+				//Grab positions
+				else if( FlightGlobals.ActiveVessel != null )
+				{
+					dist = FlightGlobals.getAltitudeAtPos(pos2, LoopedStar.CStar.sun);
+					if( dist < LoopedStar.CStar.sun.sphereOfInfluence )
+					{
+						if( LoopedStar.CStar.Enabled == false )
+						{
+							print ( "PlanetUI: Local Enabling "+LoopedStar.Name+" Sun \n");
+							LoopedStar.CStar.SunlightEnabled( true );
+							Sun.Instance.SunlightEnabled( false );
+							Planetarium.fetch.Sun = Utils.FindCB( LoopedStar.Name );
+						
+							foreach( ModuleDeployableSolarPanel panel in FindObjectsOfType( typeof( ModuleDeployableSolarPanel ) ) )
+							{
+								panel.OnStart( PartModule.StartState.None );
+							}
+							LoopedStar.CStar.Enabled = true;
+						}
+					}
+					else
+					{
+						if( LoopedStar.CStar.Enabled == true )
+						{
+							print ( "PlanetUI: Local Disabling "+LoopedStar.Name+" Sun\n" );
+							LoopedStar.CStar.SunlightEnabled( false );
+							Sun.Instance.SunlightEnabled( true );
+							Planetarium.fetch.Sun = Utils.FindCB( "Sun" );
+						
+						
+							foreach( ModuleDeployableSolarPanel panel in FindObjectsOfType( typeof( ModuleDeployableSolarPanel ) ) )
+							{
+								panel.OnStart( PartModule.StartState.None );
+							}
+							LoopedStar.CStar.Enabled = false;
+						}
+					}
+				}
 				else
 				{
-					//LocalSpace
-					//Grab positions
-					if( FlightGlobals.ActiveVessel != null )
+					if( LoopedStar.CStar.Enabled == true )
 					{
-						dist = FlightGlobals.getAltitudeAtPos(pos2, LoopedStar.CStar.sun);
-						if( dist < LoopedStar.CStar.sun.sphereOfInfluence )
+						print ( "PlanetUI: Disabling "+LoopedStar.Name+" Star\n" );
+						LoopedStar.CStar.SunlightEnabled( false );
+						Sun.Instance.SunlightEnabled( true );
+						Planetarium.fetch.Sun = Utils.FindCB( "Sun" );
+					
+					
+						foreach( ModuleDeployableSolarPanel panel in FindObjectsOfType( typeof( ModuleDeployableSolarPanel ) ) )
 						{
-							if( LoopedStar.CStar.Toggle == true )
-							{
-								print ( "Local Enabling Reslah Sun \n");
-								LoopedStar.CStar.SunlightEnabled( true );
-								Sun.Instance.SunlightEnabled( false );
-								
-								Planetarium.fetch.Sun = Utils.FindCB( LoopedStar.Name );
-							
-								foreach( ModuleDeployableSolarPanel panel in FindObjectsOfType( typeof( ModuleDeployableSolarPanel ) ) )
-								{
-									panel.OnStart( PartModule.StartState.None );
-								}
-								LoopedStar.CStar.Toggle = false;
-							}
+							panel.OnStart( PartModule.StartState.None );
 						}
-						else
-						{
-							if( LoopedStar.CStar.Toggle == false )
-							{
-								print ( "Local Disabling Reslah Sun\n" );
-								LoopedStar.CStar.SunlightEnabled( false );
-								Sun.Instance.SunlightEnabled( true );
-								
-								Planetarium.fetch.Sun = Utils.FindCB( "Sun" );
-							
-							
-								foreach( ModuleDeployableSolarPanel panel in FindObjectsOfType( typeof( ModuleDeployableSolarPanel ) ) )
-								{
-									panel.OnStart( PartModule.StartState.None );
-								}
-								LoopedStar.CStar.Toggle = true;
-							}
-						}
+						
+						LoopedStar.CStar.Enabled = false;
 					}
 				}
 			}

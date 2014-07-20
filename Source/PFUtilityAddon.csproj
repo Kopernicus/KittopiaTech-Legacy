@@ -28,6 +28,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="xcopy bin\Release\PFUtilityAddon.dll &quot;..\..\..\..\..\..\Program Files\Steam\steamapps\common\Kerbal Space Program\GameData\KittopiaSpace\plugins&quot;" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -49,6 +54,9 @@
     <Compile Include="GuiUtils.cs" />
     <Compile Include="ButtonDef.cs" />
     <Compile Include="UtilityComponents.cs" />
+    <Compile Include="HazardousOcean_Controller_Module.cs" />
+    <Compile Include="Particle_controller_module.cs" />
+    <Compile Include="AtmosphericReproccesser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

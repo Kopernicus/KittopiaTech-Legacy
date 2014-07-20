@@ -17,7 +17,7 @@ namespace PFUtilityAddon
 			id = i_id;
 		}
 		
-		bool enabled;
+		public bool enabled;
 		protected string name;
 		protected int id;
 		
@@ -82,6 +82,52 @@ namespace PFUtilityAddon
 			GUI.EndScrollView();
 			
 			GUI.DragWindow( new Rect( 0,0,400,200 ) );
+		}
+	}
+	
+	//HELP window class
+	public class HelpWindow : BaseGuiWindow
+	{
+		public HelpWindow( int id_i, string name_i ) : base( id_i, name_i )
+		{
+			name = name_i;
+			id = id_i;
+		}
+		
+		string HelpText;
+		public void SetString( string QueryString )
+		{
+			ConfigNode loadString;
+			loadString = ConfigNode.Load( "Gamedata/KittopiaSpace/Help.cr_help" );
+			if( loadString.HasNode( QueryString ) )
+			{
+				HelpText = loadString.GetNode( QueryString ).GetValue("HelpText");
+			}
+			else
+			{
+				HelpText = "No information found";
+			}
+		}
+		
+		public override void WindowFunction( int WindowId )
+		{
+			GUI.TextArea( new Rect( 10, 30, 390, 170 ) , HelpText );
+			GUI.DragWindow(  );
+		}
+		
+		string OldQueryString;
+		public void CustomToggle( string QueryString )
+		{
+			if( QueryString == OldQueryString )
+			{
+				enabled = !enabled;
+			}
+			else
+			{
+				OldQueryString = QueryString;
+				SetString(QueryString);
+				enabled = true;
+			}
 		}
 	}
 }

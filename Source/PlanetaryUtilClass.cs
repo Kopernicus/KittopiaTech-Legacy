@@ -6,13 +6,15 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using System.IO;
+using System.Reflection;
 
 namespace PFUtilityAddon
 {
 	//Helper class!
 	public class CustomStar : Sun
 	{
-		public bool Toggle;
+		public bool Enabled;
+		public Light MYLight;
 		
 		public CustomStar()
 		{
@@ -27,6 +29,7 @@ namespace PFUtilityAddon
 	
 	public class PlanetUtils
 	{
+		//Atmosphere instantiation
 		public static void AddAtmoFX( string Planetname, float inputnum, Color waveColour, float radiusAddition )
 		{
 			GameObject Kerbin = Utils.FindScaled( "Kerbin" );
@@ -65,6 +68,8 @@ namespace PFUtilityAddon
 			
 			afg.transform.localScale *= inputnum;
 		}
+		
+		//Recalculate Atmosphere
 		public static void RecalculateAtmo( string Planetname, float inputnum )
 		{
 			var body = Utils.FindCB( Planetname );
@@ -85,6 +90,7 @@ namespace PFUtilityAddon
             afg.scaleOverScaleDepth = afg.scale / afg.scaleDepth;
 			
 		}
+		
 		//Scale atmo FX (Does not work correctly)
 		public static void AtmoScaler( string Planetname, float inputnum )
 		{
@@ -95,6 +101,7 @@ namespace PFUtilityAddon
 			
 			afg.transform.localScale = Vector3.one * inputnum;
 		}
+		
 		//HackHack
 		public static PQSMod AddPQSMod( PQS mainSphere, Type ofType )
 		{
@@ -108,7 +115,7 @@ namespace PFUtilityAddon
 		}
 		
 		//Reslah fix ported for multiuse
-		public static void FixStar( string starName )
+		public static CustomStar FixStar( string starName )
 		{
 			//Get defualt stuff
 			GameObject Scenery = GameObject.Find("Scenery");
@@ -116,6 +123,7 @@ namespace PFUtilityAddon
 			
 			//Create a new instance of "scenery star"
 			GameObject newSceneryStar = new GameObject( starName + "_scenery" );
+			newSceneryStar.name = starName + "_scenery";
 			newSceneryStar.transform.parent = Scenery.transform;
 			
 			//Create a new lense flare, and dump the existing suns data to it.
@@ -141,31 +149,83 @@ namespace PFUtilityAddon
 			newLight.type = DefualtStar.light.type;
 			newLight.intensity = DefualtStar.light.intensity;
 			newLight.color = DefualtStar.light.color;
+			newLight.enabled = false;
 			
 			newLight.transform.position = Utils.FindCB( starName ).transform.position;
 			newLight.transform.parent = Utils.FindCB( starName ).transform.parent;
+			
+			newStar.MYLight = newLight;
 			
 			newSceneryStar.transform.position = Utils.FindScaled( starName ).transform.position;
 			newSceneryStar.transform.parent = Utils.FindScaled( starName ).transform;
 			newSceneryStar.layer = Utils.FindScaled( starName ).layer;
 			
-			GameObject DetectorGOB;
-			
-			if( GameObject.FindObjectOfType( typeof( Detector ) ) == null ) //spawn a new detector
+			//Sun Shader:
+			//SunShaderController Hack_SSS = Utils.FindScaled(starName).GetComponentInChildren<SunShaderController>();
+			try
 			{
-				DetectorGOB = new GameObject( "Detector", typeof( Detector ) );
-				GameObject.DontDestroyOnLoad( DetectorGOB );
-			}
-			else
-			{
-				DetectorGOB = (GameObject)GameObject.FindObjectOfType( typeof( Detector ) );
-			}
-			
-			Detector StarFixer = (Detector)DetectorGOB.GetComponent( typeof(Detector) );
-			StarFixer.AddStar( starName, newStar );
+				RecursiveFixAtmo( Utils.FindCB( starName ), starName );
+				
+				GameObject DetectorGOB;
+				
+				if( GameObject.FindObjectOfType<StarDetector>( ) == null ) //spawn a new detector
+				{
+					DetectorGOB = new GameObject( "StarDetector" );
+					DetectorGOB.AddComponent<StarDetector>();
+					GameObject.DontDestroyOnLoad( DetectorGOB );
+				}
+				else
+				{
+					DetectorGOB = GameObject.FindObjectOfType< StarDetector >().gameObject;
+				}
+				
+				StarDetector StarFixer = DetectorGOB.GetComponent<StarDetector>( );
+				StarFixer.AddStar( starName, newStar );
+				
+				newStar.Enabled = false;
+				newStar.SunlightEnabled( false );
+				
+			}catch(Exception e){ Debug.Log( "PLANETUI: Exeption thrown in StarFix: "+e+"\n" );}
+			//If all else fails, at least return the star
+			return newStar;
 		}
+		
+		public static void RecursiveFixAtmo( CelestialBody Planet, string SunName )
+		{
+			if( Planet.name != SunName )
+			{
+				//Scaledspace
+				//Utils.FindScaled( input.celestialBody.name ).layer = 1024;
+				//Stuff
+				MaterialSetDirection msd = Utils.FindScaled( Planet.name ).GetComponentInChildren<MaterialSetDirection>();
+				if( msd != null)
+				{
+					msd.target = GameObject.Find( SunName+"Sun" ).transform;
+				}
+				
+				var atmo = Utils.FindScaled( Planet.name ).transform.FindChild( "Atmosphere" );
+				if( atmo != null )
+				{
+           			AtmosphereFromGround afg = atmo.GetComponent<AtmosphereFromGround>();
+					afg.sunLight = GameObject.Find( SunName+"Sun" );
+				}
+				
+				var atmoL = Utils.FindLocal(Planet.name).transform.FindChild( "Atmosphere" );
+				if (atmoL != null)
+				{
+					AtmosphereFromGround afgL = atmo.GetComponent<AtmosphereFromGround>();
+					afgL.sunLight = GameObject.Find(SunName + "Sun");
+				}
+
+			}
+			foreach ( CelestialBody child in Planet.orbitingBodies )
+			{
+				RecursiveFixAtmo( child, SunName );
+			}
+		}
+		
 		//Rings...
-		public static GameObject AddRingToPlanet( GameObject ScaledPlanet, double IRadius, double ORadius, float angles, Texture2D Tex, Color rendercolour)
+		public static GameObject AddRingToPlanet( GameObject ScaledPlanet, double IRadius, double ORadius, float angles, Texture2D Tex, Color rendercolour, bool lockrot = false)
 		{
 			Vector3 StartVec = new Vector3( 1, 0, 0 );
 			int RingSteps = 128;
@@ -258,15 +318,53 @@ namespace PFUtilityAddon
 			RingRender.material.color = rendercolour;
 			
 			//MaterialSetDirection:
-			MaterialSetDirection MSD = ScaledPlanet.GetComponentInChildren<MaterialSetDirection>();
-			MaterialSetDirection RingMsd = (MaterialSetDirection)RingObject.AddComponent<MaterialSetDirection>();
+			//MaterialSetDirection MSD = ScaledPlanet.GetComponentInChildren<MaterialSetDirection>();
+			//MaterialSetDirection RingMsd = (MaterialSetDirection)RingObject.AddComponent<MaterialSetDirection>();
 			//RingMsd.gameObject.transform.parent = RingObject.transform;
-			RingMsd.target = MSD.target;
-			RingMsd.Update();
+			//RingMsd.target = MSD.target;
+			//RingMsd.Update();
 			
-			RingObject.AddComponent<AngleLocker>();
+			if( lockrot )
+			{
+				RingObject.AddComponent<AngleLocker>();
+			}
 			
 			return RingObject;
+		}
+		
+		//Hazardous Oceans.
+		public static void AddHazardOceanModule( string Planet, double maxDist, float HeatRate )
+		{
+			GameObject DetectorGOB;
+			
+			if( GameObject.FindObjectOfType( typeof( LavaDetector ) ) == null ) //spawn a new detector
+			{
+				DetectorGOB = new GameObject( "LavaDetector", typeof( LavaDetector ) );
+				GameObject.DontDestroyOnLoad( DetectorGOB );
+			}
+			else
+			{
+				DetectorGOB = (GameObject)GameObject.FindObjectOfType( typeof( LavaDetector ) );
+			}
+			
+			LavaDetector LavaModule = (LavaDetector)DetectorGOB.GetComponent( typeof(LavaDetector) );
+			LavaModule.AddLavaPlanet( Planet, maxDist, HeatRate );
+		}
+		
+		//ParticleEmitterTest
+		public static void AddParticleEmitter( string Planet, string Target, float speed, float ratemin, float ratemax, float lifemin, float lifemax, float sizemin, float sizemax, float growrate, Color[] ColourArray , Vector3 ParticleRandVelocity )
+		{
+			GameObject scaledPlanet = Utils.FindScaled( Planet );
+			Particle_controller_module planetParticles = scaledPlanet.GetComponent< Particle_controller_module >();
+			if( planetParticles == null )
+			{
+				planetParticles = scaledPlanet.AddComponent<Particle_controller_module>();
+				planetParticles.Init( Planet, Target, speed, ratemin, ratemax, lifemin, lifemax, sizemin, sizemax, growrate , ColourArray, ParticleRandVelocity );
+			}
+			else
+			{
+				planetParticles.Modify( Planet, Target, speed, ratemin, ratemax, lifemin, lifemax, sizemin, sizemax, growrate , ColourArray, ParticleRandVelocity );
+			}
 		}
 	}
 }

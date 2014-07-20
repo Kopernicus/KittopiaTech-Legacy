@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using System.Reflection;
-using KSP.IO;
+using System.IO;
 
 namespace PFUtilityAddon
 {
@@ -73,6 +73,75 @@ namespace PFUtilityAddon
 			}
 			//i++;
 			delgates[i] = UpdatePQSList;
+			
+			return delgates;
+		}
+	}
+	
+	public class TextureBrowser
+	{
+		public static string PlanetName;
+		public static MapSO ReturnedMapSo;
+		static public string[] GetTextures( string IPlanetName )
+		{
+			PlanetName = IPlanetName;
+			
+			List<string> FileNames = new List<string>();
+			
+			DirectoryInfo directory = new DirectoryInfo( "GameData/KittopiaSpace/Textures/"+ PlanetName +"/PQS/" );
+			var files = directory.GetFiles("*.png");
+			foreach( FileInfo f in files )
+			{
+				FileNames.Add( f.Name );
+			}
+			FileNames.Add( "Filler" );
+			
+			return FileNames.ToArray();
+		}
+		
+		static public void Button_Select( int i )
+		{
+			List<string> FileNames = new List<string>();
+			
+			DirectoryInfo directory = new DirectoryInfo( "GameInfo/KittopiaSpace/Textures/"+ PlanetName +"/PQS/" );
+			var files = directory.GetFiles("*.png");
+			foreach( FileInfo f in files )
+			{
+				FileNames.Add( f.Name );
+			}
+			FileNames.Add( "Filler" );
+			
+			Texture2D texture = Utils.LoadTexture( "GameInfo/KittopiaSpace/Textures/"+ PlanetName +"/PQS/" + FileNames[i] );
+			
+			ReturnedMapSo = (MapSO) ScriptableObject.CreateInstance(typeof (MapSO));
+			ReturnedMapSo.CreateMap( MapSO.MapDepth.RGBA, texture );
+		}
+		
+		static public ButtonDelegate[] GetButtons()
+		{
+			//Get PQS
+			int numFiles = 0;
+			
+			List<string> FileNames = new List<string>();
+			
+			DirectoryInfo directory = new DirectoryInfo( "GameInfo/KittopiaSpace/Textures/"+ PlanetName +"/PQS/" );
+			var files = directory.GetFiles("*.png");
+			foreach( FileInfo f in files )
+			{
+				FileNames.Add( f.Name );
+				numFiles++;
+			}
+			
+			ButtonDelegate[] delgates = new ButtonDelegate[numFiles + 2];
+			
+			//Populate lists
+			int i;
+			for( i = 0; i < numFiles; i++ )
+			{
+				delgates[i] = Button_Select;
+			}
+			//i++;
+			delgates[i] = Button_Select;
 			
 			return delgates;
 		}
