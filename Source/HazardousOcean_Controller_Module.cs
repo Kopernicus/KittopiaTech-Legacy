@@ -62,11 +62,11 @@ namespace PFUtilityAddon
 									{
 										part.temperature += Planet.HeatingRate; //...And heat them up!
 										
-										if( part.temperature > 100 ) //HackHack: Seems they dont explode like this by defualt. Do it manualy
-										{
-											//BOOM!
-											part.explode();
-										}
+										//if( part.temperature > 100 ) //HackHack: Seems they dont explode like this by defualt. Do it manualy
+										//{
+										//	//BOOM!
+										//	part.explode();
+										//}
 									}
 								}
 							}

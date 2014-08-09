@@ -13,6 +13,14 @@ namespace PFUtilityAddon
 		{
 			transform.localRotation = Quaternion.Euler(transform.localRotation.x ,0 , 0);
 		}
+		void FixedUpdate()
+		{
+			transform.localRotation = Quaternion.Euler(transform.localRotation.x ,0 , 0);
+		}
+		void LateUpdate()
+		{
+			transform.localRotation = Quaternion.Euler(transform.localRotation.x ,0 , 0);
+		}
 	}
 }
 

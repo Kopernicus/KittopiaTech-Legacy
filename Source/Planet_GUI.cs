@@ -12,19 +12,23 @@ namespace PFUtilityAddon
 {
 	public class RingSaveStorageHelper
 	{
-		public RingSaveStorageHelper(float ITilt, double IOuterRadius, double IInnerRadius, Color IColour, GameObject IgObj )
+		public RingSaveStorageHelper(float ITilt, double IOuterRadius, double IInnerRadius, Color IColour, GameObject IgObj, bool IUnlit, bool ILockRot )
 		{
 			tilt = ITilt;
 			OuterRadius = IOuterRadius;
 			InnerRadius = IInnerRadius;
 			Colour = IColour;
 			gObj = IgObj;
+			Unlit = IUnlit;
+			LockRot = ILockRot;
 		}
 		public float tilt;
 		public double OuterRadius;
 		public double InnerRadius;
 		public Color Colour;
 		public GameObject gObj;
+		public bool Unlit;
+		public bool LockRot;
 	}
 	public class ParticleSaveStorageHelper
 	{
@@ -723,7 +727,7 @@ namespace PFUtilityAddon
 				yoffset+=30;
 				GUI.Label( new Rect( 20, yoffset, 200, 20 ), "Transform Scale(Legacy)" );
 				yoffset+=30;
-				AtmoToMod.gameObject.transform.localScale = Vector3.one * StrToFloat(GUI.TextField( new Rect( 20, yoffset, 200, 20 ), ""+AtmoToMod.gameObject.transform.localScale.x ));
+				AtmoToMod.gameObject.transform.localScale = Vector3.one * StrToFloat(GUI.TextField( new Rect( 20, yoffset, 200, 20 ), ""+AtmoToMod.transform.localScale.x ));
 				yoffset+=30;
 				GUI.Label( new Rect( 20, yoffset, 200, 20 ), "Atmo Scale Var" );
 				yoffset+=30;
@@ -1579,7 +1583,7 @@ namespace PFUtilityAddon
 			MaxDist = Convert.ToDouble( GUI.TextField( new Rect( 20 , yoffset, 300, 20) , ""+MaxDist ) );
 			yoffset += 30;
 			
-			GUI.Label( new Rect( 20 , yoffset, 300, 20), "Rate of effect:" );
+			GUI.Label( new Rect( 20 , yoffset, 300, 20), "Rate of heating:" );
 			yoffset += 30;
 			
 			HeatRate = Convert.ToSingle( GUI.TextField( new Rect( 20 , yoffset, 300, 20) , ""+HeatRate ) );
@@ -1601,6 +1605,7 @@ namespace PFUtilityAddon
 		float Tilt = 0;
 		public Color RingColour = new Color( 1, 1, 1 );
 		bool LockRingRotation;
+		bool RingUnlit;
 		private void RingEditorFunc()
 		{
 			int yoffset = 280;
@@ -1649,6 +1654,9 @@ namespace PFUtilityAddon
 			
 			LockRingRotation = GUI.Toggle( new Rect( 20 , yoffset, 200, 20), LockRingRotation, "Lock Rotation? ");
 			if( GUI.Button( new Rect( 220, yoffset, 20, 20 ), "?" ) ){(NewWindows[ "HelpWindow" ] as HelpWindow).CustomToggle( "RingLockRotation" ); }
+			yoffset+=30;
+			RingUnlit = GUI.Toggle( new Rect( 20 , yoffset, 200, 20), RingUnlit, "Unlit? ");
+			if( GUI.Button( new Rect( 220, yoffset, 20, 20 ), "?" ) ){(NewWindows[ "HelpWindow" ] as HelpWindow).CustomToggle( "RingUnlit" ); }
 			
 			yoffset+=60;
 			
@@ -1659,14 +1667,14 @@ namespace PFUtilityAddon
 				string PlanetRingTexName = "Gamedata/KittopiaSpace/Textures/" + TemplateName + "_ring.png";
 				if ( Utils.FileExists( PlanetRingTexName ) )
 				{
-					Ring = PlanetUtils.AddRingToPlanet( Utils.FindScaled( TemplateName ), InnerRadius, OuterRadius, Tilt, Utils.LoadTexture( PlanetRingTexName, false ), RingColour, LockRingRotation );
+					Ring = PlanetUtils.AddRingToPlanet( Utils.FindScaled( TemplateName ), InnerRadius, OuterRadius, Tilt, Utils.LoadTexture( PlanetRingTexName, false ), RingColour, LockRingRotation, RingUnlit );
 				}
 				else
 				{
 					PlanetRingTexName = "Gamedata/KittopiaSpace/Textures/Default/ring.png";
 					if ( Utils.FileExists( PlanetRingTexName ) )
 					{
-						Ring = PlanetUtils.AddRingToPlanet( Utils.FindScaled( TemplateName ), InnerRadius, OuterRadius, Tilt, Utils.LoadTexture( PlanetRingTexName, false ), RingColour, LockRingRotation );
+						Ring = PlanetUtils.AddRingToPlanet( Utils.FindScaled( TemplateName ), InnerRadius, OuterRadius, Tilt, Utils.LoadTexture( PlanetRingTexName, false ), RingColour, LockRingRotation, RingUnlit );
 					}
 					else
 					{
@@ -1675,7 +1683,7 @@ namespace PFUtilityAddon
 					}
 				}
 				PlanetarySettings[ TemplateName ].AddRing = true;
-				PlanetarySettings[ TemplateName ].Rings.Add( new RingSaveStorageHelper( Tilt, OuterRadius, InnerRadius, RingColour, Ring ) );
+				PlanetarySettings[ TemplateName ].Rings.Add( new RingSaveStorageHelper( Tilt, OuterRadius, InnerRadius, RingColour, Ring, RingUnlit, LockRingRotation ) );
 			}if( GUI.Button( new Rect( 220, yoffset, 20, 20 ), "?" ) ){(NewWindows[ "HelpWindow" ] as HelpWindow).CustomToggle( "RingCreate" ); }
 			yoffset+=30;
 			if( GUI.Button( new Rect( 20 , yoffset, 200, 20), "Delete rings on: " + TemplateName ) )
@@ -2021,6 +2029,9 @@ namespace PFUtilityAddon
 					RingNode.AddValue( "OuterRadius", ring.OuterRadius );
 					RingNode.AddValue( "InnerRadius", ring.InnerRadius );
 					RingNode.AddValue( "Colour", ring.Colour );
+					
+					RingNode.AddValue( "LockRot", ring.LockRot );
+					RingNode.AddValue( "Unlit", ring.Unlit );
 				}
 			}
 			
@@ -2062,7 +2073,6 @@ namespace PFUtilityAddon
 				StarFix_root.AddValue( "SpotColour", PlanetarySettings[ TemplateName ].SpotColour );
 				StarFix_root.AddValue( "EmitColour", PlanetarySettings[ TemplateName ].EmitColour );
 			}
-			
 			
 			//Orbit
 			CelestialBody cbBody;
@@ -2377,6 +2387,9 @@ namespace PFUtilityAddon
 							outerradius = Convert.ToDouble(ringNode.GetValue( "OuterRadius" ));
 							innerradius = Convert.ToDouble(ringNode.GetValue( "InnerRadius" ));
 							
+							bool LockRot = Convert.ToBoolean(ringNode.GetValue( "LockRot" ));
+							bool Unlit = Convert.ToBoolean(ringNode.GetValue( "Unlit" ));
+							
 							tempColourString = ringNode.GetValue( "Colour" );
 							tempColourString = tempColourString.Replace( "RGBA(" , "" );
 							tempColourString = tempColourString.Replace( ")" , "" );
@@ -2385,16 +2398,16 @@ namespace PFUtilityAddon
 							string PlanetRingTexName = "Gamedata/KittopiaSpace/Textures/" + PlanetName + "_ring.png";
 							if ( Utils.FileExists( PlanetRingTexName ) )
 							{
-								ringObj = PlanetUtils.AddRingToPlanet( Utils.FindScaled( PlanetName ), innerradius, outerradius, tilt, Utils.LoadTexture( PlanetRingTexName, false ), ringcolour );
-								PlanetarySettings[ PlanetName ].Rings.Add( new RingSaveStorageHelper( tilt, outerradius, innerradius, ringcolour, ringObj ) );
+								ringObj = PlanetUtils.AddRingToPlanet( Utils.FindScaled( PlanetName ), innerradius, outerradius, tilt, Utils.LoadTexture( PlanetRingTexName, false ), ringcolour, LockRot, Unlit );
+								PlanetarySettings[ PlanetName ].Rings.Add( new RingSaveStorageHelper( tilt, outerradius, innerradius, ringcolour, ringObj, LockRot, Unlit ) );
 							}
 							else
 							{
 								PlanetRingTexName = "Gamedata/KittopiaSpace/Textures/Default/ring.png";
 								if( Utils.FileExists( PlanetRingTexName ) )
 								{
-									ringObj = PlanetUtils.AddRingToPlanet( Utils.FindScaled( PlanetName ), innerradius, outerradius, tilt, Utils.LoadTexture( PlanetRingTexName, false ), ringcolour );
-									PlanetarySettings[ PlanetName ].Rings.Add( new RingSaveStorageHelper( tilt, outerradius, innerradius, ringcolour, ringObj ) );
+									ringObj = PlanetUtils.AddRingToPlanet( Utils.FindScaled( PlanetName ), innerradius, outerradius, tilt, Utils.LoadTexture( PlanetRingTexName, false ), ringcolour, LockRot, Unlit );
+									PlanetarySettings[ PlanetName ].Rings.Add( new RingSaveStorageHelper( tilt, outerradius, innerradius, ringcolour, ringObj, LockRot, Unlit ) );
 								}
 								else
 								{

@@ -47,26 +47,14 @@ namespace PFUtilityAddon
 			
 			afg.planet = body;
 			
-			float newRadius = (float)body.Radius + radiusAddition;
-			
             afg.waveLength = waveColour;
+
+			//afg.DEBUG_alwaysUpdateAll = true;
+			//afg.doScale = false;
 			
-			afg.outerRadius = newRadius * 1.025f * ScaledSpace.InverseScaleFactor;
+			//afg.transform.localScale = Vector3.one;// * ((float)(body.Radius + body.maxAtmosphereAltitude) / (float)body.Radius);
 			
-			//afg.outerRadius *= radiusAddition;
-			
-            afg.innerRadius = afg.outerRadius * 0.975f;
-            
-            afg.outerRadius2 = afg.outerRadius * afg.outerRadius;
-            afg.innerRadius2 = afg.innerRadius * afg.innerRadius;
-            afg.scale = 1f / (afg.outerRadius - afg.innerRadius);
-            afg.scaleDepth = -0.25f;
-            afg.scaleOverScaleDepth = afg.scale / afg.scaleDepth;
-			afg.DEBUG_alwaysUpdateAll = true;
-			
-			//afg.transform.localScale = Vector3.one * ((float)(body.Radius + body.maxAtmosphereAltitude) / (float)body.Radius);
-			
-			afg.transform.localScale *= inputnum;
+			//afg.transform.localScale = Vector3.one * (float)((body.Radius + body.maxAtmosphereAltitude) / 600000);
 		}
 		
 		//Recalculate Atmosphere
@@ -225,7 +213,7 @@ namespace PFUtilityAddon
 		}
 		
 		//Rings...
-		public static GameObject AddRingToPlanet( GameObject ScaledPlanet, double IRadius, double ORadius, float angles, Texture2D Tex, Color rendercolour, bool lockrot = false)
+		public static GameObject AddRingToPlanet( GameObject ScaledPlanet, double IRadius, double ORadius, float angles, Texture2D Tex, Color rendercolour, bool lockrot = false, bool Unlit = false )
 		{
 			Vector3 StartVec = new Vector3( 1, 0, 0 );
 			int RingSteps = 128;
@@ -313,7 +301,13 @@ namespace PFUtilityAddon
 			MeshRenderer PlanetRenderer = (MeshRenderer)ScaledPlanet.GetComponentInChildren<MeshRenderer>();
 			MeshRenderer RingRender = (MeshRenderer)RingObject.AddComponent<MeshRenderer>();
 			RingRender.material = PlanetRenderer.material;
+			if( Unlit )
+			{
+				RingRender.material.shader = Shader.Find("Transparent/Unlit");
+			}
+			else{
 			RingRender.material.shader = Shader.Find("Transparent/Diffuse");
+			}
 			RingRender.material.mainTexture = Tex;
 			RingRender.material.color = rendercolour;
 			
