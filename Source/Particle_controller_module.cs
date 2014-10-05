@@ -5,7 +5,6 @@ using UnityEngine;
 using System.Reflection;
 using KSP.IO;
 
-
 namespace PFUtilityAddon
 {
 	public class Particle_controller_module : MonoBehaviour
@@ -68,7 +67,6 @@ namespace PFUtilityAddon
 			
 			//MainEmitter.emit = true;
 			ParticleAnim.sizeGrow = sizeGrow;
-			
 		}
 		
 		public void Modify( string PlanetName, string OtherScaledSpace , float IspeedScale, float IminEmission, float ImaxEmission, float IlifespanMin, float IlifespanMax, float sizeMin, float sizeMax , float sizeGrow, Color[] ColourArray, Vector3 ParticleRandVelocity)

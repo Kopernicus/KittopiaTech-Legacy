@@ -17,6 +17,9 @@ namespace PFUtilityAddon
 				GameObject ghost = new GameObject("PlanetToolsUiController", typeof(PlanetToolsUiController));
 	        	GameObject.DontDestroyOnLoad(ghost);
 				
+				GameObject AsteriodHandler = new GameObject("Kittopiatech Asteriod Handler", typeof(TerraformingAsteriodAddModule));
+	        	GameObject.DontDestroyOnLoad(AsteriodHandler);
+				
 				DestroyImmediate( this );
 			}
 		}

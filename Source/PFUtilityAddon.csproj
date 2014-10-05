@@ -57,6 +57,7 @@
     <Compile Include="HazardousOcean_Controller_Module.cs" />
     <Compile Include="Particle_controller_module.cs" />
     <Compile Include="AtmosphericReproccesser.cs" />
+    <Compile Include="TerraformingAsteriodModule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

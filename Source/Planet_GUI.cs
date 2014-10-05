@@ -29,6 +29,8 @@ namespace PFUtilityAddon
 		public GameObject gObj;
 		public bool Unlit;
 		public bool LockRot;
+		
+		public bool Volumetric;
 	}
 	public class ParticleSaveStorageHelper
 	{
@@ -1534,6 +1536,8 @@ namespace PFUtilityAddon
 							
 							PQSMod_OceanFX oceanFX = pqs.GetComponentInChildren<PQSMod_OceanFX>();
 							
+							pqs.surfaceMaterial = (Material)Instantiate( pqs.surfaceMaterial ); //Create a new clone of the texture
+							
 							for( int i = 0; i <= (oceanFX.watermain.Length - 1); i++ )
 							{
 								if( Utils.FileExists( "Gamedata/KittopiaSpace/Textures/"+TemplateName+"/Ocean/Ocean_Frame"+i+".png" ) )
@@ -1698,6 +1702,10 @@ namespace PFUtilityAddon
 					PlanetarySettings[ TemplateName ].Rings.RemoveAt( 0 );
 				}
 			}if( GUI.Button( new Rect( 220, yoffset, 20, 20 ), "?" ) ){(NewWindows[ "HelpWindow" ] as HelpWindow).CustomToggle( "RingRemove" ); }
+			yoffset+=30;
+			//if( GUI.Button( new Rect( 20 , yoffset, 200, 20), "Volumetrics" ) )
+			//{
+			//}
 			
 			GUI.EndScrollView();
 		}
@@ -2289,7 +2297,7 @@ namespace PFUtilityAddon
 										LaytheOceanClone.transform.position = Utils.FindLocal( PlanetName ).transform.position;
 										LaytheOceanClone.transform.parent = Utils.FindLocal( PlanetName ).transform;
 										LaytheOceanClone.radius = Utils.FindCB( PlanetName ).Radius;
-										LaytheOceanClone.surfaceMaterial = pqs.surfaceMaterial;
+										LaytheOceanClone.surfaceMaterial = (Material)Instantiate( pqs.surfaceMaterial );
 										
 										PQSMod_AerialPerspectiveMaterial oceanAPM = LaytheOceanClone.GetComponentInChildren<PQSMod_AerialPerspectiveMaterial>();
 										oceanAPM.sphere = Utils.FindLocal( PlanetName ).GetComponentInChildren<PQS>();

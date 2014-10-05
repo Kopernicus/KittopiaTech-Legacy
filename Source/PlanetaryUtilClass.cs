@@ -32,10 +32,10 @@ namespace PFUtilityAddon
 		//Atmosphere instantiation
 		public static void AddAtmoFX( string Planetname, float inputnum, Color waveColour, float radiusAddition )
 		{
-			GameObject Kerbin = Utils.FindScaled( "Kerbin" );
+			GameObject Jool = Utils.FindScaled( "Jool" );
 			GameObject PlanetAtmoAdd = Utils.FindScaled( Planetname );
 			
-			GameObject Atmo = Kerbin.GetComponentInChildren<AtmosphereFromGround>().gameObject;
+			GameObject Atmo = Jool.GetComponentInChildren<AtmosphereFromGround>().gameObject;
 			GameObject NewAtmo = (GameObject)GameObject.Instantiate( Atmo );
 			NewAtmo.transform.position = PlanetAtmoAdd.transform.position;
 			NewAtmo.transform.parent = PlanetAtmoAdd.transform;
@@ -49,12 +49,36 @@ namespace PFUtilityAddon
 			
             afg.waveLength = waveColour;
 
-			//afg.DEBUG_alwaysUpdateAll = true;
-			//afg.doScale = false;
+			afg.DEBUG_alwaysUpdateAll = true;
+			afg.doScale = false;
 			
 			//afg.transform.localScale = Vector3.one;// * ((float)(body.Radius + body.maxAtmosphereAltitude) / (float)body.Radius);
 			
 			//afg.transform.localScale = Vector3.one * (float)((body.Radius + body.maxAtmosphereAltitude) / 600000);
+			
+			
+			// Add the material light direction behavior 
+			//MaterialSetDirection materialLightDirection = PlanetAtmoAdd.AddComponent<MaterialSetDirection>(); 
+			//materialLightDirection.valueName            = "_localLightDirection"; 
+
+
+			// Create the atmosphere shell game object 
+			//GameObject scaledAtmosphere       = new GameObject( "atmosphere" ); 
+			//scaledAtmosphere.transform.position = PlanetAtmoAdd.transform.position;
+			//scaledAtmosphere.transform.parent = PlanetAtmoAdd.transform; 
+			//scaledAtmosphere.layer            = 9; 
+			
+			//MeshRenderer renderer             = scaledAtmosphere.AddComponent<MeshRenderer>(); 
+			//renderer.material                 = new Material( Shader.Find( "AtmosphereFromGround" ) ); 
+			//renderer.material.shader = Shader.Find( "AtmosphereFromGround" );
+			
+			//MeshFilter meshFilter = scaledAtmosphere.AddComponent<MeshFilter>(); 
+			//meshFilter.sharedMesh = Jool.GetComponent<MeshFilter>().sharedMesh;
+			//AtmosphereFromGround afg = scaledAtmosphere.AddComponent<AtmosphereFromGround>();
+			//afg.planet = Utils.FindCB( Planetname );
+			//afg.waveLength = waveColour;
+			
+			//afg.
 		}
 		
 		//Recalculate Atmosphere
@@ -303,7 +327,7 @@ namespace PFUtilityAddon
 			RingRender.material = PlanetRenderer.material;
 			if( Unlit )
 			{
-				RingRender.material.shader = Shader.Find("Transparent/Unlit");
+				RingRender.material.shader = Shader.Find("Unlit/Transparent");
 			}
 			else{
 			RingRender.material.shader = Shader.Find("Transparent/Diffuse");
