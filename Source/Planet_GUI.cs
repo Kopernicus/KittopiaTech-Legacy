@@ -109,6 +109,8 @@ namespace PFUtilityAddon
 		public Color EmitColour;
 		public CustomStar Star;
 		
+		public bool DeactivateOrbitRenderer;
+		
 		string[] stockPlanets = {"Sun", "Moho", "Eve", "Gilly", "Kerbin", "Mun", "Minmus", "Duna", "Ike", "Dres", "Jool", "Laythe", "Tylo", "Vall", "Bop", "Pol", "Eeloo" };
 	}
 	
@@ -671,6 +673,10 @@ namespace PFUtilityAddon
 				//PlanetUtils.AddParticleEmitter( TemplateName );
 				selector = 8;
 			}if( GUI.Button( new Rect( 220, 450, 20, 20 ), "?" ) ){(NewWindows[ "HelpWindow" ] as HelpWindow).CustomToggle( "Particles" ); }
+			
+			if( GUI.Button( new Rect( 20, 480, 200, 20 ), "" ) )
+			{
+			}
 			
 			GUI.EndScrollView();
 			
@@ -1370,6 +1376,14 @@ namespace PFUtilityAddon
 			if( GUI.Button( new Rect( 20 , yoffset, 200, 20), "Update Orbit" ) )
 			{
 				cbBody.orbitDriver.UpdateOrbit();
+			}
+			
+			yoffset += 30;
+			
+			if( GUI.Button( new Rect( 20 , yoffset, 200, 20), "Deactivate orbit renderer" ) )
+			{
+				cbBody.orbitDriver.Renderer.drawMode = OrbitRenderer.DrawMode.OFF;
+				PlanetarySettings[ TemplateName ].DeactivateOrbitRenderer = true;
 			}
 			
 			GUI.EndScrollView();
@@ -2082,6 +2096,8 @@ namespace PFUtilityAddon
 				StarFix_root.AddValue( "EmitColour", PlanetarySettings[ TemplateName ].EmitColour );
 			}
 			
+			additionTools_root.AddValue( "DisableOrbitRenderer", PlanetarySettings[ TemplateName ].DeactivateOrbitRenderer );
+			
 			//Orbit
 			CelestialBody cbBody;
 			cbBody = Utils.FindCB( TemplateName );
@@ -2504,6 +2520,11 @@ namespace PFUtilityAddon
 						
 						PlanetarySettings[ PlanetName ].AddParticles = true;
 					}
+					
+					if( additionalsettings_Rootnode.HasValue( "DisableOrbitRenderer" ) )
+					{
+						PlanetarySettings[ PlanetName ].DeactivateOrbitRenderer = bool.Parse(additionalsettings_Rootnode.GetValue( "DisableOrbitRenderer" ));
+					}
 				
 					print("PlanetUI: Loaded ADDITIONALDATA of " +PlanetName+ "\n" );
 						
@@ -2558,7 +2579,13 @@ namespace PFUtilityAddon
 						Color orbitColor = ConfigNode.ParseColor( tempColourString );
 						
 						cbBody.orbitDriver.orbitColor = orbitColor;
+						
 						cbBody.orbitDriver.UpdateOrbit();
+						
+						if( PlanetarySettings[ PlanetName ].DeactivateOrbitRenderer )
+						{
+							cbBody.orbitDriver.Renderer.drawMode = OrbitRenderer.DrawMode.OFF;
+						}
 					}
 					
 					print("PlanetUI: Loaded ORBIT of " +PlanetName+ "\n" );

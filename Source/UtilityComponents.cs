@@ -9,17 +9,19 @@ namespace PFUtilityAddon
 {
 	public class AngleLocker : MonoBehaviour
 	{	
+		public Quaternion RotationLock;
+		
 		void Update()
 		{
-			transform.localRotation = Quaternion.Euler(transform.localRotation.x ,0 , 0);
+			transform.rotation = RotationLock;
 		}
 		void FixedUpdate()
 		{
-			transform.localRotation = Quaternion.Euler(transform.localRotation.x ,0 , 0);
+			transform.rotation = RotationLock;
 		}
 		void LateUpdate()
 		{
-			transform.localRotation = Quaternion.Euler(transform.localRotation.x ,0 , 0);
+			transform.rotation = RotationLock;
 		}
 	}
 }

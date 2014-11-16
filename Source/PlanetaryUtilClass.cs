@@ -344,7 +344,9 @@ namespace PFUtilityAddon
 			
 			if( lockrot )
 			{
-				RingObject.AddComponent<AngleLocker>();
+				Quaternion m_rotAngleLock = RingObject.transform.localRotation;
+				AngleLocker m_ringAngleLock = (AngleLocker)RingObject.AddComponent<AngleLocker>();
+				m_ringAngleLock.RotationLock = m_rotAngleLock;
 			}
 			
 			return RingObject;
