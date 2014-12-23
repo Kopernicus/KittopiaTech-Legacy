@@ -98,7 +98,7 @@ namespace PFUtilityAddon
 		public void SetString( string QueryString )
 		{
 			ConfigNode loadString;
-			loadString = ConfigNode.Load( "Gamedata/KittopiaSpace/Help.cr_help" );
+			loadString = ConfigNode.Load( "GameData/KittopiaSpace/Help.cr_help" );
 			if( loadString.HasNode( QueryString ) )
 			{
 				HelpText = loadString.GetNode( QueryString ).GetValue("HelpText");
