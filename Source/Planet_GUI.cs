@@ -147,7 +147,7 @@ namespace PFUtilityAddon
 				try
 				{
 					//Load globals...
-					LoadData( psB.celestialBody.name, "Gamedata/KittopiaSpace/SaveLoad/"+psB.celestialBody.name+".cfg" );
+					LoadData( psB.celestialBody.name, "GameData/KittopiaSpace/SaveLoad/"+psB.celestialBody.name+".cfg" );
 				}
 				catch( Exception e )
 				{ 
@@ -174,11 +174,11 @@ namespace PFUtilityAddon
 				
 				if( curSave == null )
 				{
-					save_dir = "Gamedata/KittopiaSpace/CustomData.cfg";
+					save_dir = "GameData/KittopiaSpace/CustomData.cfg";
 				}
 				else
 				{
-					save_dir = "Gamedata/KittopiaSpace/PlanetUI/"+curSave+".cfg";
+					save_dir = "GameData/KittopiaSpace/PlanetUI/"+curSave+".cfg";
 				}
 				//Load globals...
 				LoadData( psB.celestialBody.name, save_dir );
@@ -567,7 +567,7 @@ namespace PFUtilityAddon
 			{
 				if( TemplateName != null )
 				{
-					LoadData( TemplateName, "Gamedata/KittopiaSpace/SaveLoad/"+TemplateName+".cfg" );
+					LoadData( TemplateName, "GameData/KittopiaSpace/SaveLoad/"+TemplateName+".cfg" );
 				}
 			}
 			
@@ -767,10 +767,10 @@ namespace PFUtilityAddon
 				if( GUI.Button( new Rect( 20 , yoffset, 300, 20), "Update Scaledspace atmo shader" ) )
 				{
 					//Load rim texture...
-					string RimTex = "Gamedata/KittopiaSpace/Textures/"+TemplateName+"_rimtex.png";
+					string RimTex = "GameData/KittopiaSpace/Textures/"+TemplateName+"_rimtex.png";
 					if( !Utils.FileExists( RimTex ) )
 					{
-						RimTex = "Gamedata/KittopiaSpace/Textures/default/blank_rim_text.png";
+						RimTex = "GameData/KittopiaSpace/Textures/default/blank_rim_text.png";
 						if( !Utils.FileExists( RimTex ) )
 						{
 							GUI.EndScrollView();
@@ -1546,7 +1546,7 @@ namespace PFUtilityAddon
 					{
 						if( !Unlit )
 						{
-							Texture2D Deftex = Utils.LoadTexture( "Gamedata/KittopiaSpace/Textures/"+TemplateName+"/Ocean/Ocean_Def.png" );
+							Texture2D Deftex = Utils.LoadTexture( "GameData/KittopiaSpace/Textures/"+TemplateName+"/Ocean/Ocean_Def.png" );
 							
 							PQSMod_OceanFX oceanFX = pqs.GetComponentInChildren<PQSMod_OceanFX>();
 							
@@ -1554,9 +1554,9 @@ namespace PFUtilityAddon
 							
 							for( int i = 0; i <= (oceanFX.watermain.Length - 1); i++ )
 							{
-								if( Utils.FileExists( "Gamedata/KittopiaSpace/Textures/"+TemplateName+"/Ocean/Ocean_Frame"+i+".png" ) )
+								if( Utils.FileExists( "GameData/KittopiaSpace/Textures/"+TemplateName+"/Ocean/Ocean_Frame"+i+".png" ) )
 								{
-									Texture2D FrameTex = Utils.LoadTexture( "Gamedata/KittopiaSpace/Textures/"+TemplateName+"/Ocean/Ocean_Frame"+i+".png" );
+									Texture2D FrameTex = Utils.LoadTexture( "GameData/KittopiaSpace/Textures/"+TemplateName+"/Ocean/Ocean_Frame"+i+".png" );
 									oceanFX.watermain[i] = FrameTex;	
 								}
 								else
@@ -1572,8 +1572,8 @@ namespace PFUtilityAddon
 							pqs.surfaceMaterial.shader = Shader.Find("Unlit/Texture");
 							//pqs.fallbackMaterial.shader = Shader.Find("Unlit/Texture");
 							
-							pqs.surfaceMaterial.mainTexture = Utils.LoadTexture( "Gamedata/KittopiaSpace/Textures/"+TemplateName+"/Ocean/Ocean_Def.png" );
-							//pqs.fallbackMaterial.mainTexture = Utils.LoadTexture( "Gamedata/KittopiaSpace/Textures/"+TemplateName+"/Ocean/Ocean_Def.png" );
+							pqs.surfaceMaterial.mainTexture = Utils.LoadTexture( "GameData/KittopiaSpace/Textures/"+TemplateName+"/Ocean/Ocean_Def.png" );
+							//pqs.fallbackMaterial.mainTexture = Utils.LoadTexture( "GameData/KittopiaSpace/Textures/"+TemplateName+"/Ocean/Ocean_Def.png" );
 	
 						}
 					}
@@ -1682,14 +1682,14 @@ namespace PFUtilityAddon
 			
 			if( GUI.Button( new Rect( 20 , yoffset, 200, 20), "Generate ring for: " + TemplateName ) )
 			{
-				string PlanetRingTexName = "Gamedata/KittopiaSpace/Textures/" + TemplateName + "_ring.png";
+				string PlanetRingTexName = "GameData/KittopiaSpace/Textures/" + TemplateName + "_ring.png";
 				if ( Utils.FileExists( PlanetRingTexName ) )
 				{
 					Ring = PlanetUtils.AddRingToPlanet( Utils.FindScaled( TemplateName ), InnerRadius, OuterRadius, Tilt, Utils.LoadTexture( PlanetRingTexName, false ), RingColour, LockRingRotation, RingUnlit );
 				}
 				else
 				{
-					PlanetRingTexName = "Gamedata/KittopiaSpace/Textures/Default/ring.png";
+					PlanetRingTexName = "GameData/KittopiaSpace/Textures/Default/ring.png";
 					if ( Utils.FileExists( PlanetRingTexName ) )
 					{
 						Ring = PlanetUtils.AddRingToPlanet( Utils.FindScaled( TemplateName ), InnerRadius, OuterRadius, Tilt, Utils.LoadTexture( PlanetRingTexName, false ), RingColour, LockRingRotation, RingUnlit );
@@ -1989,11 +1989,11 @@ namespace PFUtilityAddon
 			
 			//if( curSave == null )
 			//{
-				save_dir = "Gamedata/KittopiaSpace/SaveLoad/"+TemplateName+".cfg";
+				save_dir = "GameData/KittopiaSpace/SaveLoad/"+TemplateName+".cfg";
 			//}
 			//else
 			//{
-			//	save_dir = "Gamedata/KittopiaSpace/PlanetUI/"+curSave+".cfg";
+			//	save_dir = "GameData/KittopiaSpace/PlanetUI/"+curSave+".cfg";
 			//}
 			
 			//Ok, here goes...
@@ -2361,16 +2361,16 @@ namespace PFUtilityAddon
 								{
 									if( pqs.gameObject.name == PlanetName + "Ocean")
 									{
-										Texture2D Deftex = Utils.LoadTexture( "Gamedata/KittopiaSpace/Textures/"+PlanetName+"/Ocean/Ocean_Def.png" );
+										Texture2D Deftex = Utils.LoadTexture( "GameData/KittopiaSpace/Textures/"+PlanetName+"/Ocean/Ocean_Def.png" );
 										PQSMod_OceanFX oceanFX = pqs.GetComponentInChildren<PQSMod_OceanFX>();
 										
 										if( !HasUnlitOcean )
 										{
 											for( int i = 0; i <= (oceanFX.watermain.Length - 1); i++ )
 											{
-												if( Utils.FileExists( "Gamedata/KittopiaSpace/Textures/"+PlanetName+"/Ocean/Ocean_Frame"+i+".png" ) )
+												if( Utils.FileExists( "GameData/KittopiaSpace/Textures/"+PlanetName+"/Ocean/Ocean_Frame"+i+".png" ) )
 												{
-													Texture2D FrameTex = Utils.LoadTexture( "Gamedata/KittopiaSpace/Textures/"+PlanetName+"/Ocean/Ocean_Frame"+i+".png" );
+													Texture2D FrameTex = Utils.LoadTexture( "GameData/KittopiaSpace/Textures/"+PlanetName+"/Ocean/Ocean_Frame"+i+".png" );
 													oceanFX.watermain[i] = FrameTex;
 												}
 												else
@@ -2384,8 +2384,8 @@ namespace PFUtilityAddon
 											pqs.surfaceMaterial.shader = Shader.Find("Unlit/Texture");
 											//pqs.fallbackMaterial.shader = Shader.Find("Unlit/Texture");
 							
-											pqs.surfaceMaterial.mainTexture = Utils.LoadTexture( "Gamedata/KittopiaSpace/Textures/"+PlanetName+"/Ocean/Ocean_Def.png" );
-											//pqs.fallbackMaterial.mainTexture = Utils.LoadTexture( "Gamedata/KittopiaSpace/Textures/"+PlanetName+"/Ocean/Ocean_Def.png" );
+											pqs.surfaceMaterial.mainTexture = Utils.LoadTexture( "GameData/KittopiaSpace/Textures/"+PlanetName+"/Ocean/Ocean_Def.png" );
+											//pqs.fallbackMaterial.mainTexture = Utils.LoadTexture( "GameData/KittopiaSpace/Textures/"+PlanetName+"/Ocean/Ocean_Def.png" );
 										}
 									}
 								}
@@ -2419,7 +2419,7 @@ namespace PFUtilityAddon
 							tempColourString = tempColourString.Replace( ")" , "" );
 							ringcolour = ConfigNode.ParseColor( tempColourString );
 							
-							string PlanetRingTexName = "Gamedata/KittopiaSpace/Textures/" + PlanetName + "_ring.png";
+							string PlanetRingTexName = "GameData/KittopiaSpace/Textures/" + PlanetName + "_ring.png";
 							if ( Utils.FileExists( PlanetRingTexName ) )
 							{
 								ringObj = PlanetUtils.AddRingToPlanet( Utils.FindScaled( PlanetName ), innerradius, outerradius, tilt, Utils.LoadTexture( PlanetRingTexName, false ), ringcolour, LockRot, Unlit );
@@ -2427,7 +2427,7 @@ namespace PFUtilityAddon
 							}
 							else
 							{
-								PlanetRingTexName = "Gamedata/KittopiaSpace/Textures/Default/ring.png";
+								PlanetRingTexName = "GameData/KittopiaSpace/Textures/Default/ring.png";
 								if( Utils.FileExists( PlanetRingTexName ) )
 								{
 									ringObj = PlanetUtils.AddRingToPlanet( Utils.FindScaled( PlanetName ), innerradius, outerradius, tilt, Utils.LoadTexture( PlanetRingTexName, false ), ringcolour, LockRot, Unlit );
@@ -2450,10 +2450,10 @@ namespace PFUtilityAddon
 						if( bool.Parse(additionalsettings_Rootnode.GetValue( "ModScaledAtmoShader" )) == true )
 						{
 							//Load rim texture...
-							string RimTex = "Gamedata/KittopiaSpace/Textures/"+PlanetName+".png";
+							string RimTex = "GameData/KittopiaSpace/Textures/"+PlanetName+".png";
 							if( !Utils.FileExists( RimTex ) )
 							{
-								RimTex = "Gamedata/KittopiaSpace/Textures/default/blank_rim_text.png";
+								RimTex = "GameData/KittopiaSpace/Textures/default/blank_rim_text.png";
 								if( Utils.FileExists( RimTex ) )
 								{
 									//Update atmo shader texture
@@ -2849,7 +2849,7 @@ namespace PFUtilityAddon
 		private void SaveStarData( string starName )
 		{
 			string save_dir;
-			save_dir = "Gamedata/KittopiaSpace/StarFix.cfg";
+			save_dir = "GameData/KittopiaSpace/StarFix.cfg";
 			
 			cfgNodes2 = ConfigNode.Load( save_dir );
 			if( cfgNodes2 == null )
@@ -2871,7 +2871,7 @@ namespace PFUtilityAddon
 		private void LoadStarData( string starName )
 		{
 			string save_dir;
-			save_dir = "Gamedata/KittopiaSpace/StarFix.cfg";
+			save_dir = "GameData/KittopiaSpace/StarFix.cfg";
 			
 			cfgNodes2 = ConfigNode.Load( save_dir );
 			if( cfgNodes2 == null )
