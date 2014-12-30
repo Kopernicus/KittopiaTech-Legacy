@@ -82,8 +82,19 @@ namespace PFUtilityAddon
 	{
 		public static string PlanetName;
 		public static MapSO ReturnedMapSo;
+		
+		static public void UpdateTextureList()
+		{
+			//Hacky...
+			PlanetToolsUiController.NewWindows[ "TextureBrowser" ] = null; //Destroy
+			PlanetToolsUiController.NewWindows[ "TextureBrowser" ] = new ScrollWindow( TextureBrowser.GetTextures( PlanetToolsUiController.uiController.TemplateName ) , TextureBrowser.GetButtons() , "Texture Browser", 1661270 ); //rebuild;
+			
+			PlanetToolsUiController.NewWindows[ "TextureBrowser" ].ToggleWindow();
+		}
+		
 		static public string[] GetTextures( string IPlanetName )
 		{
+			try{
 			PlanetName = IPlanetName;
 			
 			List<string> FileNames = new List<string>();
@@ -97,6 +108,8 @@ namespace PFUtilityAddon
 			FileNames.Add( "Filler" );
 			
 			return FileNames.ToArray();
+			}catch{}
+			return new string[]{};
 		}
 		
 		static public void Button_Select( int i )

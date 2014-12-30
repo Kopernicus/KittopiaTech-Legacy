@@ -14,7 +14,7 @@ namespace PFUtilityAddon
 		{
 			if( Utils.FindCB( "Kerbin" ) != null && Utils.FindCB( "Eeloo" ) != null ) //Now is the time
 			{
-				GameObject ghost = new GameObject("PlanetToolsUiController", typeof(PlanetToolsUiController));
+				GameObject ghost = new GameObject("Kittopiatech Main Plugin", typeof(PlanetToolsUiController));
 	        	GameObject.DontDestroyOnLoad(ghost);
 				
 				GameObject AsteriodHandler = new GameObject("Kittopiatech Asteriod Handler", typeof(TerraformingAsteriodAddModule));

@@ -162,7 +162,7 @@ namespace PFUtilityAddon
 			
 			//Construct additional windows:
 			NewWindows[ "PQSSelector" ] = new ScrollWindow( PQSSelector.ReturnPQSNames() , PQSSelector.GetButtons() , "PQS Selector", 1661269 );
-			NewWindows[ "TextureBrowser" ] = new ScrollWindow( new string[]{"LOL", "WAT"} , null , "Texture Browser", 1661270 );
+			NewWindows[ "TextureBrowser" ] = new ScrollWindow( TextureBrowser.GetTextures( "Kerbin" ) , TextureBrowser.GetButtons() , "Texture Browser", 1661270 );
 			NewWindows[ "HelpWindow" ] = new HelpWindow( 1661271 , "Help");
 		}
 		public void LoadPerSavePlanets( string savegamename )
@@ -218,7 +218,7 @@ namespace PFUtilityAddon
 		
 		Vector2 ScrollPosition;
 		Vector2 ScrollPosition2;
-		string TemplateName = "";
+		public string TemplateName = "";
 		Color windowOutput;
 		
 		float rVal,gVal,bVal,aVal;
@@ -993,17 +993,25 @@ namespace PFUtilityAddon
 				}
 				else if( key.GetValue( obj ).GetType() == typeof( MapSO ) )
 				{
-					GUI.Label( new Rect( 20 , yoffset, 100, 20), ""+key.Name );
-					if( GUI.Button( new Rect( 150 , yoffset, 50, 20), "Edit" ) )
+					GUI.Label( new Rect( 20 , yoffset, 100, 20), ""+key.Name + ":" );
+//					if( GUI.Button( new Rect( 150 , yoffset, 50, 20), "Edit" ) )
+//					{
+//						//TextureBrowser browser = NewWindows[ "TextureBrowser" ] as TextureBrowser;
+//						TextureBrowser.UpdateTextureList();
+//					}
+//					if( GUI.Button( new Rect( 200 , yoffset, 80, 20), "Save Edit" ) )
+//					{
+//						key.SetValue( obj, TextureBrowser.ReturnedMapSo );
+//					}
+					yoffset += 30;
+					if( GUI.Button( new Rect( 20 , yoffset, 400, 20), "Load texture from: Textures/" + TemplateName + "/PQS/" +pqsmodtoMod.name ) )
 					{
-						PlanetToolsUiController.NewWindows[ "TextureBrowser" ] = null; //Destroy
-						PlanetToolsUiController.NewWindows[ "TextureBrowser" ] = new ScrollWindow( TextureBrowser.GetTextures( TemplateName ) , TextureBrowser.GetButtons() , "PQS Selector", 1661270 ); //rebuild;
-						
-						PlanetToolsUiController.NewWindows[ "TextureBrowser" ].ToggleWindow();
-					}
-					if( GUI.Button( new Rect( 200 , yoffset, 80, 20), "Save Edit" ) )
-					{
-						key.SetValue( obj, TextureBrowser.ReturnedMapSo );
+						Texture2D texture = Utils.LoadTexture( "GameInfo/KittopiaSpace/Textures/" + TemplateName + "/PQS/" +pqsmodtoMod.name );
+			
+						MapSO ReturnedMapSo = (MapSO) ScriptableObject.CreateInstance(typeof (MapSO));
+						ReturnedMapSo.CreateMap( MapSO.MapDepth.RGBA, texture );
+							
+						key.SetValue( obj, ReturnedMapSo );
 					}
 						
 					yoffset += 30;
@@ -2153,7 +2161,8 @@ namespace PFUtilityAddon
 						|| key.GetValue( obj ).GetType() == typeof( bool )
 						|| key.GetValue( obj ).GetType() == typeof( Color )
 						|| key.GetValue( obj ).GetType() == typeof( Vector3 )
-						|| key.GetValue( obj ).GetType() == typeof( PQS ))
+						|| key.GetValue( obj ).GetType() == typeof( PQS )
+						|| key.GetValue( obj ).GetType() == typeof( MapSO ) )
 					{
 						savePQS.AddValue( key.Name, key.GetValue( obj ) );
 					}
@@ -2716,6 +2725,14 @@ namespace PFUtilityAddon
 									val = val.Replace( "RGBA(" , "" );
 									val = val.Replace( ")" , "" );
 									key.SetValue( obj, ConfigNode.ParseColor( val ) );
+								}
+								else if ( t == typeof(MapSO) )
+								{
+										val = val.Replace( " (MapSO)", "" );
+									Texture2D texture = Utils.LoadTexture( val );
+									MapSO ReturnedMapSo = (MapSO) ScriptableObject.CreateInstance(typeof (MapSO));
+									ReturnedMapSo.CreateMap( MapSO.MapDepth.RGBA, texture );
+									key.SetValue( obj, ReturnedMapSo );
 								}
 								else
 								{
