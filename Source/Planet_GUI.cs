@@ -674,9 +674,10 @@ namespace PFUtilityAddon
 				selector = 8;
 			}if( GUI.Button( new Rect( 220, 450, 20, 20 ), "?" ) ){(NewWindows[ "HelpWindow" ] as HelpWindow).CustomToggle( "Particles" ); }
 			
-			if( GUI.Button( new Rect( 20, 480, 200, 20 ), "" ) )
+			if( GUI.Button( new Rect( 20, 480, 200, 20 ), "Ground Scatter Editor" ) )
 			{
-			}
+				selector = 10;
+			}if( GUI.Button( new Rect( 220, 450, 20, 20 ), "?" ) ){(NewWindows[ "HelpWindow" ] as HelpWindow).CustomToggle( "ScatterEditor" ); }
 			
 			GUI.EndScrollView();
 			
@@ -691,6 +692,7 @@ namespace PFUtilityAddon
 			case 7: RingEditorFunc(); break;
 			case 8: ParticleEditorUI(); break;
 			case 9: StarEditorUI(); break;
+			case 10: ScatterEditorUI(); break;
 			default: break;
 			}
 			
@@ -1986,6 +1988,39 @@ namespace PFUtilityAddon
 			
 		}
 		
+		private void ScatterEditorUI()
+		{			
+			int yoffset = 280;
+			
+			if( TemplateName == "" )
+			{
+				GUI.Label( new Rect( 20 , yoffset, 200, 20), "NO PLANET SELECTED" );
+				return;
+			}
+			
+			//Look for the ground scatter component:
+			PQSLandControl scatter = Utils.FindLocal( TemplateName ).GetComponentInChildren<PQSLandControl>();
+			if( scatter == null )
+			{
+				GUI.Label( new Rect( 20 , yoffset, 200, 20), "Planet has no PQSLandControl!" );
+				return;
+			}
+			
+			yoffset += 30;
+			
+			if( GUI.Button( new Rect( 20 , yoffset, 200, 20), "Import scatter models for: " +TemplateName ) )
+			{
+				int i = 0;
+				foreach( PQSLandControl.LandClassScatter obj in scatter.scatters )
+				{
+					GameObject temporyGObj = GameDatabase.Instance.GetModel( "GameData/KittopiaSpace/Models/" + TemplateName + "/scattermesh" + i );
+					MeshFilter ObjMeshFilter = temporyGObj.GetComponent<MeshFilter>();
+					obj.baseMesh = ObjMeshFilter.sharedMesh;
+					obj.material = temporyGObj.renderer.sharedMaterial;
+					i++;
+				}
+			}
+		}
 		
 		public ConfigNode cfgNodes;
 		
