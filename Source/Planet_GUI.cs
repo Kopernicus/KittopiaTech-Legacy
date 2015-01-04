@@ -1008,12 +1008,20 @@ namespace PFUtilityAddon
 					yoffset += 30;
 					if( GUI.Button( new Rect( 20 , yoffset, 400, 20), "Load texture from: Textures/" + TemplateName + "/PQS/" +pqsmodtoMod.name ) )
 					{
-						Texture2D texture = Utils.LoadTexture( "GameInfo/KittopiaSpace/Textures/" + TemplateName + "/PQS/" +pqsmodtoMod.name );
-			
-						MapSO ReturnedMapSo = (MapSO) ScriptableObject.CreateInstance(typeof (MapSO));
-						ReturnedMapSo.CreateMap( MapSO.MapDepth.RGBA, texture );
-							
-						key.SetValue( obj, ReturnedMapSo );
+						if( Utils.FileExists( "GameInfo/KittopiaSpace/Textures/" + TemplateName + "/PQS/" +pqsmodtoMod.name ) )
+						{
+							Texture2D texture = Utils.LoadTexture( "GameInfo/KittopiaSpace/Textures/" + TemplateName + "/PQS/" +pqsmodtoMod.name );
+				
+							MapSO ReturnedMapSo = (MapSO)ScriptableObject.CreateInstance( typeof(MapSO) );
+							ReturnedMapSo.CreateMap( MapSO.MapDepth.RGBA, texture );
+								
+							key.SetValue( obj, ReturnedMapSo );
+							print( "Pushed MAPSO to object!\n" );
+						}
+						else
+						{
+							print( "Failed to load: GameInfo/KittopiaSpace/Textures/" + TemplateName + "/PQS/" +pqsmodtoMod.name + ".png\n" );
+						}
 					}
 						
 					yoffset += 30;
