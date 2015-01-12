@@ -51,7 +51,7 @@ namespace PFUtilityAddon
 			{
 				//Grab altitude
 				Vector3 pos = ScaledSpace.ScaledToLocalSpace( PlanetariumCamera.fetch.GetCameraTransform().position );
-				Vector3 pos2;
+				Vector3 pos2 = new Vector3();
 				if( FlightGlobals.ActiveVessel != null )
 				{
 					pos2 = FlightGlobals.ActiveVessel.GetTransform().position;
