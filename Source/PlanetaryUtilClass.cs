@@ -342,13 +342,15 @@ namespace PFUtilityAddon
 			//RingMsd.target = MSD.target;
 			//RingMsd.Update();
 			
+			RingObject.AddComponent<ReScaler>();
+			
 			if( lockrot )
 			{
 				Quaternion m_rotAngleLock = RingObject.transform.localRotation;
 				AngleLocker m_ringAngleLock = (AngleLocker)RingObject.AddComponent<AngleLocker>();
 				m_ringAngleLock.RotationLock = m_rotAngleLock;
 			}
-			
+			GameObject.DontDestroyOnLoad(RingObject);
 			return RingObject;
 		}
 		

@@ -24,5 +24,21 @@ namespace PFUtilityAddon
 			transform.rotation = RotationLock;
 		}
 	}
+	
+	public class ReScaler : MonoBehaviour
+	{	
+		void Update()
+		{
+			transform.localScale = transform.parent.localScale;
+		}
+		void FixedUpdate()
+		{
+			transform.localScale = transform.parent.localScale;
+		}
+		void LateUpdate()
+		{
+			transform.localScale = transform.parent.localScale;
+		}
+	}
 }
 

@@ -2771,11 +2771,14 @@ namespace PFUtilityAddon
 								}
 								else if ( t == typeof(MapSO) )
 								{
-										val = val.Replace( " (MapSO)", "" );
-									Texture2D texture = Utils.LoadTexture( val );
-									MapSO ReturnedMapSo = (MapSO) ScriptableObject.CreateInstance(typeof (MapSO));
-									ReturnedMapSo.CreateMap( MapSO.MapDepth.RGBA, texture );
-									key.SetValue( obj, ReturnedMapSo );
+									val = val.Replace( " (MapSO)", "" );
+									if( Utils.FileExists( val ) )
+									{
+										Texture2D texture = Utils.LoadTexture( val, false );
+										MapSO ReturnedMapSo = (MapSO) ScriptableObject.CreateInstance(typeof (MapSO));
+										ReturnedMapSo.CreateMap( MapSO.MapDepth.RGBA, texture );
+										key.SetValue( obj, ReturnedMapSo );
+									}
 								}
 								else
 								{
