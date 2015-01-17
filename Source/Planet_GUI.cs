@@ -2800,7 +2800,9 @@ namespace PFUtilityAddon
 					//Utils.FindLocal( PlanetName ).GetComponentInChildren<PQS>().RebuildSphere();
 				}
 				print("PlanetUI: Loaded PQS of " +PlanetName+ "\n" );
-					
+
+				// Initial ScaledSpace generation would not work properly without this.
+				Utils.FindLocal(PlanetName).GetComponentInChildren<PQS>().RebuildSphere();
 					
 					//Regen ScaledSpace:
 					string PlanetScaledSpaceTex = "GameData/KittopiaSpace/Textures/ScaledSpace/" + PlanetName + "/colourMap.png";
