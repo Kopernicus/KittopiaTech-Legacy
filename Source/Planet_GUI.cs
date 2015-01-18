@@ -533,8 +533,11 @@ namespace PFUtilityAddon
 				GameObject scaledSpace = Utils.FindScaled( TemplateName );
 				
 				PQS pqsGrabtex = localSpace.GetComponentInChildren<PQS>();
-				textures = pqsGrabtex.CreateMaps( 2048, 2000, pqsGrabtex.mapOcean, pqsGrabtex.mapOceanHeight, pqsGrabtex.mapOceanColor );
-				
+				textures = pqsGrabtex.CreateMaps( 2048, pqsGrabtex.mapMaxHeight, pqsGrabtex.mapOcean, pqsGrabtex.mapOceanHeight, pqsGrabtex.mapOceanColor );
+
+				Texture2D Normal = Utils.BumpToNormalMap(textures[1], 9);
+				textures[1] = Normal;
+
 				//Save textures to file.
 				if( ShouldExportScaledMap )
 				{
@@ -545,6 +548,7 @@ namespace PFUtilityAddon
 				
 				MeshRenderer planettextures = scaledSpace.GetComponentInChildren<MeshRenderer>();
 				planettextures.material.SetTexture("_MainTex",PlanetColours);
+				planettextures.material.SetTexture("_BumpMap", Normal);
 				
 				RegenerateModel( pqsGrabtex, scaledSpace.GetComponentInChildren<MeshFilter>() );
 			}if( GUI.Button( new Rect( 220, 240, 20, 20 ), "?" ) ){(NewWindows[ "HelpWindow" ] as HelpWindow).CustomToggle( "ScaledSpaceUpdate" ); }

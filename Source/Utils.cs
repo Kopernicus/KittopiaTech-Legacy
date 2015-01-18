@@ -260,6 +260,28 @@ namespace PFUtilityAddon
 			tempColourString = tempColourString.Replace( ")" , "" );
 			return ConfigNode.ParseColor(tempColourString);
 		}
+
+		// Credit goes to Kragrathea.
+		public static Texture2D BumpToNormalMap(Texture2D source, float strength)
+		{
+			strength = Mathf.Clamp(strength, 0.0F, 10.0F);
+			var result = new Texture2D(source.width, source.height, TextureFormat.ARGB32, true);
+			for (int by = 0; by < result.height; by++)
+			{
+				for (var bx = 0; bx < result.width; bx++)
+				{
+					var xLeft = source.GetPixel(bx - 1, by).grayscale * strength;
+					var xRight = source.GetPixel(bx + 1, by).grayscale * strength;
+					var yUp = source.GetPixel(bx, by - 1).grayscale * strength;
+					var yDown = source.GetPixel(bx, by + 1).grayscale * strength;
+					var xDelta = ((xLeft - xRight) + 1) * 0.5f;
+					var yDelta = ((yUp - yDown) + 1) * 0.5f;
+					result.SetPixel(bx, by, new Color(xDelta, yDelta, 1.0f, xDelta));
+				}
+			}
+			result.Apply();
+			return result;
+		}
 		
 	}
 }
