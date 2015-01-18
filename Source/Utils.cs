@@ -232,27 +232,10 @@ namespace PFUtilityAddon
 		public static void ExportPlanetMaps( string TemplateName, Texture2D[] texture )
 		{
 			byte[] ExportColourMap = texture[0].EncodeToPNG();
-			if( File.Exists( "GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/colourMap.png" ) )
-			{
-    			File.WriteAllBytes("GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/colourMap.png",  ExportColourMap);
-			}
-			else
-			{
-				File.Create( "GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/colourMap.png" );
-				File.WriteAllBytes("GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/colourMap.png",  ExportColourMap);
-			}
-			
+			File.WriteAllBytes("GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/colourMap.png", ExportColourMap);
+
 			ExportColourMap = texture[1].EncodeToPNG();
-			
-			if( File.Exists( "GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/bumpMap.png" ) )
-			{
-				File.WriteAllBytes("GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/bumpMap.png",  ExportColourMap);
-			}
-			else
-			{
-				File.Create( "GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/bumpMap.png" );
-				File.WriteAllBytes("GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/bumpMap.png",  ExportColourMap);
-			}
+			File.WriteAllBytes("GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/bumpMap.png", ExportColourMap);
 		}
 		
 		public static void CreateTextFile( string dir, string io )
