@@ -231,6 +231,8 @@ namespace PFUtilityAddon
 		
 		public static void ExportPlanetMaps( string TemplateName, Texture2D[] texture )
 		{
+			Directory.CreateDirectory("GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName);
+
 			byte[] ExportColourMap = texture[0].EncodeToPNG();
 			File.WriteAllBytes("GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/colourMap.png", ExportColourMap);
 
