@@ -533,8 +533,11 @@ namespace PFUtilityAddon
 				GameObject scaledSpace = Utils.FindScaled( TemplateName );
 				
 				PQS pqsGrabtex = localSpace.GetComponentInChildren<PQS>();
-				textures = pqsGrabtex.CreateMaps( 2048, 2000, pqsGrabtex.mapOcean, pqsGrabtex.mapOceanHeight, pqsGrabtex.mapOceanColor );
-				
+				textures = pqsGrabtex.CreateMaps( 2048, pqsGrabtex.mapMaxHeight, pqsGrabtex.mapOcean, pqsGrabtex.mapOceanHeight, pqsGrabtex.mapOceanColor );
+
+				Texture2D Normal = Utils.BumpToNormalMap(textures[1], 9);
+				textures[1] = Normal;
+
 				//Save textures to file.
 				if( ShouldExportScaledMap )
 				{
@@ -545,6 +548,7 @@ namespace PFUtilityAddon
 				
 				MeshRenderer planettextures = scaledSpace.GetComponentInChildren<MeshRenderer>();
 				planettextures.material.SetTexture("_MainTex",PlanetColours);
+				planettextures.material.SetTexture("_BumpMap", Normal);
 				
 				RegenerateModel( pqsGrabtex, scaledSpace.GetComponentInChildren<MeshFilter>() );
 			}if( GUI.Button( new Rect( 220, 240, 20, 20 ), "?" ) ){(NewWindows[ "HelpWindow" ] as HelpWindow).CustomToggle( "ScaledSpaceUpdate" ); }
@@ -2726,8 +2730,8 @@ namespace PFUtilityAddon
 									//key.SetValue( cbobj, ConfigNode.ParseColor( val ) );
 									//print ( "PQS not compatible at this point." );
 									//continue;
-										string FixName = node.GetValue( key.Name );
-										FixName.Replace( " (PQS)", "" );
+									string FixName = node.GetValue( key.Name );
+									FixName = FixName.Replace(" (PQS)", "");
 									key.SetValue( obj, Utils.FindPQS( FixName ) );
 								}
 								
@@ -2800,7 +2804,9 @@ namespace PFUtilityAddon
 					//Utils.FindLocal( PlanetName ).GetComponentInChildren<PQS>().RebuildSphere();
 				}
 				print("PlanetUI: Loaded PQS of " +PlanetName+ "\n" );
-					
+
+				// Initial ScaledSpace generation would not work properly without this.
+				Utils.FindLocal(PlanetName).GetComponentInChildren<PQS>().RebuildSphere();
 					
 					//Regen ScaledSpace:
 					string PlanetScaledSpaceTex = "GameData/KittopiaSpace/Textures/ScaledSpace/" + PlanetName + "/colourMap.png";
