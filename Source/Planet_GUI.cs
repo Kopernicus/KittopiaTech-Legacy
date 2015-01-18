@@ -549,8 +549,8 @@ namespace PFUtilityAddon
 				MeshRenderer planettextures = scaledSpace.GetComponentInChildren<MeshRenderer>();
 				planettextures.material.SetTexture("_MainTex",PlanetColours);
 				planettextures.material.SetTexture("_BumpMap", Normal);
-				
-				RegenerateModel( pqsGrabtex, scaledSpace.GetComponentInChildren<MeshFilter>() );
+
+				RegenerateModel(pqsGrabtex, scaledSpace.GetComponentInChildren<MeshFilter>(), PlanetarySettings[TemplateName].IsStock);
 			}if( GUI.Button( new Rect( 220, 240, 20, 20 ), "?" ) ){(NewWindows[ "HelpWindow" ] as HelpWindow).CustomToggle( "ScaledSpaceUpdate" ); }
 			
 			if( GUI.Button( new Rect( 20, 270, 200, 20 ), "Ocean Tools" ) )
@@ -1412,10 +1412,20 @@ namespace PFUtilityAddon
 		}
 		
 		//Scaled Space Updater
-		private void RegenerateModel(PQS bodyPQS, MeshFilter meshfilter_input)
+		private void RegenerateModel(PQS bodyPQS, MeshFilter meshfilter_input, bool isStock = true)
 		{
-			// Using constant scaling factor.
-			float scale = 6000;
+			float scale;
+			if (isStock)
+			{
+				var originalVert = meshfilter_input.mesh.vertices[0];
+				var originalHeight = (float)bodyPQS.GetSurfaceHeight(originalVert);
+				scale = originalHeight / originalVert.magnitude;
+			}
+			else // If the planet was made by Kopernicus...
+			{
+				// Using constant scaling factor.
+				scale = 6000;
+			}
 				
 			bodyPQS.isBuildingMaps = true;
 	        var newVerts = new Vector3[meshfilter_input.mesh.vertices.Count()];
@@ -2824,8 +2834,8 @@ namespace PFUtilityAddon
 						print("PlanetUI: Loaded ScaledSace bumpmap of " +PlanetName+ "\n" );
 						PlanetTextures.material.SetTexture("_BumpMap",PlanetTex2);
 					}
-					
-					RegenerateModel( Utils.FindLocal( PlanetName ).GetComponentInChildren<PQS>(), Utils.FindScaled(PlanetName).GetComponentInChildren<MeshFilter>() );
+
+					RegenerateModel(Utils.FindLocal(PlanetName).GetComponentInChildren<PQS>(), Utils.FindScaled(PlanetName).GetComponentInChildren<MeshFilter>(), PlanetarySettings[PlanetName].IsStock);
 					
 					print( "PlanetUI: ScaledSpace loaded for " +PlanetName+ "\n" );
 				}
