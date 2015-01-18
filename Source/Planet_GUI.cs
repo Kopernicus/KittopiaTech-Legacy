@@ -2730,8 +2730,8 @@ namespace PFUtilityAddon
 									//key.SetValue( cbobj, ConfigNode.ParseColor( val ) );
 									//print ( "PQS not compatible at this point." );
 									//continue;
-										string FixName = node.GetValue( key.Name );
-										FixName.Replace( " (PQS)", "" );
+									string FixName = node.GetValue( key.Name );
+									FixName = FixName.Replace(" (PQS)", "");
 									key.SetValue( obj, Utils.FindPQS( FixName ) );
 								}
 								
