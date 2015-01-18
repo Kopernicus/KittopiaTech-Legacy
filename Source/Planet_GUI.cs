@@ -1410,9 +1410,8 @@ namespace PFUtilityAddon
 		//Scaled Space Updater
 		private void RegenerateModel(PQS bodyPQS, MeshFilter meshfilter_input)
 		{
-			var originalVert = meshfilter_input.mesh.vertices[0];
-	        var originalHeight = (float)bodyPQS.GetSurfaceHeight(originalVert);
-	        var scale = originalHeight / originalVert.magnitude;
+			// Using constant scaling factor.
+			float scale = 6000;
 				
 			bodyPQS.isBuildingMaps = true;
 	        var newVerts = new Vector3[meshfilter_input.mesh.vertices.Count()];
