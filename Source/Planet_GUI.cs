@@ -2812,6 +2812,12 @@ namespace PFUtilityAddon
 							component.transform.parent = Utils.FindPQS( node.GetValue( "Parent" ) ).transform;
 						}
 					//Utils.FindLocal( PlanetName ).GetComponentInChildren<PQS>().RebuildSphere();
+
+						print(component.GetType());
+						if (component.GetType() != typeof(PQS))
+						{
+							((PQSMod)component).RebuildSphere();
+						}
 				}
 				print("PlanetUI: Loaded PQS of " +PlanetName+ "\n" );
 
