@@ -2622,9 +2622,12 @@ namespace PFUtilityAddon
 					CelestialBody cbBody;
 					cbBody = Utils.FindCB( PlanetName );
 					
+					ConfigNode Orbit_Node = planet_rootnode.GetNode( "Orbit" );
+
+					// Parse only if the Orbit node exists.
+					if (Orbit_Node != null) {				
 					if( cbBody.GetOrbitDriver() != null )
 					{
-						ConfigNode Orbit_Node = planet_rootnode.GetNode( "Orbit" );
 						cbBody.orbitDriver.orbit.semiMajorAxis = Convert.ToDouble( Orbit_Node.GetValue( "semiMajorAxis" ) );
 						cbBody.orbitDriver.orbit.eccentricity = Convert.ToDouble(Orbit_Node.GetValue( "eccentricity" ));
 						cbBody.orbitDriver.orbit.inclination = Convert.ToDouble(Orbit_Node.GetValue( "inclination" ));
@@ -2652,11 +2655,13 @@ namespace PFUtilityAddon
 							cbBody.orbitDriver.Renderer.drawMode = OrbitRenderer.DrawMode.OFF;
 						}
 					}
-					
 					print("PlanetUI: Loaded ORBIT of " +PlanetName+ "\n" );
+					}
 				
 					ConfigNode cb_rootnode = planet_rootnode.GetNode( "CelestialBody" );
-					
+
+					// Parse only if the CelestialBody node exists.
+					if (cb_rootnode != null) {
 					//Load CB related stuff
 					System.Object cbobj = cbBody;
 					foreach( FieldInfo key in cbobj.GetType().GetFields() )
@@ -2690,9 +2695,13 @@ namespace PFUtilityAddon
 						CBody.CBUpdate();
 					}
 					print("PlanetUI: Loaded CB of " +PlanetName+ "\n" );
+					}
 				
 					//Load PQS related stuff
 					ConfigNode pqs_rootnode = planet_rootnode.GetNode( "PQS" );
+
+					// Parse and fix scaled space only if the PQS node exists.
+					if (pqs_rootnode != null) {
 					foreach( ConfigNode node in pqs_rootnode.nodes )
 					{
 						
@@ -2841,6 +2850,7 @@ namespace PFUtilityAddon
 					RegenerateModel(Utils.FindLocal(PlanetName).GetComponentInChildren<PQS>(), Utils.FindScaled(PlanetName).GetComponentInChildren<MeshFilter>(), PlanetarySettings[PlanetName].IsStock);
 					
 					print( "PlanetUI: ScaledSpace loaded for " +PlanetName+ "\n" );
+					}
 				}
 			}
 			else
