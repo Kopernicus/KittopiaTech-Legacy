@@ -327,37 +327,37 @@ namespace PFUtilityAddon
 					{
 					try{
 					System.Object obj = (System.Object)landclasstoMod;
-					if( key.GetValue(obj).GetType() == typeof( string ))
+					if( key.FieldType == typeof( string ))
 					{
 						GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 						key.SetValue( obj, GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) );
 						yoffset += 30;
 					}
-					else if( key.GetValue(obj).GetType() == typeof( bool ))
+					else if( key.FieldType == typeof( bool ))
 					{
 						GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 						key.SetValue( obj, GUI.Toggle( new Rect( 200 , yoffset, 200, 20 ), (bool)key.GetValue(obj), "Bool" ));
 						yoffset += 30;
 					}
-					else if( key.GetValue(obj).GetType() == typeof( int ))
+					else if( key.FieldType == typeof( int ))
 					{
 						GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 						key.SetValue( obj, (int)StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
 						yoffset += 30;
 					}
-					else if( key.GetValue(obj).GetType() == typeof( float ))
+					else if( key.FieldType == typeof( float ))
 					{
 						GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 						key.SetValue( obj, StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
 						yoffset += 30;
 					}
-					else if( key.GetValue(obj).GetType() == typeof( double ))
+					else if( key.FieldType == typeof( double ))
 					{
 						GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 						key.SetValue( obj, (double)StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
 						yoffset += 30;
 					}
-					else if( key.GetValue(obj).GetType() == typeof( Color ))
+					else if( key.FieldType == typeof( Color ))
 					{
 						GUI.Label( new Rect( 20 , yoffset, 100, 20), ""+key.Name );
 						if( GUI.Button( new Rect( 150 , yoffset, 50, 20), "Edit" ) )
@@ -402,37 +402,37 @@ namespace PFUtilityAddon
 					{
 					try{
 					System.Object obj = (System.Object)VertexLandclasstoMod;
-					if( key.GetValue(obj).GetType() == typeof( string ))
+					if( key.FieldType == typeof( string ))
 					{
 						GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 						key.SetValue( obj, GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) );
 						yoffset += 30;
 					}
-					else if( key.GetValue(obj).GetType() == typeof( bool ))
+					else if( key.FieldType == typeof( bool ))
 					{
 						GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 						key.SetValue( obj, GUI.Toggle( new Rect( 200 , yoffset, 200, 20 ), (bool)key.GetValue(obj), "Bool" ));
 						yoffset += 30;
 					}
-					else if( key.GetValue(obj).GetType() == typeof( int ))
+					else if( key.FieldType == typeof( int ))
 					{
 						GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 						key.SetValue( obj, (int)StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
 						yoffset += 30;
 					}
-					else if( key.GetValue(obj).GetType() == typeof( float ))
+					else if( key.FieldType == typeof( float ))
 					{
 						GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 						key.SetValue( obj, StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
 						yoffset += 30;
 					}
-					else if( key.GetValue(obj).GetType() == typeof( double ))
+					else if( key.FieldType == typeof( double ))
 					{
 						GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 						key.SetValue( obj, (double)StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
 						yoffset += 30;
 					}
-					else if( key.GetValue(obj).GetType() == typeof( Color ))
+					else if( key.FieldType == typeof( Color ))
 					{
 						GUI.Label( new Rect( 20 , yoffset, 100, 20), ""+key.Name );
 						if( GUI.Button( new Rect( 150 , yoffset, 50, 20), "Edit" ) )
@@ -910,37 +910,37 @@ namespace PFUtilityAddon
 			{
 				try{
 				System.Object obj = (System.Object)pqsmodtoMod;
-				if( key.GetValue(obj).GetType() == typeof( string ))
+				if( key.FieldType == typeof( string ))
 				{
 					GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 					key.SetValue( obj, GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) );
 					yoffset += 30;
 				}
-				else if( key.GetValue(obj).GetType() == typeof( bool ))
+				else if( key.FieldType == typeof( bool ))
 				{
 					GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 					key.SetValue( obj, GUI.Toggle( new Rect( 200 , yoffset, 200, 20 ), (bool)key.GetValue(obj), "Bool" ));
 					yoffset += 30;
 				}
-				else if( key.GetValue(obj).GetType() == typeof( int ))
+				else if( key.FieldType == typeof( int ))
 				{
 					GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 					key.SetValue( obj, (int)StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
 					yoffset += 30;
 				}
-				else if( key.GetValue(obj).GetType() == typeof( float ))
+				else if( key.FieldType == typeof( float ))
 				{
 					GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 					key.SetValue( obj, StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
 					yoffset += 30;
 				}
-				else if( key.GetValue(obj).GetType() == typeof( double ))
+				else if( key.FieldType == typeof( double ))
 				{
 					GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 					key.SetValue( obj, (double)StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
 					yoffset += 30;
 				}
-				else if( key.GetValue(obj).GetType() == typeof( Color ))
+				else if( key.FieldType == typeof( Color ))
 				{
 					GUI.Label( new Rect( 20 , yoffset, 100, 20), ""+key.Name );
 					if( GUI.Button( new Rect( 150 , yoffset, 50, 20), "Edit" ) )
@@ -960,7 +960,7 @@ namespace PFUtilityAddon
 					//key.SetValue( obj, (double)StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
 					yoffset += 30;
 				}
-				else if( key.GetValue(obj).GetType() == typeof( Vector3 ))
+				else if( key.FieldType == typeof( Vector3 ))
 				{
 					GUI.Label( new Rect( 20 , yoffset, 200, 20) , ""+key.Name );
 					yoffset += 30;
@@ -975,7 +975,7 @@ namespace PFUtilityAddon
 						
 					yoffset += 30;
 				}
-				else if(key.GetValue(obj).GetType() == typeof( PQSLandControl.LandClass[] ))
+				else if(key.FieldType == typeof( PQSLandControl.LandClass[] ))
 				{
 					if( GUI.Button(new Rect( 20, yoffset, 200, 20), "Mod Land Classes") )
 					{
@@ -986,7 +986,7 @@ namespace PFUtilityAddon
 					}
 					yoffset += 30;
 				}
-				else if(key.GetValue(obj).GetType() == typeof( PQSMod_VertexPlanet.LandClass[] ))
+				else if(key.FieldType == typeof( PQSMod_VertexPlanet.LandClass[] ))
 				{
 					if( GUI.Button(new Rect( 20, yoffset, 200, 20), "Mod Land Classes") )
 					{
@@ -997,7 +997,7 @@ namespace PFUtilityAddon
 					}
 					yoffset += 30;
 				}
-				else if( key.GetValue( obj ).GetType() == typeof( MapSO ) )
+				else if( key.FieldType == typeof( MapSO ) )
 				{
 					GUI.Label( new Rect( 20 , yoffset, 100, 20), ""+key.Name + ":" );
 //					if( GUI.Button( new Rect( 150 , yoffset, 50, 20), "Edit" ) )
@@ -1084,37 +1084,37 @@ namespace PFUtilityAddon
 			{
 				try{
 				System.Object obj = (System.Object)pqstoMod;
-				if( key.GetValue(obj).GetType() == typeof( string ))
+				if( key.FieldType == typeof( string ))
 				{
 					GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 					key.SetValue( obj, GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) );
 					yoffset += 30;
 				}
-				else if( key.GetValue(obj).GetType() == typeof( bool ))
+				else if( key.FieldType == typeof( bool ))
 				{
 					GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 					key.SetValue( obj, GUI.Toggle( new Rect( 200 , yoffset, 200, 20 ), (bool)key.GetValue(obj), "Bool" ));
 					yoffset += 30;
 				}
-				else if( key.GetValue(obj).GetType() == typeof( int ))
+				else if( key.FieldType == typeof( int ))
 				{
 					GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 					key.SetValue( obj, (int)StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
 					yoffset += 30;
 				}
-				else if( key.GetValue(obj).GetType() == typeof( float ))
+				else if( key.FieldType == typeof( float ))
 				{
 					GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 					key.SetValue( obj, StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
 					yoffset += 30;
 				}
-				else if( key.GetValue(obj).GetType() == typeof( double ))
+				else if( key.FieldType == typeof( double ))
 				{
 					GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 					key.SetValue( obj, (double)StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
 					yoffset += 30;
 				}
-				else if( key.GetValue(obj).GetType() == typeof( Color ))
+				else if( key.FieldType == typeof( Color ))
 				{
 					GUI.Label( new Rect( 20 , yoffset, 100, 20), ""+key.Name );
 					if( GUI.Button( new Rect( 150 , yoffset, 50, 20), "Edit" ) )
@@ -1134,7 +1134,7 @@ namespace PFUtilityAddon
 					//key.SetValue( obj, (double)StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
 					yoffset += 30;
 				}
-				else if( key.GetValue(obj).GetType() == typeof( Vector3 ))
+				else if( key.FieldType == typeof( Vector3 ))
 				{
 					GUI.Label( new Rect( 20 , yoffset, 200, 20) , ""+key.Name );
 					yoffset += 30;
@@ -1149,7 +1149,7 @@ namespace PFUtilityAddon
 						
 					yoffset += 30;
 				}
-				else if(key.GetValue(obj).GetType() == typeof( PQSLandControl.LandClass[] ))
+				else if(key.FieldType == typeof( PQSLandControl.LandClass[] ))
 				{
 					if( GUI.Button(new Rect( 20, yoffset, 200, 20), "Mod Land Classes") )
 					{
@@ -1160,7 +1160,7 @@ namespace PFUtilityAddon
 					}
 					yoffset += 30;
 				}
-				else if(key.GetValue(obj).GetType() == typeof( PQSMod_VertexPlanet.LandClass[] ))
+				else if(key.FieldType == typeof( PQSMod_VertexPlanet.LandClass[] ))
 				{
 					if( GUI.Button(new Rect( 20, yoffset, 200, 20), "Mod Land Classes") )
 					{
@@ -1246,37 +1246,37 @@ namespace PFUtilityAddon
 			{
 				try{
 				System.Object obj = (System.Object)cbBody;
-				if( key.GetValue(obj).GetType() == typeof( string ))
+				if( key.FieldType == typeof( string ))
 				{
 					GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 					key.SetValue( obj, GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) );
 					yoffset += 30;
 				}
-				else if( key.GetValue(obj).GetType() == typeof( bool ))
+				else if( key.FieldType == typeof( bool ))
 				{
 					GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 					key.SetValue( obj, GUI.Toggle( new Rect( 200 , yoffset, 200, 20 ), (bool)key.GetValue(obj), "Bool" ));
 					yoffset += 30;
 				}
-				else if( key.GetValue(obj).GetType() == typeof( int ))
+				else if( key.FieldType == typeof( int ))
 				{
 					GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 					key.SetValue( obj, (int)StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
 					yoffset += 30;
 				}
-				else if( key.GetValue(obj).GetType() == typeof( float ))
+				else if( key.FieldType == typeof( float ))
 				{
 					GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 					key.SetValue( obj, StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
 					yoffset += 30;
 				}
-				else if( key.GetValue(obj).GetType() == typeof( double ))
+				else if( key.FieldType == typeof( double ))
 				{
 					GUI.Label( new Rect( 20 , yoffset, 200, 20), ""+key.Name );
 					key.SetValue( obj, (double)StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
 					yoffset += 30;
 				}
-				else if( key.GetValue(obj).GetType() == typeof( Color ))
+				else if( key.FieldType == typeof( Color ))
 				{
 					GUI.Label( new Rect( 20 , yoffset, 100, 20), ""+key.Name );
 					if( GUI.Button( new Rect( 150 , yoffset, 50, 20), "Edit" ) )
@@ -1296,7 +1296,7 @@ namespace PFUtilityAddon
 					//key.SetValue( obj, (double)StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
 					yoffset += 30;
 				}
-				else if( key.GetValue(obj).GetType() == typeof( Vector3 ))
+				else if( key.FieldType == typeof( Vector3 ))
 				{
 					GUI.Label( new Rect( 20 , yoffset, 200, 20) , ""+key.Name );
 					yoffset += 30;
@@ -2189,13 +2189,13 @@ namespace PFUtilityAddon
 			{
 				try{
 				System.Object obj = (System.Object)cbBody;
-				if( key.GetValue( obj ).GetType() == typeof( string ) 
-					|| key.GetValue( obj ).GetType() == typeof( double ) 
-					|| key.GetValue( obj ).GetType() == typeof( int ) 
-					|| key.GetValue( obj ).GetType() == typeof( float )
-					|| key.GetValue( obj ).GetType() == typeof( bool )
-					|| key.GetValue( obj ).GetType() == typeof( Color )
-					|| key.GetValue( obj ).GetType() == typeof( Vector3 ))
+				if( key.FieldType == typeof( string ) 
+					|| key.FieldType == typeof( double ) 
+					|| key.FieldType == typeof( int ) 
+					|| key.FieldType == typeof( float )
+					|| key.FieldType == typeof( bool )
+					|| key.FieldType == typeof( Color )
+					|| key.FieldType == typeof( Vector3 ))
 				{
 					CelestialBody_Node.AddValue( key.Name, key.GetValue( obj ) );
 				}
@@ -2210,20 +2210,20 @@ namespace PFUtilityAddon
 				{
 					try{
 					System.Object obj = (System.Object)pqs;
-					if( key.GetValue( obj ).GetType() == typeof( string ) 
-						|| key.GetValue( obj ).GetType() == typeof( double ) 
-						|| key.GetValue( obj ).GetType() == typeof( int ) 
-						|| key.GetValue( obj ).GetType() == typeof( float )
-						|| key.GetValue( obj ).GetType() == typeof( bool )
-						|| key.GetValue( obj ).GetType() == typeof( Color )
-						|| key.GetValue( obj ).GetType() == typeof( Vector3 )
-						|| key.GetValue( obj ).GetType() == typeof( PQS )
-						|| key.GetValue( obj ).GetType() == typeof( MapSO ) )
+					if( key.FieldType == typeof( string ) 
+						|| key.FieldType == typeof( double ) 
+						|| key.FieldType == typeof( int ) 
+						|| key.FieldType == typeof( float )
+						|| key.FieldType == typeof( bool )
+						|| key.FieldType == typeof( Color )
+						|| key.FieldType == typeof( Vector3 )
+						|| key.FieldType == typeof( PQS )
+						|| key.FieldType == typeof( MapSO ) )
 					{
 						savePQS.AddValue( key.Name, key.GetValue( obj ) );
 					}
 						
-						if( key.GetValue( obj ).GetType() == typeof( PQSLandControl.LandClass[] ) ) //Landclasses
+						if( key.FieldType == typeof( PQSLandControl.LandClass[] ) ) //Landclasses
 						{
 							ConfigNode landclasses_root = savePQS.AddNode( "Landclass[]" );
 							foreach( PQSLandControl.LandClass lc in (PQSLandControl.LandClass[])key.GetValue( obj ) )
@@ -2246,7 +2246,7 @@ namespace PFUtilityAddon
 								}
 							}
 						}
-						if( key.GetValue( obj ).GetType() == typeof( PQSMod_VertexPlanet.LandClass[] ) )
+						if( key.FieldType == typeof( PQSMod_VertexPlanet.LandClass[] ) )
 						{
 							ConfigNode landclasses_root = savePQS.AddNode( "VPLandclass[]" );
 							foreach( PQSMod_VertexPlanet.LandClass lc in (PQSMod_VertexPlanet.LandClass[])key.GetValue( obj ) )
@@ -2665,7 +2665,7 @@ namespace PFUtilityAddon
 						{
 							string val = cb_rootnode.GetValue( key.Name );
 							System.Object castedval = val;
-							Type t = key.GetValue( cbobj ).GetType();
+							Type t = key.FieldType;
 							
 							if ( t == typeof(UnityEngine.Vector3) )
 							{
@@ -2734,7 +2734,7 @@ namespace PFUtilityAddon
 						{
 							if( node.HasValue( key.Name ) )
 							{
-								if ( key.GetValue( obj ).GetType() == typeof(PQS) )
+								if ( key.FieldType == typeof(PQS) )
 								{
 									//key.SetValue( cbobj, ConfigNode.ParseColor( val ) );
 									//print ( "PQS not compatible at this point." );
@@ -2745,7 +2745,7 @@ namespace PFUtilityAddon
 									key.SetValue( obj, Utils.FindPQS( FixName ) );
 								}
 								
-								if( key.GetValue( obj ).GetType() == typeof( PQSLandControl.LandClass[] ) )
+								if( key.FieldType == typeof( PQSLandControl.LandClass[] ) )
 								{
 									if( node.HasNode( "Landclass[]" ) )
 									{
@@ -2757,16 +2757,16 @@ namespace PFUtilityAddon
 										print( "PlanetUI: Failed to load LANDCLASS\n" );
 									}
 								}
-								else if( node.HasNode( "VPLandclass[]" ) && key.GetValue( obj ).GetType() == typeof( PQSMod_VertexPlanet.LandClass[] ) )
+								else if( node.HasNode( "VPLandclass[]" ) && key.FieldType == typeof( PQSMod_VertexPlanet.LandClass[] ) )
 								{
 									LoadVPLandControl( node.GetNode("VPLandclass[]") , obj , key );
 								}
 								
 							
-								//print( "PlanetUI: Attempting: " + key.Name + " of type " + key.GetValue( obj ).GetType() + "\n" );
+								//print( "PlanetUI: Attempting: " + key.Name + " of type " + key.FieldType + "\n" );
 								string val = node.GetValue( key.Name );
 								System.Object castedval = val;
-								Type t = key.GetValue( obj ).GetType();
+								Type t = key.FieldType;
 								
 								//print( "PlanetUI: " + component + " " + key.Name + " = ("+t+") " + castedval + "\n" );
 								
