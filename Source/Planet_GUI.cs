@@ -2683,130 +2683,130 @@ namespace PFUtilityAddon
 					print("PlanetUI: Loaded CB of " +PlanetName+ "\n" );
 				
 					//Load PQS related stuff
-				ConfigNode pqs_rootnode = planet_rootnode.GetNode( "PQS" );
-				foreach( ConfigNode node in pqs_rootnode.nodes )
-				{
+					ConfigNode pqs_rootnode = planet_rootnode.GetNode( "PQS" );
+					foreach( ConfigNode node in pqs_rootnode.nodes )
+					{
 						
-					if( node.HasValue( "Parent" ) )
-					{
-						if( node.GetValue( "Parent" ) == PlanetName+"Ocean")
+						if( node.HasValue( "Parent" ) )
 						{
-							break;
+							if( node.GetValue( "Parent" ) == PlanetName+"Ocean")
+							{
+								break;
+							}
 						}
-					}
 					
-					var componentTypeStr = node.name;
-	                var componentType = Type.GetType(componentTypeStr + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
-	                if (componentType == null)
-	                {
-	                    print("Cant find PQSMod type:" + componentTypeStr + "\n");
-	                    continue;
-	                }
-
-					print( node.name + "\n" );
-					if( localPlanet.GetComponentInChildren(componentType) == null )
-					{
-						PQS mainsphere = localPlanet.GetComponentInChildren<PQS>();
-						if( mainsphere == null )
+						var componentTypeStr = node.name;
+						var componentType = Type.GetType(componentTypeStr + ", Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null");
+						if (componentType == null)
 						{
-							print ( "Cannot add PQSMod to " + PlanetName + "... Is it a gas giant?\n" );
+							print("Cant find PQSMod type:" + componentTypeStr + "\n");
 							continue;
 						}
-						
-						PlanetUtils.AddPQSMod( mainsphere , componentType);
-					}
-					var component =	localPlanet.GetComponentInChildren(componentType);
-					
-					System.Object obj = component;
-					foreach( FieldInfo key in obj.GetType().GetFields() )
-					{
-							//print ( "PlanetUI: Debug: " +PlanetName + " Component: " + key.Name +"\n" );
-						try
+
+						print( node.name + "\n" );
+						if( localPlanet.GetComponentInChildren(componentType) == null )
 						{
-							if( node.HasValue( key.Name ) )
+							PQS mainsphere = localPlanet.GetComponentInChildren<PQS>();
+							if( mainsphere == null )
 							{
-								if ( key.FieldType == typeof(PQS) )
+								print ( "Cannot add PQSMod to " + PlanetName + "... Is it a gas giant?\n" );
+								continue;
+							}
+						
+							PlanetUtils.AddPQSMod( mainsphere , componentType);
+						}
+						var component =	localPlanet.GetComponentInChildren(componentType);
+					
+						System.Object obj = component;
+						foreach( FieldInfo key in obj.GetType().GetFields() )
+						{
+								//print ( "PlanetUI: Debug: " +PlanetName + " Component: " + key.Name +"\n" );
+							try
+							{
+								if( node.HasValue( key.Name ) )
 								{
-									//key.SetValue( cbobj, ConfigNode.ParseColor( val ) );
-									//print ( "PQS not compatible at this point." );
-									//continue;
-									string FixName = node.GetValue( key.Name );
-									FixName = FixName.Replace(" (PQS)", "");
-									key.SetValue( obj, Utils.FindPQS( FixName ) );
-								}
-								
-								if( key.FieldType == typeof( PQSLandControl.LandClass[] ) )
-								{
-									if( node.HasNode( "Landclass[]" ) )
+									if ( key.FieldType == typeof(PQS) )
 									{
-										//print( "LANDCLASS \n" );
-										LoadLandControl( node.GetNode("Landclass[]") , obj , key );
+										//key.SetValue( cbobj, ConfigNode.ParseColor( val ) );
+										//print ( "PQS not compatible at this point." );
+										//continue;
+										string FixName = node.GetValue( key.Name );
+										FixName = FixName.Replace(" (PQS)", "");
+										key.SetValue( obj, Utils.FindPQS( FixName ) );
+									}
+								
+									if( key.FieldType == typeof( PQSLandControl.LandClass[] ) )
+									{
+										if( node.HasNode( "Landclass[]" ) )
+										{
+											//print( "LANDCLASS \n" );
+											LoadLandControl( node.GetNode("Landclass[]") , obj , key );
+										}
+										else
+										{
+											print( "PlanetUI: Failed to load LANDCLASS\n" );
+										}
+									}
+									else if( node.HasNode( "VPLandclass[]" ) && key.FieldType == typeof( PQSMod_VertexPlanet.LandClass[] ) )
+									{
+										LoadVPLandControl( node.GetNode("VPLandclass[]") , obj , key );
+									}
+								
+							
+									//print( "PlanetUI: Attempting: " + key.Name + " of type " + key.FieldType + "\n" );
+									string val = node.GetValue( key.Name );
+									System.Object castedval = val;
+									Type t = key.FieldType;
+								
+									//print( "PlanetUI: " + component + " " + key.Name + " = ("+t+") " + castedval + "\n" );
+								
+									if ( t == typeof(UnityEngine.Vector3) )
+									{
+										val = val.Replace( "(" , "" );
+										val = val.Replace( ")" , "" );
+									
+										key.SetValue( obj, ConfigNode.ParseVector3( val ) );
+									}
+									else if ( t == typeof(UnityEngine.Color) )
+									{
+										val = val.Replace( "RGBA(" , "" );
+										val = val.Replace( ")" , "" );
+										key.SetValue( obj, ConfigNode.ParseColor( val ) );
+									}
+									else if ( t == typeof(MapSO) )
+									{
+										val = val.Replace( " (MapSO)", "" );
+										if( Utils.FileExists( val ) )
+										{
+											Texture2D texture = Utils.LoadTexture( val, false );
+											MapSO ReturnedMapSo = (MapSO) ScriptableObject.CreateInstance(typeof (MapSO));
+											ReturnedMapSo.CreateMap( MapSO.MapDepth.RGBA, texture );
+											key.SetValue( obj, ReturnedMapSo );
+										}
 									}
 									else
 									{
-										print( "PlanetUI: Failed to load LANDCLASS\n" );
+										key.SetValue( obj, Convert.ChangeType( castedval, t ) );
 									}
-								}
-								else if( node.HasNode( "VPLandclass[]" ) && key.FieldType == typeof( PQSMod_VertexPlanet.LandClass[] ) )
-								{
-									LoadVPLandControl( node.GetNode("VPLandclass[]") , obj , key );
-								}
-								
-							
-								//print( "PlanetUI: Attempting: " + key.Name + " of type " + key.FieldType + "\n" );
-								string val = node.GetValue( key.Name );
-								System.Object castedval = val;
-								Type t = key.FieldType;
-								
-								//print( "PlanetUI: " + component + " " + key.Name + " = ("+t+") " + castedval + "\n" );
-								
-								if ( t == typeof(UnityEngine.Vector3) )
-								{
-									val = val.Replace( "(" , "" );
-									val = val.Replace( ")" , "" );
-									
-									key.SetValue( obj, ConfigNode.ParseVector3( val ) );
-								}
-								else if ( t == typeof(UnityEngine.Color) )
-								{
-									val = val.Replace( "RGBA(" , "" );
-									val = val.Replace( ")" , "" );
-									key.SetValue( obj, ConfigNode.ParseColor( val ) );
-								}
-								else if ( t == typeof(MapSO) )
-								{
-									val = val.Replace( " (MapSO)", "" );
-									if( Utils.FileExists( val ) )
-									{
-										Texture2D texture = Utils.LoadTexture( val, false );
-										MapSO ReturnedMapSo = (MapSO) ScriptableObject.CreateInstance(typeof (MapSO));
-										ReturnedMapSo.CreateMap( MapSO.MapDepth.RGBA, texture );
-										key.SetValue( obj, ReturnedMapSo );
-									}
-								}
-								else
-								{
-									key.SetValue( obj, Convert.ChangeType( castedval, t ) );
 								}
 							}
+							catch( Exception e )
+							{
+								print ( "PlanetUI: Failed to load: "+obj+", Exeption: " + e );
+								continue;
+							}
 						}
-						catch( Exception e )
-						{
-							print ( "PlanetUI: Failed to load: "+obj+", Exeption: " + e );
-							continue;
-						}
-					}
 					
-						if( node.HasValue("Parent") )
-						{
-							component.transform.parent = Utils.FindPQS( node.GetValue( "Parent" ) ).transform;
-						}
-					//Utils.FindLocal( PlanetName ).GetComponentInChildren<PQS>().RebuildSphere();
-				}
-				print("PlanetUI: Loaded PQS of " +PlanetName+ "\n" );
+							if( node.HasValue("Parent") )
+							{
+								component.transform.parent = Utils.FindPQS( node.GetValue( "Parent" ) ).transform;
+							}
+						//Utils.FindLocal( PlanetName ).GetComponentInChildren<PQS>().RebuildSphere();
+					}
+					print("PlanetUI: Loaded PQS of " +PlanetName+ "\n" );
 
-				// Initial ScaledSpace generation would not work properly without this.
-				Utils.FindLocal(PlanetName).GetComponentInChildren<PQS>().RebuildSphere();
+					// Initial ScaledSpace generation would not work properly without this.
+					Utils.FindLocal(PlanetName).GetComponentInChildren<PQS>().RebuildSphere();
 					
 					//Regen ScaledSpace:
 					string PlanetScaledSpaceTex = "GameData/KittopiaSpace/Textures/ScaledSpace/" + PlanetName + "/colourMap.png";
