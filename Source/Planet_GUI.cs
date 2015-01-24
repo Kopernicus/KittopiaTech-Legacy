@@ -159,6 +159,9 @@ namespace PFUtilityAddon
 			//Spawn per-save planet loader
 			//GameObject persaveloader = new GameObject( "Per Save Loader", typeof( PerSave_Loader ) );
 			//DontDestroyOnLoad( persaveloader );
+
+			// Hopefully this is the right place to put it.
+			PlanetariumCamera.fetch.maxDistance = 50000000000;
 			
 			//Construct additional windows:
 			NewWindows[ "PQSSelector" ] = new ScrollWindow( PQSSelector.ReturnPQSNames() , PQSSelector.GetButtons() , "PQS Selector", 1661269 );
