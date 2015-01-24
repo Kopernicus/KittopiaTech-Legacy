@@ -2822,10 +2822,6 @@ namespace PFUtilityAddon
 						}
 						//Utils.FindLocal( PlanetName ).GetComponentInChildren<PQS>().RebuildSphere();
 
-						if (component.GetType() != typeof(PQS))
-						{
-							((PQSMod)component).RebuildSphere();
-						}
 					}
 					print("PlanetUI: Loaded PQS of " +PlanetName+ "\n" );
 
