@@ -553,7 +553,12 @@ namespace PFUtilityAddon
 				planettextures.material.SetTexture("_MainTex",PlanetColours);
 				planettextures.material.SetTexture("_BumpMap", Normal);
 
-				RegenerateModel(pqsGrabtex, scaledSpace.GetComponentInChildren<MeshFilter>(), PlanetarySettings[TemplateName].IsStock);
+				var vec_array = RegenerateModel(pqsGrabtex, scaledSpace.GetComponentInChildren<MeshFilter>(), PlanetarySettings[TemplateName].IsStock);
+
+				if( ShouldExportScaledMap )
+				{
+					Utils.SaveScaledPlanetMesh(TemplateName, vec_array);
+				}
 			}if( GUI.Button( new Rect( 220, 240, 20, 20 ), "?" ) ){(NewWindows[ "HelpWindow" ] as HelpWindow).CustomToggle( "ScaledSpaceUpdate" ); }
 			
 			if( GUI.Button( new Rect( 20, 270, 200, 20 ), "Ocean Tools" ) )
@@ -1415,7 +1420,7 @@ namespace PFUtilityAddon
 		}
 		
 		//Scaled Space Updater
-		private void RegenerateModel(PQS bodyPQS, MeshFilter meshfilter_input, bool isStock = true)
+		private Vector3[] RegenerateModel(PQS bodyPQS, MeshFilter meshfilter_input, bool isStock = true)
 		{
 			float scale;
 			if (isStock)
@@ -1448,6 +1453,8 @@ namespace PFUtilityAddon
 			
 			meshfilter_input.mesh.RecalculateNormals();
             Utils.RecalculateTangents(meshfilter_input.mesh);
+
+			return newVerts;
 		}
 		
 		//Ocean Tools
@@ -2835,19 +2842,32 @@ namespace PFUtilityAddon
 					if ( Utils.FileExists( PlanetScaledSpaceTex ) )
 					{
 						Texture2D PlanetTex1 = Utils.LoadTexture("GameData/KittopiaSpace/Textures/ScaledSpace/" + PlanetName + "/colourMap.png");
-						print("PlanetUI: Loaded ScaledSace colourmap of " +PlanetName+ "\n" );
+						print("PlanetUI: Loaded ScaledSpace colourmap of " +PlanetName+ "\n" );
 						PlanetTextures.material.SetTexture("_MainTex",PlanetTex1);
 					}
 					PlanetScaledSpaceTex = "GameData/KittopiaSpace/Textures/ScaledSpace/" + PlanetName + "/bumpMap.png";
 					if ( Utils.FileExists( PlanetScaledSpaceTex ) )
 					{
 						Texture2D PlanetTex2 = Utils.LoadTexture("GameData/KittopiaSpace/Textures/ScaledSpace/" + PlanetName + "/bumpMap.png");
-						print("PlanetUI: Loaded ScaledSace bumpmap of " +PlanetName+ "\n" );
+						print("PlanetUI: Loaded ScaledSpace bumpmap of " +PlanetName+ "\n" );
 						PlanetTextures.material.SetTexture("_BumpMap",PlanetTex2);
 					}
 
-					RegenerateModel(Utils.FindLocal(PlanetName).GetComponentInChildren<PQS>(), Utils.FindScaled(PlanetName).GetComponentInChildren<MeshFilter>(), PlanetarySettings[PlanetName].IsStock);
-					
+					var vec_array = Utils.LoadScaledPlanetMesh(PlanetName);
+					var meshf = Utils.FindScaled(PlanetName).GetComponentInChildren<MeshFilter>();
+
+					// Load ScaledSpace from the binary file, if it exists.
+					if (vec_array != null)
+					{
+						meshf.mesh.vertices = vec_array;
+						meshf.mesh.RecalculateNormals();
+						Utils.RecalculateTangents(meshf.mesh);
+						print("PlanetUI: Loaded ScaledSpace mesh of " + PlanetName + "\n");
+					}
+					else
+						// If scaled space binary were not found, generate it.
+						RegenerateModel(Utils.FindLocal(PlanetName).GetComponentInChildren<PQS>(), meshf, PlanetarySettings[PlanetName].IsStock);
+
 					print( "PlanetUI: ScaledSpace loaded for " +PlanetName+ "\n" );
 					}
 				}

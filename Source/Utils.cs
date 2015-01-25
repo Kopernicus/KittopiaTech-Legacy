@@ -282,6 +282,53 @@ namespace PFUtilityAddon
 			result.Apply();
 			return result;
 		}
+
+		public static Vector3[] LoadScaledPlanetMesh(string name)
+		{
+			var filepath = "GameData/KittopiaSpace/ScaledSpace/" + name + ".bin";
+
+			if (!File.Exists(filepath))
+			{
+				return null;
+			}
+			else
+			{
+				var stream = File.OpenRead(filepath);
+				var reader = new BinaryReader(stream);
+
+				int vec_count = (int)reader.BaseStream.Length / (3 * sizeof(float));
+				Vector3[] vec_array = new Vector3[vec_count];
+				
+				int i = 0;
+				while (i < vec_count)
+				{
+					vec_array[i].x = reader.ReadSingle();
+					vec_array[i].y = reader.ReadSingle();
+					vec_array[i].z = reader.ReadSingle();
+					i++;
+				}
+				reader.Close();
+
+				return vec_array;
+			}
+		}
+
+		public static void SaveScaledPlanetMesh(string name, Vector3[] vec_array)
+		{
+			var filepath = "GameData/KittopiaSpace/ScaledSpace/" + name + ".bin";
+
+			Directory.CreateDirectory("GameData/KittopiaSpace/ScaledSpace");
+			var stream = File.Open(filepath, FileMode.Create);
+			var writer = new BinaryWriter(stream);
+
+			foreach (var vec in vec_array)
+			{
+				writer.Write(vec.x);
+				writer.Write(vec.y);
+				writer.Write(vec.z);
+			}
+			writer.Close();
+		}
 		
 	}
 }
