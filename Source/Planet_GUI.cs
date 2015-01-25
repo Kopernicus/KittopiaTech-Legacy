@@ -192,7 +192,7 @@ namespace PFUtilityAddon
 		{
 			if( GuiEnabled )
 			{
-				windowPosMain = GUI.Window( 1661266, windowPosMain, WindowFunction, "Planet Editor" );
+				windowPosMain = GUI.Window( 1661266, windowPosMain, WindowFunction, "Planet Editor (KopernicusHack version)" );
 			}
 			if( isshowingColourEditor )
 			{
