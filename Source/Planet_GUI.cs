@@ -550,14 +550,15 @@ namespace PFUtilityAddon
 				PlanetColours = textures[0];
 				
 				MeshRenderer planettextures = scaledSpace.GetComponentInChildren<MeshRenderer>();
-				planettextures.material.SetTexture("_MainTex",PlanetColours);
+				planettextures.material.SetTexture("_MainTex", PlanetColours);
 				planettextures.material.SetTexture("_BumpMap", Normal);
 
-				var vec_array = RegenerateModel(pqsGrabtex, scaledSpace.GetComponentInChildren<MeshFilter>(), PlanetarySettings[TemplateName].IsStock);
+				var scaledmesh = ScaledPlanetMesh.Generate(pqsGrabtex, scaledSpace.GetComponentInChildren<MeshFilter>().mesh);
+				scaledmesh.ApplyToScaledSpace(scaledSpace);
 
 				if( ShouldExportScaledMap )
 				{
-					Utils.SaveScaledPlanetMesh(TemplateName, vec_array);
+					ScaledPlanetMesh.Save(TemplateName, scaledmesh);
 				}
 			}if( GUI.Button( new Rect( 220, 240, 20, 20 ), "?" ) ){(NewWindows[ "HelpWindow" ] as HelpWindow).CustomToggle( "ScaledSpaceUpdate" ); }
 			
@@ -1420,6 +1421,7 @@ namespace PFUtilityAddon
 		}
 		
 		//Scaled Space Updater
+		/*
 		private Vector3[] RegenerateModel(PQS bodyPQS, MeshFilter meshfilter_input, bool isStock = true)
 		{
 			float scale;
@@ -1431,8 +1433,8 @@ namespace PFUtilityAddon
 			}
 			else // If the planet was made by Kopernicus...
 			{
-				// Using constant scaling factor.
-				scale = 6000;
+				float joolScaledRad = 1000f;
+				scale = (float)bodyPQS.radius / joolScaledRad;
 			}
 				
 			bodyPQS.isBuildingMaps = true;
@@ -1456,6 +1458,7 @@ namespace PFUtilityAddon
 
 			return newVerts;
 		}
+		 * */
 		
 		//Ocean Tools
 		int OceanToolsUiSelector;
@@ -2835,7 +2838,7 @@ namespace PFUtilityAddon
 					// Initial ScaledSpace generation would not work properly without this.
 					Utils.FindLocal(PlanetName).GetComponentInChildren<PQS>().RebuildSphere();
 					
-					//Regen ScaledSpace:
+					/*
 					string PlanetScaledSpaceTex = "GameData/KittopiaSpace/Textures/ScaledSpace/" + PlanetName + "/colourMap.png";
 					MeshRenderer PlanetTextures = Utils.FindScaled( PlanetName ).GetComponentInChildren<MeshRenderer>();
 					
@@ -2852,24 +2855,21 @@ namespace PFUtilityAddon
 						print("PlanetUI: Loaded ScaledSpace bumpmap of " +PlanetName+ "\n" );
 						PlanetTextures.material.SetTexture("_BumpMap",PlanetTex2);
 					}
+					*/
 
-					var vec_array = Utils.LoadScaledPlanetMesh(PlanetName);
-					var meshf = Utils.FindScaled(PlanetName).GetComponentInChildren<MeshFilter>();
+					var mesh = ScaledPlanetMesh.Load(PlanetName);
+					var scaled = Utils.FindScaled(PlanetName);
+					var meshf = scaled.GetComponentInChildren<MeshFilter>();
 
-					// Load ScaledSpace from the binary file, if it exists.
-					if (vec_array != null)
-					{
-						meshf.mesh.vertices = vec_array;
-						meshf.mesh.RecalculateNormals();
-						Utils.RecalculateTangents(meshf.mesh);
-						print("PlanetUI: Loaded ScaledSpace mesh of " + PlanetName + "\n");
-					}
-					else
-						// If scaled space binary were not found, generate it.
-						RegenerateModel(Utils.FindLocal(PlanetName).GetComponentInChildren<PQS>(), meshf, PlanetarySettings[PlanetName].IsStock);
+					// If scaled space binary were not found, generate it.
+					if (mesh == null)
+						mesh = ScaledPlanetMesh.Generate(Utils.FindLocal(PlanetName).GetComponentInChildren<PQS>(), meshf.mesh);
+
+					mesh.ApplyToScaledSpace(scaled);
 
 					print( "PlanetUI: ScaledSpace loaded for " +PlanetName+ "\n" );
-					}
+
+					} // End of pqs node checking conditional.
 				}
 			}
 			else
