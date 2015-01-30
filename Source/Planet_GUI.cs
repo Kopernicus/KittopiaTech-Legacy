@@ -539,12 +539,20 @@ namespace PFUtilityAddon
 				textures = pqsGrabtex.CreateMaps( 2048, pqsGrabtex.mapMaxHeight, pqsGrabtex.mapOcean, pqsGrabtex.mapOceanHeight, pqsGrabtex.mapOceanColor );
 
 				Texture2D Normal = Utils.BumpToNormalMap(textures[1], 9);
-				textures[1] = Normal;
 
 				//Save textures to file.
 				if( ShouldExportScaledMap )
 				{
-					Utils.ExportPlanetMaps( TemplateName , textures );
+					System.IO.Directory.CreateDirectory("GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName);
+
+					byte[] ExportColourMap = textures[0].EncodeToPNG();
+					System.IO.File.WriteAllBytes("GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/colourMap.png", ExportColourMap);
+
+					ExportColourMap = textures[1].EncodeToPNG();
+					System.IO.File.WriteAllBytes("GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/heightMap.png", ExportColourMap);
+
+					ExportColourMap = Normal.EncodeToPNG();
+					System.IO.File.WriteAllBytes("GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/bumpMap.png", ExportColourMap);
 				}
 				
 				PlanetColours = textures[0];

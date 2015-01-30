@@ -138,6 +138,7 @@ namespace PFUtilityAddon
             SmallPlanetMeshRenderer.material.SetTexture("_rimColorRamp", Tex);
         }
 		
+		/*
 		public static void ExportPlanetMaps( string TemplateName, Texture2D[] texture )
 		{
 			Directory.CreateDirectory("GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName);
@@ -148,6 +149,7 @@ namespace PFUtilityAddon
 			ExportColourMap = texture[1].EncodeToPNG();
 			File.WriteAllBytes("GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/bumpMap.png", ExportColourMap);
 		}
+		 * */
 		
 		public static void CreateTextFile( string dir, string io )
 		{
