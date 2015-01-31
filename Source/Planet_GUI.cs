@@ -192,7 +192,7 @@ namespace PFUtilityAddon
 		{
 			if( GuiEnabled )
 			{
-				windowPosMain = GUI.Window( 1661266, windowPosMain, WindowFunction, "KittopiaTech Planet Creator v0.1" );
+				windowPosMain = GUI.Window( 1661266, windowPosMain, WindowFunction, "KopernicusTech Planet Creator v0.1" );
 			}
 			if( isshowingColourEditor )
 			{

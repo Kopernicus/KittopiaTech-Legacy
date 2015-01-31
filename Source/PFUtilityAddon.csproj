@@ -55,6 +55,7 @@
     <Compile Include="MyClass.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Planet_GUI.cs" />
+    <Compile Include="ScaledPlanetMesh.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="PlanetaryUtilClass.cs" />
     <Compile Include="PerSave_Loader.cs" />
@@ -72,7 +73,5 @@
     <None Include="Resources\ringTex.png" />
     <None Include="Resources\unlitshader1.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>
