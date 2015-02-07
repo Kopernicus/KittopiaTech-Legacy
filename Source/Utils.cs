@@ -119,7 +119,8 @@ namespace PFUtilityAddon
 
             //Console.WriteLine("Loading Texture:"+name+"("+wid+"x"+hei+")");
             
-            var texture = new Texture2D((int)wid, (int)hei, TextureFormat.ARGB32, true);
+            //var texture = new Texture2D((int)wid, (int)hei, TextureFormat.ARGB32, true);
+			var texture = new Texture2D(4, 4, TextureFormat.ARGB32, true);
             texture.LoadImage(textureData);
 
 
