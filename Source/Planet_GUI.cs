@@ -192,7 +192,7 @@ namespace PFUtilityAddon
 		{
 			if( GuiEnabled )
 			{
-				windowPosMain = GUI.Window( 1661266, windowPosMain, WindowFunction, "KopernicusTech Planet Creator v0.1" );
+				windowPosMain = GUI.Window( 1661266, windowPosMain, WindowFunction, "KopernicusTech Planet Creator v0.12" );
 			}
 			if( isshowingColourEditor )
 			{
@@ -2878,13 +2878,16 @@ namespace PFUtilityAddon
 					var scaled = Utils.FindScaled(PlanetName);
 					var meshf = scaled.GetComponentInChildren<MeshFilter>();
 
-					// If scaled space binary were not found, generate it.
-					if (mesh == null)
-						mesh = ScaledPlanetMesh.Generate(Utils.FindLocal(PlanetName).GetComponentInChildren<PQS>(), meshf.mesh);
-
-					mesh.ApplyToScaledSpace(scaled);
-
-					print( "PlanetUI: ScaledSpace loaded for " +PlanetName+ "\n" );
+					// Check whether the binary file exists.
+					if (mesh != null)
+					{
+						mesh.ApplyToScaledSpace(scaled);
+						print( "PlanetUI: ScaledSpace binary file loaded for " +PlanetName+ "\n" );
+					}
+					else
+					{
+						print("PlanetUI: Could not load ScaledSpace binary file for " + PlanetName + "\n");
+					}
 
 					} // End of pqs node checking conditional.
 				}
