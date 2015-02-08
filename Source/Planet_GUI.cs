@@ -2815,10 +2815,19 @@ namespace PFUtilityAddon
 										val = val.Replace( " (MapSO)", "" );
 										if( Utils.FileExists( val ) )
 										{
-											Texture2D texture = Utils.LoadTexture( val, false );
-											MapSO ReturnedMapSo = (MapSO) ScriptableObject.CreateInstance(typeof (MapSO));
-											ReturnedMapSo.CreateMap( MapSO.MapDepth.RGBA, texture );
+											Texture2D texture = null;
+											bool localload = Utils.LoadTexture(val, ref texture, false, false, false);
+											MapSO ReturnedMapSo = (MapSO) ScriptableObject.CreateInstance(typeof(MapSO));
+											if ((component.GetType().ToString().Contains("VertexHeight") || component.GetType().ToString().Contains("VertexSimplexHeight")))
+												ReturnedMapSo.CreateMap(MapSO.MapDepth.Greyscale, texture);
+											else
+												ReturnedMapSo.CreateMap(MapSO.MapDepth.RGB, texture);
 											key.SetValue( obj, ReturnedMapSo );
+											if (localload)
+											{
+												DestroyImmediate(texture);
+												texture = null;
+											}
 										}
 									}
 									else

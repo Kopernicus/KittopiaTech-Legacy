@@ -127,6 +127,56 @@ namespace PFUtilityAddon
             return texture;
         }
 
+		// This function was taken straight from RSS. Credit goes to NathanKell.
+		public static bool LoadTexture(string path, ref Texture2D map, bool compress, bool upload, bool unreadable)
+		{
+			map = null;
+			//MonoBehaviour.print("LoadTextureRSS: Searching for texture " + path);
+			// first try in GDB
+			Texture2D[] textures = Resources.FindObjectsOfTypeAll(typeof(Texture2D)) as Texture2D[];
+			foreach (Texture2D tex in textures)
+			{
+				if (tex.name.Equals(path))
+				{
+					map = tex;
+					break;
+				}
+			}
+			if ((object)map == null)
+			{
+				//MonoBehaviour.print("LoadTextureRSS: Loading local texture " + path);
+				path = KSPUtil.ApplicationRootPath + path;
+				if (File.Exists(path))
+				{
+					try
+					{
+						map = new Texture2D(4, 4, TextureFormat.RGB24, true);
+						if (path.ToLower().Contains(".dds"))
+						{
+							GameDatabase.TextureInfo tInfo = DDSLoader.DatabaseLoaderTexture_DDS.LoadDDS(path, !unreadable, path.ToLower().Contains("normal"), -1, upload);
+							map = tInfo.texture;
+						}
+						else
+						{
+							map.LoadImage(System.IO.File.ReadAllBytes(path));
+							if (compress)
+								map.Compress(true);
+							if (upload)
+								map.Apply(true, unreadable);
+						}
+						return true;
+					}
+					catch (Exception e)
+					{
+						Debug.Log("LoadTextureRSS: Failed to load " + path + " with exception " + e.Message);
+					}
+				}
+				else
+					MonoBehaviour.print("LoadTextureRSS: Texture does not exist! " + path);
+			}
+			return false;
+		}
+
 		public static bool FileExists( string path )
 		{
 			return (File.Exists( path ));
