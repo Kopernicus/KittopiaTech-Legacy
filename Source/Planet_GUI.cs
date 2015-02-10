@@ -2818,7 +2818,7 @@ namespace PFUtilityAddon
 											Texture2D texture = null;
 											bool localload = Utils.LoadTexture(val, ref texture, false, false, false);
 											MapSO ReturnedMapSo = (MapSO) ScriptableObject.CreateInstance(typeof(MapSO));
-											if ((component.GetType().ToString().Contains("VertexHeight") || component.GetType().ToString().Contains("VertexSimplexHeight")))
+											if (key.Name.Equals("heightMap"))
 												ReturnedMapSo.CreateMap(MapSO.MapDepth.Greyscale, texture);
 											else
 												ReturnedMapSo.CreateMap(MapSO.MapDepth.RGB, texture);
