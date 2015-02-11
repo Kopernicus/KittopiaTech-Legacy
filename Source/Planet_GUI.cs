@@ -536,7 +536,7 @@ namespace PFUtilityAddon
 				GameObject scaledSpace = Utils.FindScaled( TemplateName );
 				
 				PQS pqsGrabtex = localSpace.GetComponentInChildren<PQS>();
-				textures = pqsGrabtex.CreateMaps( 2048, pqsGrabtex.mapMaxHeight, pqsGrabtex.mapOcean, pqsGrabtex.mapOceanHeight, pqsGrabtex.mapOceanColor );
+				textures = pqsGrabtex.CreateMaps( pqsGrabtex.mapFilesize, pqsGrabtex.mapMaxHeight, pqsGrabtex.mapOcean, pqsGrabtex.mapOceanHeight, pqsGrabtex.mapOceanColor );
 
 				Texture2D Normal = Utils.BumpToNormalMap(textures[1], 9);
 
