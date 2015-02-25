@@ -2228,7 +2228,6 @@ namespace PFUtilityAddon
 			foreach( PQSMod pqs in Utils.FindLocal(TemplateName).GetComponentsInChildren(typeof( PQSMod )) )
 			{
 				ConfigNode savePQS = PQSRoot.AddNode( ""+pqs.GetType() );
-                savePQS.AddValue("object name", pqs.gameObject.name);
 				foreach( FieldInfo key in pqs.GetType().GetFields() )
 				{
 					try{
