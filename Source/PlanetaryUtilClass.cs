@@ -119,9 +119,22 @@ namespace PFUtilityAddon
 		{
 			var newgob = new GameObject();
             var newComponent = (PQSMod)newgob.AddComponent(ofType);
-			newgob.name = (""+ofType);
-			newgob.transform.parent = mainSphere.gameObject.transform;
-            newComponent.sphere = mainSphere;
+
+            if (ofType.Name == "PQSMod_VoronoiCraters")
+            {
+                var mun = Utils.FindCB("Mun");
+                var craters = mun.GetComponentsInChildren<PQSMod_VoronoiCraters>()[0];
+                
+                PQSMod_VoronoiCraters nc = newComponent.GetComponentsInChildren<PQSMod_VoronoiCraters>()[0];
+                nc.craterColourRamp = craters.craterColourRamp;
+                nc.craterCurve = craters.craterCurve;
+                nc.jitterCurve = craters.jitterCurve;
+            }
+
+                newgob.name = ("Craters");
+                newgob.transform.parent = mainSphere.gameObject.transform;
+                newComponent.sphere = mainSphere;
+            
 			
 			return newComponent;
 		}
