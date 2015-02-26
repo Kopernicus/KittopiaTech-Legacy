@@ -130,12 +130,10 @@ namespace PFUtilityAddon
                 nc.craterCurve = craters.craterCurve;
                 nc.jitterCurve = craters.jitterCurve;
             }
-
-                newgob.name = ("Craters");
+                newgob.name = (""+ofType);
                 newgob.transform.parent = mainSphere.gameObject.transform;
                 newComponent.sphere = mainSphere;
             
-			
 			return newComponent;
 		}
 		
