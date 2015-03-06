@@ -2750,9 +2750,12 @@ namespace PFUtilityAddon
 
 					// Parse and fix scaled space only if the PQS node exists.
 					if (pqs_rootnode != null) {
+
+					// Data structure for counting number of applied PQSMods for each type.
+					Dictionary<String, int> pqsmods_counter = new Dictionary<string,int>();
+
 					foreach( ConfigNode node in pqs_rootnode.nodes )
 					{
-						
 						if( node.HasValue( "Parent" ) )
 						{
 							if( node.GetValue( "Parent" ) == PlanetName+"Ocean")
@@ -2769,19 +2772,38 @@ namespace PFUtilityAddon
 							continue;
 						}
 						print( node.name + "\n" );
-						if( localPlanet.GetComponentInChildren(componentType) == null )
+
+						// Add the PQS mod if it's not already in the dictionary.
+						if (!pqsmods_counter.ContainsKey(componentTypeStr))
 						{
+							pqsmods_counter.Add(componentTypeStr, 0);
+						}
+
+						// Get total number of applied PQSMods.
+						int mod_count;
+						pqsmods_counter.TryGetValue(componentTypeStr, out mod_count);
+
+						var components = localPlanet.GetComponentsInChildren(componentType);
+						Component component;
+						if (components.Length > mod_count)
+						{
+							// Get existing mod if it's already exist, else...
+							component = components[mod_count];
+						}
+						else
+						{
+							// ... create a new one.
 							PQS mainsphere = localPlanet.GetComponentInChildren<PQS>();
-							if( mainsphere == null )
+							if (mainsphere == null)
 							{
 								print ( "Cannot add PQSMod to " + PlanetName + "... Is it a gas giant?\n" );
 								continue;
 							}
-						
-							PlanetUtils.AddPQSMod( mainsphere , componentType);
+							component = PlanetUtils.AddPQSMod(mainsphere, componentType);
 						}
-						var component =	localPlanet.GetComponentInChildren(componentType);
-					
+
+						pqsmods_counter[componentTypeStr]++;
+
 						System.Object obj = component;
 						foreach( FieldInfo key in obj.GetType().GetFields() )
 						{
