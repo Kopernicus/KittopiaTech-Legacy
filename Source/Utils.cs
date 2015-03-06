@@ -153,7 +153,7 @@ namespace PFUtilityAddon
 						map = new Texture2D(4, 4, TextureFormat.RGB24, true);
 						if (path.ToLower().Contains(".dds"))
 						{
-							GameDatabase.TextureInfo tInfo = DDSLoader.DatabaseLoaderTexture_DDS.LoadDDS(path, !unreadable, path.ToLower().Contains("normal"), -1, upload);
+							GameDatabase.TextureInfo tInfo = LoadDDS(path, !unreadable, path.ToLower().Contains("normal"), -1, upload);
 							map = tInfo.texture;
 						}
 						else
@@ -175,6 +175,13 @@ namespace PFUtilityAddon
 					MonoBehaviour.print("LoadTextureRSS: Texture does not exist! " + path);
 			}
 			return false;
+		}
+
+		// Made this "wrapper function", so DDSLoader would be loaded only if this function was called.
+		// Still hacky; if anyone knows a better solution, please let me know.
+		private static GameDatabase.TextureInfo LoadDDS(string path, bool keepReadable = false, bool asNormal = false, int mipmapBias = -1, bool apply = true)
+		{
+			return DDSLoader.DatabaseLoaderTexture_DDS.LoadDDS(path, keepReadable, asNormal, mipmapBias, apply);
 		}
 
 		public static bool FileExists( string path )

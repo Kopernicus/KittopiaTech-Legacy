@@ -2865,7 +2865,6 @@ namespace PFUtilityAddon
                                 {
                                     //Debug.Log("Found landclass");
                                     ParseColorMapLandclass(node.GetNode("HMLandclass[]"),localPlanet);
-                                    
                                 }
 							}
 							catch( Exception e )
