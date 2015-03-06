@@ -10,6 +10,7 @@ using KSP.IO;
 
 namespace PFUtilityAddon
 {
+
 	public class RingSaveStorageHelper
 	{
 		public RingSaveStorageHelper(float ITilt, double IOuterRadius, double IInnerRadius, Color IColour, GameObject IgObj, bool IUnlit, bool ILockRot )
@@ -147,7 +148,7 @@ namespace PFUtilityAddon
 				try
 				{
 					//Load globals...
-					LoadData( psB.celestialBody.name, "GameData/KittopiaSpace/SaveLoad/"+psB.celestialBody.name+".cfg" );
+					LoadData( psB.celestialBody.name, "GameData/KittopiaSpace/SaveLoad/" );
 				}
 				catch( Exception e )
 				{ 
@@ -588,7 +589,7 @@ namespace PFUtilityAddon
 			{
 				if( TemplateName != null )
 				{
-					LoadData( TemplateName, "GameData/KittopiaSpace/SaveLoad/"+TemplateName+".cfg" );
+					LoadData( TemplateName, "GameData/KittopiaSpace/SaveLoad/" );
 				}
 			}
 			
@@ -2267,6 +2268,31 @@ namespace PFUtilityAddon
 								}
 							}
 						}
+                        if (key.FieldType == typeof(PQSMod_HeightColorMap.LandClass[]))
+                        {
+                            ConfigNode landclasses_root = savePQS.AddNode("HMLandclass[]");
+                            foreach (PQSMod_HeightColorMap.LandClass lc in (PQSMod_HeightColorMap.LandClass[])key.GetValue(obj))
+                            {
+                                ConfigNode landclass = landclasses_root.AddNode("Landclass");
+                                foreach (FieldInfo key2 in lc.GetType().GetFields())
+                                {
+                                    try
+                                    {
+                                        System.Object obj2 = (System.Object)lc;
+                                        if (key2.GetValue(obj2).GetType() == typeof(string)
+                                            || key2.GetValue(obj2).GetType() == typeof(double)
+                                            || key2.GetValue(obj2).GetType() == typeof(int)
+                                            || key2.GetValue(obj2).GetType() == typeof(float)
+                                            || key2.GetValue(obj2).GetType() == typeof(bool)
+                                            || key2.GetValue(obj2).GetType() == typeof(Color))
+                                        {
+                                            landclass.AddValue(key2.Name, key2.GetValue(obj2));
+                                        }
+                                    }
+                                    catch { }
+                                }
+                            }
+                        }
 						if( key.FieldType == typeof( PQSMod_VertexPlanet.LandClass[] ) )
 						{
 							ConfigNode landclasses_root = savePQS.AddNode( "VPLandclass[]" );
@@ -2299,13 +2325,14 @@ namespace PFUtilityAddon
 		
 		//Data Loader
 		public void LoadData( string PlanetName, string path )
-		{	
-			if( !Utils.FileExists(path) )
+		{
+            string file = System.IO.Directory.GetFiles(path, PlanetName + ".cfg", System.IO.SearchOption.AllDirectories).FirstOrDefault();
+            if (file == null)
 			{
 				print("PlanetUI: No data loaded for " +PlanetName+ "\n" );
 				return;
 			}
-			cfgNodes = ConfigNode.Load( path );
+			cfgNodes = ConfigNode.Load( file );
 			if( cfgNodes == null )
 			{
 				print("PlanetUI: No data loaded for " +PlanetName+ "\n" );
@@ -2741,7 +2768,6 @@ namespace PFUtilityAddon
 							print("Cant find PQSMod type:" + componentTypeStr + "\n");
 							continue;
 						}
-
 						print( node.name + "\n" );
 						if( localPlanet.GetComponentInChildren(componentType) == null )
 						{
@@ -2759,7 +2785,7 @@ namespace PFUtilityAddon
 						System.Object obj = component;
 						foreach( FieldInfo key in obj.GetType().GetFields() )
 						{
-							//print ( "PlanetUI: Debug: " +PlanetName + " Component: " + key.Name +"\n" );
+							//Debug.Log ( "PlanetUI: Debug: " +PlanetName + " Component: " + key.Name + " Type: " + key.FieldType );
 							try
 							{
 								if( node.HasValue( key.Name ) )
@@ -2768,10 +2794,10 @@ namespace PFUtilityAddon
 									{
 										//key.SetValue( cbobj, ConfigNode.ParseColor( val ) );
 										//print ( "PQS not compatible at this point." );
-										//continue;
-										string FixName = node.GetValue( key.Name );
-										FixName = FixName.Replace(" (PQS)", "");
-										key.SetValue( obj, Utils.FindPQS( FixName ) );
+										continue;
+										//string FixName = node.GetValue( key.Name );
+										//FixName = FixName.Replace(" (PQS)", "");
+										//key.SetValue( obj, Utils.FindPQS( FixName ) );
 									}
 									if( key.FieldType == typeof( PQSLandControl.LandClass[] ) )
 									{
@@ -2790,12 +2816,12 @@ namespace PFUtilityAddon
 										LoadVPLandControl( node.GetNode("VPLandclass[]") , obj , key );
 									}
 								
-									//print( "PlanetUI: Attempting: " + key.Name + " of type " + key.FieldType + "\n" );
+									//Debug.Log( "PlanetUI: Attempting: " + key.Name + " of type " + key.FieldType + "\n" );
 									string val = node.GetValue( key.Name );
 									System.Object castedval = val;
 									Type t = key.FieldType;
 								
-									//print( "PlanetUI: " + component + " " + key.Name + " = ("+t+") " + castedval + "\n" );
+									//Debug.Log( "PlanetUI: " + component + " " + key.Name + " = ("+t+") " + castedval + "\n" );
 								
 									if ( t == typeof(UnityEngine.Vector3) )
 									{
@@ -2835,6 +2861,12 @@ namespace PFUtilityAddon
 										key.SetValue( obj, Convert.ChangeType( castedval, t ) );
 									}
 								}
+                                if (key.Name == "landClasses" && node.HasNode("HMLandclass[]"))
+                                {
+                                    //Debug.Log("Found landclass");
+                                    ParseColorMapLandclass(node.GetNode("HMLandclass[]"),localPlanet);
+                                    
+                                }
 							}
 							catch( Exception e )
 							{
@@ -2842,6 +2874,7 @@ namespace PFUtilityAddon
 								continue;
 							}
 						}
+                        
 					
 						if( node.HasValue("Parent") )
 						{
@@ -2897,6 +2930,33 @@ namespace PFUtilityAddon
 				print("PlanetUI: No data loaded for " +PlanetName+ "\n" );
 			}
 		}
+
+
+        void ParseColorMapLandclass(ConfigNode pqsNode, GameObject root)
+        {
+            Color color = Color.white;
+
+            PQSMod_HeightColorMap heightColorMap = root.GetComponentsInChildren<PQSMod_HeightColorMap>()[0];
+            List<PQSMod_HeightColorMap.LandClass> landClasses = new List<PQSMod_HeightColorMap.LandClass>();
+
+            PQSMod_HeightColorMap.LandClass landClass;
+
+            foreach (ConfigNode node in pqsNode.nodes)
+            {
+                
+                    var val = node.GetValue("color");
+                    val = val.Replace("RGBA(", "");
+                    val = val.Replace(")", "");
+                    color = ConfigNode.ParseColor(val);
+
+                    landClass = new PQSMod_HeightColorMap.LandClass(node.GetValue("name"), double.Parse(node.GetValue("altStart")), double.Parse(node.GetValue("altEnd")),color, Color.white, double.NaN);
+                    landClass.lerpToNext = bool.Parse(node.GetValue("lerpToNext"));
+                    landClasses.Add(landClass);
+            }
+            heightColorMap.landClasses = landClasses.ToArray();
+            heightColorMap.lcCount = heightColorMap.landClasses.Length;
+            heightColorMap.requirements = PQS.ModiferRequirements.MeshColorChannel;
+        }
 		void LoadLandControl( ConfigNode pqsNode, System.Object obj, FieldInfo key )
 		{
 			//int count = pqsNode.CountNodes;
