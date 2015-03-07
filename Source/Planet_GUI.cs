@@ -848,25 +848,31 @@ namespace PFUtilityAddon
 		PQS pqstoMod;
 		
 		//PQS Modder PT1
+		//GUI for showing list of all PQS mods applied to a body (the initial PQS Editor window). 
 		private void PQSModderPT1()
 		{
 			//Todo: swap with switch?
 			if( pqsModderStage == 1 )
 			{
+				// Show the PQSMod modification GUI instead.
 				PQSModderPT2();
 				return;
 			}
 			if( pqsModderStage == 2 )
 			{
+				// Show the PQS modification GUI instead.
 				PQSModderPT3();
 				return;
 			}
 			if( pqsModderStage == 3 )
 			{
+				// Show the PQS addition GUI instead.
 				PQSAdderFunc();
 				return;
 			}
-			
+
+			// If none of the conditional above is true,
+			// then show a list of all PQS mods applied to a body.
 			int yoffset = 280;
 			if( TemplateName == "" )
 			{
@@ -917,8 +923,11 @@ namespace PFUtilityAddon
 			
 			GUI.EndScrollView();
 		}
+
 		bool showLandClassmenu;
+
 		//PQS Modder PT2
+		//GUI for modifying a PQSMod.
 		private void PQSModderPT2()
 		{
 			ScrollPosition2 = GUI.BeginScrollView( new Rect( 20, 280, 380, 250 ), ScrollPosition2 ,new Rect( 20,280,380,10000) );
@@ -1093,6 +1102,7 @@ namespace PFUtilityAddon
 		}
 		
 		//PQS Modder PT3
+		//GUI for modifying a PQS class.
 		private void PQSModderPT3()
 		{
 			ScrollPosition2 = GUI.BeginScrollView( new Rect( 20, 280, 380, 250 ), ScrollPosition2 ,new Rect( 20,280,380,10000) );
@@ -1201,6 +1211,7 @@ namespace PFUtilityAddon
 		}
 		
 		//PQS Adder
+		//GUI for adding more PQSMods to a body.
 		void PQSAdderFunc()
 		{
 			//Urrgg... hacky at best :/
