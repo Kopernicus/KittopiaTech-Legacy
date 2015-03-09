@@ -2816,6 +2816,11 @@ namespace PFUtilityAddon
 						pqsmods_counter[componentTypeStr]++;
 
 						System.Object obj = component;
+						
+						// Load config file, recursively.
+						ConfigIO.LoadConfigNode(obj, node);
+						
+						if (false)
 						foreach( FieldInfo key in obj.GetType().GetFields() )
 						{
 							//Debug.Log ( "PlanetUI: Debug: " +PlanetName + " Component: " + key.Name + " Type: " + key.FieldType );
@@ -2905,8 +2910,7 @@ namespace PFUtilityAddon
 								print ( "PlanetUI: Failed to load: "+obj+", Exeption: " + e );
 								continue;
 							}
-						}
-                        
+						}                        
 					
 						if( node.HasValue("Parent") )
 						{
