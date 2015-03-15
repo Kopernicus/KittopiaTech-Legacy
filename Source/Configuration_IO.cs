@@ -9,9 +9,36 @@ namespace PFUtilityAddon
 {
 	public class ConfigIO
 	{
-		private static bool IsTypeHasFields(Type type)
+		// Currently unsupported types; will add support to some of them in the future.
+		private static Type[] unsupported_type =
 		{
-			return type.GetFields().Length > 0;
+			typeof(AnimationCurve),
+			typeof(CelestialBody),
+			typeof(List<>),
+			typeof(PQS),
+			typeof(PQS.ModiferRequirements),
+			typeof(Stack<>),
+			typeof(Texture2D),
+			typeof(UnityEngine.Cubemap),
+			typeof(UnityEngine.GameObject),
+			typeof(UnityEngine.Gradient),
+			typeof(UnityEngine.HideFlags),
+			typeof(UnityEngine.Material),
+			typeof(UnityEngine.Mesh),
+		};
+
+		// List of types that only needs to be saved as a string.
+		private static Type[] string_save =
+		{
+			typeof(MapSO),
+			typeof(string), // Duh!
+			typeof(UnityEngine.Color),
+			typeof(UnityEngine.Vector3)
+		};
+
+		private static bool IsTypeHasFieldsOrProperties(Type type)
+		{
+			return type.GetFields().Length > 0 || type.GetProperties().Length > 0;
 		}
 
 		public static void LoadConfigNode(object obj, ConfigNode node)
@@ -28,13 +55,7 @@ namespace PFUtilityAddon
 					{
 						string val = node.GetValue(key.Name);
 
-						if (keytype == typeof(PQS))
-						{
-							string FixName = val;
-							FixName = FixName.Replace(" (PQS)", "");
-							key.SetValue(obj, Utils.FindPQS(FixName));
-						}
-						else if (keytype == typeof(UnityEngine.Vector3))
+						if (keytype == typeof(UnityEngine.Vector3))
 						{
 							val = val.Replace("(", "");
 							val = val.Replace(")", "");
@@ -87,7 +108,7 @@ namespace PFUtilityAddon
 								LoadConfigNode(((object[])key.GetValue(obj))[i], sub2node);
 							}
 						}
-						else if (IsTypeHasFields(keytype))
+						else if (IsTypeHasFieldsOrProperties(keytype))
 						{
 							//MonoBehaviour.print("Subnode");
 							LoadConfigNode(key.GetValue(obj), subnode);
@@ -101,6 +122,131 @@ namespace PFUtilityAddon
 					continue;
 				}
 			}
+		}
+
+		public static void SaveConfigNode(object obj, ConfigNode node)
+		{
+			//MonoBehaviour.print(obj.GetType());
+			//MonoBehaviour.print("----------------");
+
+			foreach (PropertyInfo key in obj.GetType().GetProperties())
+			{
+				try
+				{
+					Type keytype = key.PropertyType;
+					if (keytype.IsGenericType) keytype = keytype.GetGenericTypeDefinition();
+
+					//MonoBehaviour.print(key.Name + " " + keytype + " " + key.GetValue(obj, null));
+					//MonoBehaviour.print(key.DeclaringType);
+
+					// Ignore properties that came from some Unity base class.
+					if (key.DeclaringType == typeof(GameObject) || key.DeclaringType == typeof(Component)
+						|| key.DeclaringType == typeof(Behaviour) || key.DeclaringType == typeof(MonoBehaviour))
+					{
+						continue;
+					}
+
+					// Only support modifiable properties.
+					if (!key.CanRead || !key.CanWrite) continue;
+
+					// Don't save unsupported type.
+					if (unsupported_type.Contains(keytype)) continue;
+
+					// Save some class members in string form.
+					if (string_save.Contains(keytype))
+					{
+						//MonoBehaviour.print("Property String save");
+						node.AddValue(key.Name, key.GetValue(obj, null));
+					}
+					else if (keytype.IsEnum)
+					{
+						//MonoBehaviour.print("Property Enum");
+						node.AddValue(key.Name, Enum.GetName(keytype, key.GetValue(obj, null)));
+					}
+					else if (IsTypeHasFieldsOrProperties(keytype) && !keytype.IsPrimitive)
+					{
+						//MonoBehaviour.print("Property Subnode");
+						ConfigNode subnode = new ConfigNode(key.Name);
+						SaveConfigNode(key.GetValue(obj, null), subnode);
+
+						if (subnode.HasNode() || subnode.HasValue()) node.AddNode(subnode);
+					}
+					else
+					{
+						//MonoBehaviour.print("Property Generic");
+						node.AddValue(key.Name, key.GetValue(obj, null));
+					}
+				}
+				catch (Exception ex)
+				{
+					MonoBehaviour.print(ex.Message + ex.StackTrace);
+				}
+			}
+
+			foreach (FieldInfo key in obj.GetType().GetFields())
+			{
+				try
+				{
+					Type keytype = key.FieldType;
+					if (keytype.IsGenericType) keytype = keytype.GetGenericTypeDefinition();
+
+					//MonoBehaviour.print(key.Name + " " + keytype + " " + key.GetValue(obj));
+
+					// Don't save unsupported type.
+					if (unsupported_type.Contains(keytype)) continue;
+				
+					// Save some class members in string form.
+					if (string_save.Contains(keytype))
+					{
+						//MonoBehaviour.print("String save");
+						node.AddValue(key.Name, key.GetValue(obj));
+					}
+					else if (keytype.IsArray)
+					{
+						//MonoBehaviour.print("Array");
+
+						if (!unsupported_type.Contains(keytype.GetElementType()))
+						{
+							ConfigNode subnode = new ConfigNode(key.Name);
+
+							object[] objarray = (object[])key.GetValue(obj);
+
+							foreach (object subobj in objarray)
+							{
+								ConfigNode sub2node = new ConfigNode(subobj.GetType().ToString());
+								SaveConfigNode(subobj, sub2node);
+								subnode.AddNode(sub2node);
+							}
+
+							if (subnode.HasNode() || subnode.HasValue()) node.AddNode(subnode);
+						}
+					}
+					else if (keytype.IsEnum)
+					{
+						//MonoBehaviour.print("Enum");
+						node.AddValue(key.Name, Enum.GetName(keytype, key.GetValue(obj)));
+					}
+					else if (IsTypeHasFieldsOrProperties(keytype) && !keytype.IsPrimitive)
+					{
+						//MonoBehaviour.print("Subnode");
+						ConfigNode subnode = new ConfigNode(key.Name);
+						SaveConfigNode(key.GetValue(obj), subnode);
+
+						if (subnode.HasNode() || subnode.HasValue()) node.AddNode(subnode);
+					}
+					else
+					{
+						//MonoBehaviour.print("Generic");
+						node.AddValue(key.Name, key.GetValue(obj));
+					}
+				}
+				catch (Exception ex)
+				{
+					MonoBehaviour.print(ex.Message + ex.StackTrace);
+				}
+			}
+
+			//MonoBehaviour.print("----------------");
 		}
 	}
 }

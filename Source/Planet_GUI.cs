@@ -2239,6 +2239,10 @@ namespace PFUtilityAddon
 			foreach( PQSMod pqs in Utils.FindLocal(TemplateName).GetComponentsInChildren(typeof( PQSMod )) )
 			{
 				ConfigNode savePQS = PQSRoot.AddNode( ""+pqs.GetType() );
+
+				ConfigIO.SaveConfigNode(pqs, savePQS);
+
+				if (false)
 				foreach( FieldInfo key in pqs.GetType().GetFields() )
 				{
 					try{
@@ -2329,7 +2333,7 @@ namespace PFUtilityAddon
 						}
 					}catch{}
 				}
-				savePQS.AddValue( "Parent", pqs.transform.parent.name );
+				//savePQS.AddValue( "Parent", pqs.transform.parent.name );
 			}
 			cfgNodes.Save( save_dir, "CustomData" );
 		}
