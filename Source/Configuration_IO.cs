@@ -88,6 +88,10 @@ namespace PFUtilityAddon
 								}
 							}
 						}
+						else if (keytype.IsEnum)
+						{
+							key.SetValue(obj, Enum.Parse(keytype, val));
+						}
 						else
 						{
 							key.SetValue(obj, Convert.ChangeType((System.Object)val, keytype));
