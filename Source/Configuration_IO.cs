@@ -183,7 +183,7 @@ namespace PFUtilityAddon
 				}
 				catch (Exception ex)
 				{
-					MonoBehaviour.print(ex.Message + ex.StackTrace);
+					//MonoBehaviour.print(ex.Message + ex.StackTrace);
 				}
 			}
 
@@ -246,7 +246,7 @@ namespace PFUtilityAddon
 				}
 				catch (Exception ex)
 				{
-					MonoBehaviour.print(ex.Message + ex.StackTrace);
+					//MonoBehaviour.print(ex.Message + ex.StackTrace);
 				}
 			}
 
