@@ -43,6 +43,43 @@ namespace PFUtilityAddon
 
 		public static void LoadConfigNode(object obj, ConfigNode node)
 		{
+			foreach (PropertyInfo key in obj.GetType().GetProperties())
+			{
+				Type keytype = key.PropertyType;
+
+				// Only support writeable properties.
+				if (!key.CanWrite) continue;
+				
+				try
+				{
+					if (node.HasValue(key.Name))
+					{
+						string val = node.GetValue(key.Name);
+
+						if (keytype == typeof(UnityEngine.Vector3))
+						{
+							val = val.Replace("(", "");
+							val = val.Replace(")", "");
+
+							key.SetValue(obj, ConfigNode.ParseVector3(val), null);
+						}
+						else if (keytype.IsEnum)
+						{
+							key.SetValue(obj, Enum.Parse(keytype, val), null);
+						}
+						else
+						{
+							key.SetValue(obj, Convert.ChangeType((System.Object)val, keytype), null);
+						}
+					}
+				}
+				catch (Exception ex)
+				{
+					MonoBehaviour.print("PlanetUI: Failed to load: " + key.Name + ", Exception: " + ex);
+					continue;
+				}
+			}
+
 			foreach (FieldInfo key in obj.GetType().GetFields())
 			{
 				Type keytype = key.FieldType;
@@ -121,8 +158,7 @@ namespace PFUtilityAddon
 				}
 				catch (Exception ex)
 				{
-					MonoBehaviour.print("PlanetUI: Failed to load: " + obj + ", Exception: " + ex);
-					MonoBehaviour.print("Stacktrace: " + ex.StackTrace);
+					MonoBehaviour.print("PlanetUI: Failed to load: " + key.Name + ", Exception: " + ex);
 					continue;
 				}
 			}
