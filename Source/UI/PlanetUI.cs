@@ -34,7 +34,7 @@ namespace Kopernicus
 
             // Curently edited body
             public static CelestialBody currentBody;
-            public static string currentName = "No Planet selected!";
+            public static string currentName = "";
 
             // Return an OnGUI()-Window.
             public static Rect Render(Rect rect, string title)
