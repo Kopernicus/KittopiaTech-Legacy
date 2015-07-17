@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="UI\CelestialBodyEditor.cs" />
+    <Compile Include="UI\OrbitEditor.cs" />
     <Compile Include="UI\PlanetSelector.cs" />
     <Compile Include="UI\LandClassModifier.cs" />
     <Compile Include="UI\ColorPicker.cs" />

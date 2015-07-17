@@ -32,6 +32,7 @@ namespace Kopernicus
                         {
                             PlanetUI.currentName = body.name;
                             PlanetUI.currentBody = body;
+                            OrbitEditor.reference = "";
                         }
                         offset += 30;
                     }
