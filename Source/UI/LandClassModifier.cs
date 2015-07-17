@@ -57,6 +57,14 @@ namespace Kopernicus
                 vertexPlanetClasses = landClassArray;
             }
 
+            // Set edited object
+            public static void SetEditedObject(PQSLandControl.LandClass[] landClassArray)
+            {
+                mode = Mode.LandControl;
+                state = State.Select;
+                landControlClasses = landClassArray;
+            }
+
             // GUI stuff
             private static Vector2 scrollPosition;
 

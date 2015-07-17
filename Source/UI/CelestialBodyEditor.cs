@@ -25,7 +25,7 @@ namespace Kopernicus
                 // If we have no Body selected, abort
                 if (PlanetUI.currentName == "")
                 {
-                    GUI.Label(new Rect(20, offset, 200, 20), "NO TEMPLATE AVALIABLE");
+                    GUI.Label(new Rect(20, 310, 400, 20), "No Planet selected!");
                     return;
                 }
 

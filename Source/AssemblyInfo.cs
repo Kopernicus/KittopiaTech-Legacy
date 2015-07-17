@@ -4,13 +4,13 @@ using System.Runtime.CompilerServices;
 // Information about this assembly is defined by the following attributes. 
 // Change them to the values specific to your project.
 
-[assembly: AssemblyTitle("PFUtilityAddon")]
+[assembly: AssemblyTitle("KittopiaTech")]
 [assembly: KSPAssembly("KittopiaTech Planet Editor", 0, 155)]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("Creator/Kragrathea")]
+[assembly: AssemblyCopyright("KCreator|Kragrathea|Gravitasi|BorisBee|Thomas P.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

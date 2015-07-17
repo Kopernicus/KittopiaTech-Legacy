@@ -38,6 +38,12 @@ namespace Kopernicus
                     }
                     GUI.EndScrollView();
                 }
+                else
+                {
+                    // If the Bodies aren't setup, abort
+                    GUI.Label(new Rect(20, 310, 400, 20), "CelestialBody-List is not initialized!");
+                    return;
+                }
             }
         }
     }

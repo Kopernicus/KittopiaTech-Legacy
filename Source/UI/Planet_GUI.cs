@@ -830,7 +830,7 @@ namespace Kopernicus
 
                 if (TemplateName == "")
                 {
-                    GUI.Label(new Rect(20, yoffset, 200, 20), "NO TEMPLATE AVALIABLE");
+                    GUI.Label(new Rect(20, yoffset, 200, 20), "No Planet selected!");
                     return;
                 }
 
@@ -935,7 +935,7 @@ namespace Kopernicus
 
                 if (TemplateName == "")
                 {
-                    GUI.Label(new Rect(20, yoffset, 200, 20), "NO TEMPLATE AVALIABLE");
+                    GUI.Label(new Rect(20, yoffset, 200, 20), "No Planet selected!");
                     return;
                 }
 
@@ -1103,7 +1103,7 @@ namespace Kopernicus
 
                 if (TemplateName == "")
                 {
-                    GUI.Label(new Rect(20, yoffset, 200, 20), "NO TEMPLATE AVALIABLE");
+                    GUI.Label(new Rect(20, yoffset, 200, 20), "No Planet selected!");
                     return;
                 }
 
@@ -1233,7 +1233,7 @@ namespace Kopernicus
 
                 if (TemplateName == "")
                 {
-                    GUI.Label(new Rect(20, yoffset, 200, 20), "NO TEMPLATE AVALIABLE");
+                    GUI.Label(new Rect(20, yoffset, 200, 20), "No Planet selected!");
                     return;
                 }
                 GUI.Label(new Rect(20, yoffset, 300, 20), "Maximum distance from sea level to effect:");

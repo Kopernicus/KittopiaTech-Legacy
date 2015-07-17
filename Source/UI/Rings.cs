@@ -23,33 +23,33 @@ namespace Kopernicus
             public static void Render()
             {
                 // Render variables
-                int offset = 290;
+                int offset = 280;
 
-                // Is a body selected?
-                if (PlanetUI.currentBody == null)
+                // If we have no Body selected, abort
+                if (PlanetUI.currentName == "")
                 {
-                    GUI.Label(new Rect(20, offset, 200, 20), "NO PLANET SELECTED");
+                    GUI.Label(new Rect(20, 310, 400, 20), "No Planet selected!");
                     return;
                 }
 
                 // Render the Window
-                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, 370));
+                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, 320));
 
                 GUI.Label(new Rect(20, offset, 200, 20), "Inner Radius:");
-                offset += 20;
+                offset += 25;
                 ring.innerRadius = Double.Parse(GUI.TextField(new Rect(20, offset, 200, 20), "" + ring.innerRadius));
 
-                offset += 40;
+                offset += 30;
                 GUI.Label(new Rect(20, offset, 200, 20), "Outer Radius:");
-                offset += 20;
+                offset += 25;
                 ring.outerRadius = Double.Parse(GUI.TextField(new Rect(20, offset, 200, 20), "" + ring.outerRadius));
 
-                offset += 40;
+                offset += 30;
                 GUI.Label(new Rect(20, offset, 200, 20), "Inclination:");
-                offset += 20;
+                offset += 25;
                 ring.angle = Single.Parse(GUI.TextField(new Rect(20, offset, 200, 20), "" + ring.angle));
 
-                offset += 40;
+                offset += 30;
                 GUI.Label(new Rect(20, offset, 200, 20), "Color:");
                 if (GUI.Button(new Rect(150, offset, 50, 20), "Edit"))
                 {
@@ -69,7 +69,7 @@ namespace Kopernicus
                     ring.texture = Utils.LoadTexture("KittopiaTech/Textures/ring");
                     RingLoader.AddRing(PlanetUI.currentBody.scaledBody, ring);
                 }
-                offset += 30;
+                offset += 25;
                 if (GUI.Button(new Rect(20, offset, 200, 20), "Delete rings on: " + PlanetUI.currentName))
                 {
                     GameObject ScaledPlanet = Utils.FindScaled(PlanetUI.currentName);
