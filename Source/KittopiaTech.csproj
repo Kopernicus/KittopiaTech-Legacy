@@ -7,8 +7,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2FD01CB8-AAC9-4CA9-B5E5-7B3A84E85A01}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>PFUtilityAddon</RootNamespace>
-    <AssemblyName>PFUtilityAddon</AssemblyName>
+    <RootNamespace>Kopernicus.UI</RootNamespace>
+    <AssemblyName>KittopiaTech</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <OldToolsVersion>3.5</OldToolsVersion>
   </PropertyGroup>
@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>Z:\Kerbal Space Program\GameData\KittopiaSpace\Plugins\</OutputPath>
+    <OutputPath>DevelopmentBuild\</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,30 +26,26 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Release</OutputPath>
+    <OutputPath>..\Distribution\</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="AfterBuild" command="xcopy bin\Release\PFUtilityAddon.dll &quot;..\..\..\..\..\..\Program Files\Steam\steamapps\common\Kerbal Space Program\GameData\KittopiaSpace\plugins&quot;" />
-      </CustomCommands>
-    </CustomCommands>
     <NoStdLib>true</NoStdLib>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DDSLoader, Version=1.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\DDSLoader\DDSLoader.dll</HintPath>
+    <Reference Include="Kopernicus">
+      <HintPath>..\References\Kopernicus.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\System.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\Programme\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\Programme\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\mscorlib.dll</HintPath>
@@ -57,26 +53,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration_IO.cs" />
-    <Compile Include="MyClass.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Planet_GUI.cs" />
-    <Compile Include="ScaledPlanetMesh.cs" />
+    <Compile Include="UI\LandClassModifier.cs" />
+    <Compile Include="UI\ColorPicker.cs" />
+    <Compile Include="UI\PlanetUI.cs" />
+    <Compile Include="UI\Planet_GUI.cs" />
+    <Compile Include="UI\UIController.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="PlanetaryUtilClass.cs" />
-    <Compile Include="PerSave_Loader.cs" />
     <Compile Include="Starfix_Controller_Module.cs" />
     <Compile Include="GuiUtils.cs" />
     <Compile Include="ButtonDef.cs" />
     <Compile Include="UtilityComponents.cs" />
     <Compile Include="HazardousOcean_Controller_Module.cs" />
     <Compile Include="Particle_controller_module.cs" />
-    <Compile Include="AtmosphericReproccesser.cs" />
-    <Compile Include="TerraformingAsteriodModule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <None Include="Resources\ringTex.png" />
-    <None Include="Resources\unlitshader1.txt" />
-  </ItemGroup>
   <ItemGroup />
 </Project>

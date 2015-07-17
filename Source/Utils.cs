@@ -69,7 +69,7 @@ namespace PFUtilityAddon
             return null;
         }
 		
-		public static PQS FindPQS( string name )
+		/*public static PQS FindPQS( string name )
         {
 			foreach( PSystemBody body in PlanetToolsUiController.Templates )
 			{
@@ -83,7 +83,7 @@ namespace PFUtilityAddon
 			}
 			
 			return null;
-		}
+		}*/
 		
         private static Texture2D _defaultTexture=null;
         public static Texture2D defaultTexture { get{
@@ -181,7 +181,7 @@ namespace PFUtilityAddon
 		// Still hacky; if anyone knows a better solution, please let me know.
 		private static GameDatabase.TextureInfo LoadDDS(string path, bool keepReadable = false, bool asNormal = false, int mipmapBias = -1, bool apply = true)
 		{
-			return DDSLoader.DatabaseLoaderTexture_DDS.LoadDDS(path, keepReadable, asNormal, mipmapBias, apply);
+            return null;// DDSLoader.DatabaseLoaderTexture_DDS.LoadDDS(path, keepReadable, asNormal, mipmapBias, apply);
 		}
 
 		public static bool FileExists( string path )
