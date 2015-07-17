@@ -22,7 +22,7 @@ namespace Kopernicus
             public static UIController Instance { get; private set; }
 
             // Window Positions
-            Rect mainWindow = new Rect(20, 20, 420, 550);
+            Rect mainWindow = new Rect(20, 20, 420, 560);
             Rect colorWindow = new Rect(420, 20, 400, 200);
             Rect landClassWindow = new Rect(420, 400, 400, 400);
 

@@ -35,6 +35,7 @@
   <ItemGroup>
     <Reference Include="Kopernicus">
       <HintPath>..\References\Kopernicus.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\System.dll</HintPath>
@@ -54,6 +55,7 @@
   <ItemGroup>
     <Compile Include="Configuration_IO.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="UI\PlanetSelector.cs" />
     <Compile Include="UI\LandClassModifier.cs" />
     <Compile Include="UI\ColorPicker.cs" />
     <Compile Include="UI\PlanetUI.cs" />

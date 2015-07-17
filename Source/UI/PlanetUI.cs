@@ -18,18 +18,19 @@ namespace Kopernicus
             {
                 AtmosphereSFX,
                 CelestialBody,
-                PQS,
+                PQSEditor,
                 PlanetSelector,
-                Orbit,
+                OrbitEditor,
                 Ocean,
                 StarFix,
                 Rings,
                 Particles,
-                GroundScatter
+                GroundScatter,
+                None
             }
 
             // Current window mode
-            public static Modes mode;
+            public static Modes mode = Modes.None;
 
             // Curently edited body
             public static CelestialBody curentBody;
@@ -60,7 +61,7 @@ namespace Kopernicus
                     mode = Modes.CelestialBody;
 
                 if (GUI.Button(new Rect(20, 70, 200, 20), "PQS Editor"))
-                    mode = Modes.PQS;
+                    mode = Modes.PQSEditor;
 
                 if (GUI.Button(new Rect(20, 100, 200, 20), "Planet Selection"))
                     mode = Modes.PlanetSelector;
@@ -68,7 +69,7 @@ namespace Kopernicus
                 GUI.Label(new Rect(20, 130, 200, 20), "Planet Selected: " + currentName);
 
                 if (GUI.Button(new Rect(20, 160, 200, 20), "Orbit Editor"))
-                    mode = Modes.Orbit;
+                    mode = Modes.OrbitEditor;
 
                 exportScaled = GUI.Toggle(new Rect(240, 190, 300, 20), exportScaled, "Export?");
                 if (GUI.Button(new Rect(20, 190, 200, 20), "ScaledSpace updater"))
@@ -99,6 +100,23 @@ namespace Kopernicus
                 // Design Hack
                 GUI.HorizontalSlider(new Rect(10, 280, 400, 5), 0.5f, 0, 1, GUI.skin.horizontalSlider, new GUIStyle());
 
+                // Use the current mode to render the editor
+                if (mode != Modes.None)
+                {
+                    try
+                    {
+                        Type modeType = Assembly.GetAssembly(typeof(PlanetUI)).GetTypes().Where(t => t.Name == mode.ToString().Replace("Modes.", "")).FirstOrDefault();
+                        MethodInfo method = modeType.GetMethod("Render", BindingFlags.Public | BindingFlags.Static);
+                        method.Invoke(null, null);
+                    }
+                    catch
+                    {
+                        Debug.LogWarning("[KittopiaTech]: RenderClass \"" + mode.ToString().Replace("Modes.", "") + "\" not available!");
+                        mode = Modes.None;
+                    }
+                }
+
+                // Finish the GUI-Drawing
                 GUI.DragWindow();
             }
         }
