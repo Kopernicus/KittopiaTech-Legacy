@@ -61,7 +61,10 @@ namespace Kopernicus
                     mode = Modes.CelestialBodyEditor;
 
                 if (GUI.Button(new Rect(20, 70, 200, 20), "PQS Editor"))
+                {
                     mode = Modes.PQSEditor;
+                    PQSEditor.mode = PQSEditor.Modes.List;
+                }
 
                 if (GUI.Button(new Rect(20, 100, 200, 20), "Planet Selection"))
                     mode = Modes.PlanetSelector;

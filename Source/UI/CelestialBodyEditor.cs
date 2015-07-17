@@ -83,17 +83,16 @@ namespace Kopernicus
                         else if (key.FieldType == typeof(Vector3))
                         {
                             GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                            offset += 25;
 
                             Vector3 value = (Vector3)key.GetValue(obj);
 
-                            value.x = Single.Parse(GUI.TextField(new Rect(20, offset, 50, 20), "" + value.x));
-                            value.y = Single.Parse(GUI.TextField(new Rect(80, offset, 50, 20), "" + value.y));
-                            value.z = Single.Parse(GUI.TextField(new Rect(140, offset, 50, 20), "" + value.z));
+                            value.x = Single.Parse(GUI.TextField(new Rect(200, offset, 50, 20), "" + value.x));
+                            value.y = Single.Parse(GUI.TextField(new Rect(260, offset, 50, 20), "" + value.y));
+                            value.z = Single.Parse(GUI.TextField(new Rect(320, offset, 50, 20), "" + value.z));
 
                             key.SetValue(obj, value);
 
-                            offset += 20;
+                            offset += 25;
                         }
                     }
                     catch { }

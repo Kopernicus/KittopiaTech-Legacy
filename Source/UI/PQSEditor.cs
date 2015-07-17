@@ -50,7 +50,7 @@ namespace Kopernicus
                 // Render an UI based on the current Mode
                 try
                 {
-                    MethodInfo method = typeof(PQSEditor).GetMethod(mode.ToString().Replace("Modes.", ""), BindingFlags.Public | BindingFlags.Static);
+                    MethodInfo method = typeof(PQSEditor).GetMethod(mode.ToString().Replace("Modes.", ""), BindingFlags.NonPublic | BindingFlags.Static);
                     method.Invoke(null, null);
                 }
                 catch
@@ -60,9 +60,10 @@ namespace Kopernicus
                 }
             }
 
-            public static void List()
+            // Show a list of all PQS mods applied to a body.
+            private static void List()
             {
-                // Show a list of all PQS mods applied to a body.
+                // Render Stuff
                 int offset = 280;
 
                 // Get the PQS-Spheres and their mods
@@ -104,186 +105,151 @@ namespace Kopernicus
                 // Finish
                 GUI.EndScrollView();
             }
-            /*
-            bool showLandClassmenu;
 
-            //PQS Modder PT2
-            //GUI for modifying a PQSMod.
-            private void PQSModderPT2()
+            // GUI for modifying a PQSMod.
+            private static void PQSMod()
             {
-                ScrollPosition2 = GUI.BeginScrollView(new Rect(20, 280, 380, 250), ScrollPosition2, new Rect(20, 280, 380, 10000));
-
+                // Render Stuff
                 int offset = 280;
-                foreach (FieldInfo key in pqsmodtoMod.GetType().GetFields())
+
+                // Create the height of the Scroll-List
+                Type[] supportedTypes = new Type[] { typeof(string), typeof(bool), typeof(int), typeof(float), typeof(double), typeof(Color), typeof(Vector3), typeof(PQSLandControl.LandClass[]), typeof(PQSMod_VertexPlanet.LandClass[]), typeof(MapSO), typeof(PQS) };
+                int scrollOffset = currentPQSMod.GetType().GetFields().Where(f => supportedTypes.Contains(f.FieldType)).Count() * 25;
+
+                // Render the Scrollbar
+                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollOffset + 40));
+
+                // Display the Fields of the PQSMod
+                foreach (FieldInfo key in currentPQSMod.GetType().GetFields())
                 {
                     try
                     {
-                        System.Object obj = (System.Object)pqsmodtoMod;
+                        System.Object obj = (System.Object)currentPQSMod;
                         if (key.FieldType == typeof(string))
                         {
-                            GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                            key.SetValue(obj, GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj)));
-                            offset += 30;
+                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                            key.SetValue(obj, GUI.TextField(new Rect(200, offset, 170, 20), "" + key.GetValue(obj)));
+                            offset += 25;
                         }
                         else if (key.FieldType == typeof(bool))
                         {
-                            GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                            key.SetValue(obj, GUI.Toggle(new Rect(200, offset, 200, 20), (bool)key.GetValue(obj), "Bool"));
-                            offset += 30;
+                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                            key.SetValue(obj, GUI.Toggle(new Rect(200, offset, 170, 20), (bool)key.GetValue(obj), "Bool"));
+                            offset += 25;
                         }
                         else if (key.FieldType == typeof(int))
                         {
-                            GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                            key.SetValue(obj, (int)StrToFloat(GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj))));
-                            offset += 30;
+                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                            key.SetValue(obj, Int32.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + key.GetValue(obj))));
+                            offset += 25;
                         }
                         else if (key.FieldType == typeof(float))
                         {
-                            GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                            key.SetValue(obj, StrToFloat(GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj))));
-                            offset += 30;
+                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                            key.SetValue(obj, Single.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + key.GetValue(obj))));
+                            offset += 25;
                         }
                         else if (key.FieldType == typeof(double))
                         {
-                            GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                            key.SetValue(obj, (double)StrToFloat(GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj))));
-                            offset += 30;
+                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                            key.SetValue(obj, Double.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + key.GetValue(obj))));
+                            offset += 25;
                         }
                         else if (key.FieldType == typeof(Color))
                         {
-                            GUI.Label(new Rect(20, offset, 100, 20), "" + key.Name);
-                            if (GUI.Button(new Rect(150, offset, 50, 20), "Edit"))
-                            {
-                                Color getColour;
-                                getColour = (Color)key.GetValue(obj);
-                                rVal = getColour.r;
-                                gVal = getColour.g;
-                                bVal = getColour.b;
-                                aVal = getColour.a;
-
-                                objToEdit = obj;
-                                KeyToEdit = key;
-
-                                isshowingColourEditor = true;
-                            }
-                            //key.SetValue( obj, (double)StrToFloat( GUI.TextField( new Rect( 200 , offset, 200, 20), ""+key.GetValue(obj) ) ));
-                            offset += 30;
+                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                            if (GUI.Button(new Rect(200, offset, 50, 20), "Edit"))
+                                ColorPicker.SetEditedObject(key, (Color)key.GetValue(obj), obj);
+                            offset += 25;
                         }
                         else if (key.FieldType == typeof(Vector3))
                         {
                             GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                            offset += 30;
 
-                            Vector3 blah = (Vector3)key.GetValue(obj);
+                            Vector3 value = (Vector3)key.GetValue(obj);
 
-                            blah.x = Convert.ToSingle(GUI.TextField(new Rect(20, offset, 50, 20), "" + blah.x));
-                            blah.y = Convert.ToSingle(GUI.TextField(new Rect(80, offset, 50, 20), "" + blah.y));
-                            blah.z = Convert.ToSingle(GUI.TextField(new Rect(140, offset, 50, 20), "" + blah.z));
+                            value.x = Single.Parse(GUI.TextField(new Rect(200, offset, 50, 20), "" + value.x));
+                            value.y = Single.Parse(GUI.TextField(new Rect(260, offset, 50, 20), "" + value.y));
+                            value.z = Single.Parse(GUI.TextField(new Rect(320, offset, 50, 20), "" + value.z));
 
-                            key.SetValue(obj, blah);
+                            key.SetValue(obj, value);
 
-                            offset += 30;
+                            offset += 25;
                         }
                         else if (key.FieldType == typeof(PQSLandControl.LandClass[]))
                         {
-                            if (GUI.Button(new Rect(20, offset, 200, 20), "Mod Land Classes"))
-                            {
-                                LandclassestoMod = (PQSLandControl.LandClass[])key.GetValue(obj);
-                                landmodder_mode = 0;
-                                landmodder_state = 0;
-                                showLandClassmenu = true;
-                            }
-                            offset += 30;
+                            if (GUI.Button(new Rect(20, offset, 178, 20), "Mod Land Classes"))
+                                LandClassModifier.SetEditedObject((PQSLandControl.LandClass[])key.GetValue(obj));
+                            offset += 25;
                         }
                         else if (key.FieldType == typeof(PQSMod_VertexPlanet.LandClass[]))
                         {
-                            if (GUI.Button(new Rect(20, offset, 200, 20), "Mod Land Classes"))
-                            {
-                                VertexLandclassestoMod = (PQSMod_VertexPlanet.LandClass[])key.GetValue(obj);
-                                landmodder_mode = 1;
-                                landmodder_state = 0;
-                                showLandClassmenu = true;
-                            }
-                            offset += 30;
+                            if (GUI.Button(new Rect(20, offset, 178, 20), "Mod Land Classes"))
+                                LandClassModifier.SetEditedObject((PQSMod_VertexPlanet.LandClass[])key.GetValue(obj));
+                            offset += 25;
                         }
+                            /*
                         else if (key.FieldType == typeof(MapSO))
                         {
-                            GUI.Label(new Rect(20, offset, 100, 20), "" + key.Name + ":");
-                            //					if( GUI.Button( new Rect( 150 , offset, 50, 20), "Edit" ) )
-                            //					{
-                            //						//TextureBrowser browser = NewWindows[ "TextureBrowser" ] as TextureBrowser;
-                            //						TextureBrowser.UpdateTextureList();
-                            //					}
-                            //					if( GUI.Button( new Rect( 200 , offset, 80, 20), "Save Edit" ) )
-                            //					{
-                            //						key.SetValue( obj, TextureBrowser.ReturnedMapSo );
-                            //					}
+                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name + ":");
                             offset += 30;
-                            if (GUI.Button(new Rect(20, offset, 400, 20), "Load texture from: Textures/" + TemplateName + "/PQS/" + pqsmodtoMod.name))
+                            if (GUI.Button(new Rect(200, offset, 170, 20), "Load texture"))
                             {
-                                if (Utils.FileExists("GameInfo/KittopiaSpace/Textures/" + TemplateName + "/PQS/" + pqsmodtoMod.name))
-                                {
-                                    Texture2D texture = Utils.LoadTexture("GameInfo/KittopiaSpace/Textures/" + TemplateName + "/PQS/" + pqsmodtoMod.name);
-
-                                    MapSO ReturnedMapSo = (MapSO)ScriptableObject.CreateInstance(typeof(MapSO));
-                                    ReturnedMapSo.CreateMap(MapSO.MapDepth.RGBA, texture);
-
-                                    key.SetValue(obj, ReturnedMapSo);
-                                    print("Pushed MAPSO to object!\n");
-                                }
-                                else
-                                {
-                                    print("Failed to load: GameInfo/KittopiaSpace/Textures/" + TemplateName + "/PQS/" + pqsmodtoMod.name + ".png\n");
-                                }
+                                FileBrowser browser = new FileBrowser(new Rect(420, 400, 400, 400), "Load MapSO", onFileBrowserSelected);
                             }
-
-                            offset += 30;
+                            offset += 25;
                         }
+                             * */
+                            /*
                         else if (key.GetValue(obj).GetType() == typeof(PQS))
                         {
-                            //PQS Variable Selector.
-                            GUI.Label(new Rect(20, offset, 100, 20), "" + key.Name);
+                            // PQS Variable Selector.
+                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
                             if (GUI.Button(new Rect(150, offset, 50, 20), "Edit"))
                             {
-                                NewWindows["PQSSelector"].ToggleWindow();
+                                
                             }
                             if (GUI.Button(new Rect(200, offset, 80, 20), "Save Edit"))
                             {
-                                key.SetValue(obj, PQSSelector.ReturnedPQS);
+                                
                             }
 
-                            offset += 30;
+                            offset += 25;
                         }
+                             * */
                     }
                     catch { }
                 }
-                offset += 30;
+                offset += 25;
 
+                /*
                 //PQS Variable Selector.
-                GUI.Label(new Rect(20, offset, 100, 20), "ParentSphere");
+                GUI.Label(new Rect(20, offset, 178, 20), "ParentSphere");
                 if (GUI.Button(new Rect(150, offset, 50, 20), "Edit"))
                 {
-                    NewWindows["PQSSelector"].ToggleWindow();
+                    UIController.Instance.isPQS = true;
                 }
                 if (GUI.Button(new Rect(200, offset, 80, 20), "Save Edit"))
                 {
-                    try
-                    {
-                        pqsmodtoMod.gameObject.transform.parent = PQSSelector.ReturnedPQS.gameObject.transform;
-                    }
-                    catch { }
+                    currentPQSMod.transform.parent = PQSSelector.sphere.transform;
                 }
 
-                offset += 30;
+                offset += 25;
+                 * */
 
                 if (GUI.Button(new Rect(20, offset, 200, 20), "Rebuild"))
                 {
-                    pqsmodtoMod.RebuildSphere();
+                    currentPQSMod.RebuildSphere();
                 }
 
                 GUI.EndScrollView();
             }
 
+            private static void onFileBrowserSelected(string s) 
+            {
+
+            }
+            /*
             //PQS Modder PT3
             //GUI for modifying a PQS class.
             private void PQSModderPT3()
