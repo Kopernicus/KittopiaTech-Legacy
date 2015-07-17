@@ -14,21 +14,34 @@ namespace Kopernicus
         {
             private static Color color;
             private static FieldInfo field;
+            private static PropertyInfo property;
             private static object fieldObject;
             public static int index;
 
             // Return an OnGUI()-Window.
             public static Rect Render(Rect rect, string title)
             {
-                return GUI.Window(1, rect, RenderWindow, title);
+                return GUI.Window(34677, rect, RenderWindow, title);
             }
 
             // Set edited object
             public static void SetEditedObject (FieldInfo fieldInfo, Color colorObject, object obj)
             {
                 field = fieldInfo;
+                property = null;
                 color = colorObject;
                 fieldObject = obj;
+                UIController.Instance.isColor = true;
+            }
+
+            // Set edited object
+            public static void SetEditedObject(PropertyInfo propertyInfo, Color colorObject, object obj)
+            {
+                field = null;
+                property = propertyInfo;
+                color = colorObject;
+                fieldObject = obj;
+                UIController.Instance.isColor = true;
             }
 
             public static void RenderWindow(int windowID)
@@ -69,16 +82,33 @@ namespace Kopernicus
 
                 if (GUI.Button(new Rect(10, 150, 200, 50), "Save"))
                 {
-                    //Hacky mcHack
-                    if (field.GetValue(fieldObject) is Array)
+                    if (field != null)
                     {
-                        Color[] colors = field.GetValue(fieldObject) as Color[];
-                        colors[index] = color;
-                        field.SetValue(fieldObject, colors);
+                        //Hacky mcHack
+                        if (field.GetValue(fieldObject) is Array)
+                        {
+                            Color[] colors = field.GetValue(fieldObject) as Color[];
+                            colors[index] = color;
+                            field.SetValue(fieldObject, colors);
+                        }
+                        else
+                        {
+                            field.SetValue(fieldObject, color);
+                        }
                     }
                     else
                     {
-                        field.SetValue(fieldObject, color);
+                        //Hacky mcHack
+                        if (property.GetValue(fieldObject, null) is Array)
+                        {
+                            Color[] colors = property.GetValue(fieldObject, null) as Color[];
+                            colors[index] = color;
+                            property.SetValue(fieldObject, colors, null);
+                        }
+                        else
+                        {
+                            property.SetValue(fieldObject, color, null);
+                        }
                     }
                     UIController.Instance.isColor = false;
                 }

@@ -7,6 +7,7 @@ using System.Text;
 using UnityEngine;
 using System.IO;
 using System.Reflection;
+using Kopernicus.UI;
 
 namespace PFUtilityAddon
 {

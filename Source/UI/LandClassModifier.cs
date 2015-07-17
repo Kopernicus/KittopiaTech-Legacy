@@ -46,7 +46,7 @@ namespace Kopernicus
             // Return an OnGUI()-Window.
             public static Rect Render(Rect rect, string title)
             {
-                return GUI.Window(1, rect, RenderWindow, title);
+                return GUI.Window(86636, rect, RenderWindow, title);
             }
 
             // Set edited object

@@ -17,7 +17,7 @@ namespace Kopernicus
             public enum Modes : int
             {
                 AtmosphereSFX,
-                CelestialBody,
+                CelestialBodyEditor,
                 PQSEditor,
                 PlanetSelector,
                 OrbitEditor,
@@ -33,13 +33,13 @@ namespace Kopernicus
             public static Modes mode = Modes.None;
 
             // Curently edited body
-            public static CelestialBody curentBody;
-            public static string currentName = "";
+            public static CelestialBody currentBody;
+            public static string currentName = "No Planet selected!";
 
             // Return an OnGUI()-Window.
             public static Rect Render(Rect rect, string title)
             {
-                return GUI.Window(1, rect, RenderWindow, title);
+                return GUI.Window(954225, rect, RenderWindow, title);
             }
 
             // Scroll positions
@@ -58,7 +58,7 @@ namespace Kopernicus
                     mode = Modes.AtmosphereSFX;
 
                 if (GUI.Button(new Rect(20, 40, 200, 20), "CB Editor"))
-                    mode = Modes.CelestialBody;
+                    mode = Modes.CelestialBodyEditor;
 
                 if (GUI.Button(new Rect(20, 70, 200, 20), "PQS Editor"))
                     mode = Modes.PQSEditor;
@@ -74,7 +74,7 @@ namespace Kopernicus
                 exportScaled = GUI.Toggle(new Rect(240, 190, 300, 20), exportScaled, "Export?");
                 if (GUI.Button(new Rect(20, 190, 200, 20), "ScaledSpace updater"))
                 {
-                    Utility.UpdateScaledMesh(curentBody.scaledBody, curentBody.pqsController, curentBody, Body.ScaledSpaceCacheDirectory, "", exportScaled, false);
+                    Utility.UpdateScaledMesh(currentBody.scaledBody, currentBody.pqsController, currentBody, Body.ScaledSpaceCacheDirectory, "", exportScaled, false);
                 }
 
                 if (GUI.Button(new Rect(20, 220, 200, 20), "Ocean Tools"))

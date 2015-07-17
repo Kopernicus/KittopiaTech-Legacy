@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using System.Reflection;
 using KSP.IO;
+using Kopernicus.UI;
 
 namespace PFUtilityAddon
 {

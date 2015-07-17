@@ -31,7 +31,7 @@ namespace Kopernicus
                         if (GUI.Button(new Rect(20, offset, 200, 20), body.name))
                         {
                             PlanetUI.currentName = body.name;
-                            PlanetUI.curentBody = body;
+                            PlanetUI.currentBody = body;
                         }
                         offset += 30;
                     }
