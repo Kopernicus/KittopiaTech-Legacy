@@ -53,7 +53,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Configuration_IO.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="UI\PlanetSelector.cs" />
     <Compile Include="UI\LandClassModifier.cs" />
@@ -68,7 +67,6 @@
     <Compile Include="GuiUtils.cs" />
     <Compile Include="ButtonDef.cs" />
     <Compile Include="UtilityComponents.cs" />
-    <Compile Include="HazardousOcean_Controller_Module.cs" />
     <Compile Include="Particle_controller_module.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

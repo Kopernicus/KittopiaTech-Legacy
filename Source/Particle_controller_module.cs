@@ -35,7 +35,7 @@ namespace PFUtilityAddon
 			
 			ParticleRender.material = new Material( Shader.Find("Particles/Alpha Blended") );
 			
-			if( Utils.FileExists( "GameData/KittopiaSpace/Textures/"+PlanetName+"/Particle.png" ) )
+			if( System.IO.File.Exists( "GameData/KittopiaSpace/Textures/"+PlanetName+"/Particle.png" ) )
 			{
 				ParticleRender.material.mainTexture = Utils.LoadTexture( "GameData/KittopiaSpace/Textures/"+PlanetName+"/Particle.png" );
 			}

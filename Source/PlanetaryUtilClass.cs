@@ -366,7 +366,7 @@ namespace PFUtilityAddon
 			return RingObject;
 		}
 		
-		//Hazardous Oceans.
+		/*Hazardous Oceans.
 		public static void AddHazardOceanModule( string Planet, double maxDist, float HeatRate )
 		{
 			GameObject DetectorGOB;
@@ -383,7 +383,7 @@ namespace PFUtilityAddon
 			
 			LavaDetector LavaModule = (LavaDetector)DetectorGOB.GetComponent( typeof(LavaDetector) );
 			LavaModule.AddLavaPlanet( Planet, maxDist, HeatRate );
-		}
+		}*/
 		
 		//ParticleEmitterTest
 		public static void AddParticleEmitter( string Planet, string Target, float speed, float ratemin, float ratemax, float lifemin, float lifemax, float sizemin, float sizemax, float growrate, Color[] ColourArray , Vector3 ParticleRandVelocity )

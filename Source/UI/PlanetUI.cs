@@ -73,9 +73,7 @@ namespace Kopernicus
 
                 exportScaled = GUI.Toggle(new Rect(240, 190, 300, 20), exportScaled, "Export?");
                 if (GUI.Button(new Rect(20, 190, 200, 20), "ScaledSpace updater"))
-                {
-                    Utility.UpdateScaledMesh(currentBody.scaledBody, currentBody.pqsController, currentBody, Body.ScaledSpaceCacheDirectory, "", exportScaled, false);
-                }
+                    Utils.UpdateScaledMesh(currentBody.scaledBody, currentBody.pqsController, currentBody, Body.ScaledSpaceCacheDirectory, "", exportScaled, false);
 
                 if (GUI.Button(new Rect(20, 220, 200, 20), "Ocean Tools"))
                     mode = Modes.Ocean;

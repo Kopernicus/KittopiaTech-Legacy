@@ -1,4 +1,7 @@
-//This code is copyright Kragrathea with all rights reserved. Used with permission
+/*=======================================================================================================*\
+ * This code is partitially by Kragrathea (GPL) and by the Kopernicus-Team (LGPL). Used with permission. *
+\*=======================================================================================================*/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,126 +17,50 @@ namespace Kopernicus
 {
     namespace UI
     {
-        public class Utils
+        // Collection of Utillity-functions
+        public class Utils : Kopernicus.Utility
         {
-            private static GameObject _localSpace;
-
-
-            public static GameObject LocalSpace
-            {
-                get
-                {
-                    if (_localSpace == null)
-                        _localSpace = GameObject.Find("localSpace");
-                    return (_localSpace);
-                }
-            }
-
-
+            /// <summary>
+            /// Returns the LocalSpace GameObject for a Body
+            /// </summary>
+            /// <param name="name">The name of the Body</param>
+            /// <returns>The LocalSpace GameObject of the Body</returns>
             public static GameObject FindLocal(string name)
             {
-                try
-                {
-                    return (LocalSpace.transform.FindChild(name).gameObject);
-                }
-                catch
-                {
-                }
-                return null;
+                if (LocalSpace.transform.FindChild(name) != null)
+                    return LocalSpace.transform.FindChild(name).gameObject;
+                else
+                    return null;
             }
 
-
+            /// <summary>
+            /// Returns the ScaledSpace GameObject for a Body
+            /// </summary>
+            /// <param name="name">The name of the Body</param>
+            /// <returns>The ScaledSpace GameObject of the Body</returns>
             public static GameObject FindScaled(string name)
             {
-                try
-                {
-                    return (ScaledSpace.Instance.transform.FindChild(name).gameObject);
-                }
-                catch
-                {
-                }
-
-
-                return null;
+                if (ScaledSpace.Instance.transform.FindChild(name) != null)
+                    return ScaledSpace.Instance.transform.FindChild(name).gameObject;
+                else
+                    return null;
             }
 
-
+            /// <summary>
+            /// Returns the CelestialBody Component for a Body
+            /// </summary>
+            /// <param name="name">The name of the Body</param>
+            /// <returns>The CelestialBody Component of the body</returns>
             public static CelestialBody FindCB(string name)
             {
-                try
-                {
-                    return (FindLocal(name).GetComponent<CelestialBody>());
-                }
-                catch
-                {
-                }
-
-
-                return null;
+                return PSystemManager.Instance.localBodies.Find(b => b.name == name);
             }
 
-            /*public static PQS FindPQS( string name )
-            {
-                foreach( PSystemBody body in PlanetToolsUiController.Templates )
-                {
-                    foreach( PQS pqs in Utils.FindLocal(body.celestialBody.name).GetComponentsInChildren(typeof( PQS )) )
-                    {
-                        if( pqs.gameObject.name == name )
-                        {
-                            return pqs;
-                        }
-                    }
-                }
-			
-                return null;
-            }*/
-
-            private static Texture2D _defaultTexture = null;
-            public static Texture2D defaultTexture
-            {
-                get
-                {
-                    if (_defaultTexture == null)
-                        _defaultTexture = LoadTexture("PFUtilityAddon.Resources.ringTex.png", true);
-                    return _defaultTexture;
-                }
-            }
-
-
-            public static Texture2D LoadTexture(string name, bool embedded = false)
-            {
-                byte[] textureData = null;
-                if (!embedded)
-                {
-                    if (!File.Exists(name))
-                        return defaultTexture;
-                    textureData = File.ReadAllBytes(name);
-                }
-                else
-                {
-                    System.Reflection.Assembly myAssembly = System.Reflection.Assembly.GetExecutingAssembly();
-                    Stream myStream = myAssembly.GetManifestResourceStream(name);
-                    var br = new BinaryReader(myStream);
-                    textureData = br.ReadBytes((int)myStream.Length);
-                }
-                var bytes = textureData.Skip(16).Take(4);
-                ulong wid = bytes.Aggregate<byte, ulong>(0, (current, b) => (current * 0x100) + b);
-
-
-                bytes = textureData.Skip(16 + 4).Take(4);
-                ulong hei = bytes.Aggregate<byte, ulong>(0, (current, b) => (current * 0x100) + b);
-
-
-                //Console.WriteLine("Loading Texture:"+name+"("+wid+"x"+hei+")");
-
-                //var texture = new Texture2D((int)wid, (int)hei, TextureFormat.ARGB32, true);
-                var texture = new Texture2D(4, 4, TextureFormat.ARGB32, true);
-                texture.LoadImage(textureData);
-
-
-                return texture;
-            }
-
+            /// <summary>
+            /// Loads a Texture from GameDatabase or from the Game-Assets
+            /// </summary>
+            /// <param name="path">The GameData-relative path of the Texture</param>
+            /// <returns>The loaded Texture</returns>
             public static Texture2D LoadTexture(string path)
             {
                 Texture2DParser parser = new Texture2DParser();
@@ -141,107 +68,16 @@ namespace Kopernicus
                 return parser.value;
             }
 
-            // This function was taken straight from RSS. Credit goes to NathanKell.
-            public static bool LoadTexture(string path, ref Texture2D map, bool compress, bool upload, bool unreadable)
+            /// <summary>
+            /// Updates the Atmosphere-Ramp in ScaledSpace for a body
+            /// </summary>
+            /// <param name="name">The name of the Body</param>
+            /// <param name="texture">The new Atmosphere-Ramp</param>
+            public static void UpdateAtmosphereRamp(string name, Texture2D texture)
             {
-                map = null;
-                //MonoBehaviour.print("LoadTextureRSS: Searching for texture " + path);
-                // first try in GDB
-                Texture2D[] textures = Resources.FindObjectsOfTypeAll(typeof(Texture2D)) as Texture2D[];
-                foreach (Texture2D tex in textures)
-                {
-                    if (tex.name.Equals(path))
-                    {
-                        map = tex;
-                        break;
-                    }
-                }
-                if ((object)map == null)
-                {
-                    //MonoBehaviour.print("LoadTextureRSS: Loading local texture " + path);
-                    path = KSPUtil.ApplicationRootPath + path;
-                    if (File.Exists(path))
-                    {
-                        try
-                        {
-                            map = new Texture2D(4, 4, TextureFormat.RGB24, true);
-                            if (path.ToLower().Contains(".dds"))
-                            {
-                                GameDatabase.TextureInfo tInfo = LoadDDS(path, !unreadable, path.ToLower().Contains("normal"), -1, upload);
-                                map = tInfo.texture;
-                            }
-                            else
-                            {
-                                map.LoadImage(System.IO.File.ReadAllBytes(path));
-                                if (compress)
-                                    map.Compress(true);
-                                if (upload)
-                                    map.Apply(true, unreadable);
-                            }
-                            return true;
-                        }
-                        catch (Exception e)
-                        {
-                            Debug.Log("LoadTextureRSS: Failed to load " + path + " with exception " + e.Message);
-                        }
-                    }
-                    else
-                        MonoBehaviour.print("LoadTextureRSS: Texture does not exist! " + path);
-                }
-                return false;
-            }
-
-            // Made this "wrapper function", so DDSLoader would be loaded only if this function was called.
-            // Still hacky; if anyone knows a better solution, please let me know.
-            private static GameDatabase.TextureInfo LoadDDS(string path, bool keepReadable = false, bool asNormal = false, int mipmapBias = -1, bool apply = true)
-            {
-                return null;// DDSLoader.DatabaseLoaderTexture_DDS.LoadDDS(path, keepReadable, asNormal, mipmapBias, apply);
-            }
-
-            public static bool FileExists(string path)
-            {
-                return (File.Exists(path));
-            }
-
-            public static void LoadScaledPlanetAtmoShader(string Name, Texture2D Tex)
-            {
-                GameObject ScaledPlanet = Utils.FindScaled(Name);
-                MeshRenderer SmallPlanetMeshRenderer = (MeshRenderer)ScaledPlanet.GetComponentInChildren((typeof(MeshRenderer)));
-                SmallPlanetMeshRenderer.material.SetTexture("_rimColorRamp", Tex);
-            }
-
-            /*
-            public static void ExportPlanetMaps( string TemplateName, Texture2D[] texture )
-            {
-                Directory.CreateDirectory("GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName);
-
-                byte[] ExportColourMap = texture[0].EncodeToPNG();
-                File.WriteAllBytes("GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/colourMap.png", ExportColourMap);
-
-                ExportColourMap = texture[1].EncodeToPNG();
-                File.WriteAllBytes("GameData/KittopiaSpace/Textures/ScaledSpace/" + TemplateName + "/bumpMap.png", ExportColourMap);
-            }
-             * */
-
-            public static void CreateTextFile(string dir, string io)
-            {
-                if (File.Exists(dir))
-                {
-                    File.WriteAllText(dir, io);
-                }
-                else
-                {
-                    File.Create(dir);
-                    File.WriteAllText(dir, io);
-                }
-            }
-
-            public static Color ParseColour(string input)
-            {
-                string tempColourString = input;
-                tempColourString = tempColourString.Replace("RGBA(", "");
-                tempColourString = tempColourString.Replace(")", "");
-                return ConfigNode.ParseColor(tempColourString);
+                GameObject scaledVersion = FindScaled(name);
+                MeshRenderer meshRenderer = scaledVersion.GetComponentInChildren<MeshRenderer>();
+                meshRenderer.material.SetTexture("_rimColorRamp", texture);
             }
 
             // Credit goes to Kragrathea.
