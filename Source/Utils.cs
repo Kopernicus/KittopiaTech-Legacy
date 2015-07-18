@@ -137,10 +137,6 @@ namespace Kopernicus
                 // Start the OrbitDriver
                 if (cBody.orbitDriver != null)
                     typeof(OrbitDriver).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(cBody.orbitDriver, null);
-                
-                // Start the OrbitRenderer
-                foreach (OrbitRenderer r in Resources.FindObjectsOfTypeAll<OrbitRenderer>())
-                    Debug.Log(r + " - " + r.celestialBody);
 
                 // Fix and start the OrbitRenderer
                 if (Resources.FindObjectsOfTypeAll<OrbitRenderer>().Where(r => r.name == cBody.name).Count() == 1)
