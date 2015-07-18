@@ -157,7 +157,7 @@ namespace Kopernicus
                     offset = 35;
 
                     // Modify the Scroll-Size
-                    Type[] supportedTypes = new Type[] { typeof(string), typeof(bool), typeof(int), typeof(float), typeof(double), typeof(Color), typeof(Vector3), typeof(PQSLandControl.LandClass[]), typeof(PQSMod_VertexPlanet.LandClass[]), typeof(MapSO), typeof(PQS), typeof(PQSMod_VertexPlanet.SimplexWrapper), typeof(PQSMod_VertexPlanet.NoiseModWrapper) };
+                    Type[] supportedTypes = new Type[] { typeof(string), typeof(bool), typeof(int), typeof(float), typeof(double), typeof(Color), typeof(Vector3), typeof(PQSLandControl.LandClass[]), typeof(PQSMod_VertexPlanet.LandClass[]), typeof(MapSO), typeof(PQS), typeof(PQSMod_VertexPlanet.SimplexWrapper), typeof(PQSMod_VertexPlanet.NoiseModWrapper), typeof(PQSLandControl.LerpRange) };
                     int scrollSize = obj.GetType().GetFields().Where(f => supportedTypes.Contains(f.FieldType)).Count() * 25;
 
                     // Render the Scrollbar
@@ -203,6 +203,14 @@ namespace Kopernicus
                                 GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
                                 if (GUI.Button(new Rect(200, offset, 50, 20), "Edit"))
                                     ColorPicker.SetEditedObject(key, (Color)key.GetValue(obj), obj);
+
+                                offset += 25;
+                            }
+                            else if (key.FieldType == typeof(PQSLandControl.LerpRange))
+                            {
+                                GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                                if (GUI.Button(new Rect(200, offset, 50, 20), "Edit"))
+                                    LerpRange.SetEditedObject((PQSLandControl.LerpRange)key.GetValue(obj));
 
                                 offset += 25;
                             }

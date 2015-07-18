@@ -19,6 +19,7 @@ namespace Kopernicus
             public bool isLandClass = false;
             public bool isSimplexWrapper = false;
             public bool isNoiseModWrapper = false;
+            public bool isLerpRange = false;
 
             // Instance memeber
             public static UIController Instance { get; private set; }
@@ -29,6 +30,7 @@ namespace Kopernicus
             Rect landClassWindow = new Rect(420, 400, 420, 250);
             Rect simplexWrapperWindow = new Rect(420, 20, 420, 190);
             Rect noiseModWrapperWindow = new Rect(420, 20, 420, 170);
+            Rect lerpRangeWindow = new Rect(420, 20, 420, 260);
 
             // OnGUI() => Render the planetary UI
             public void OnGUI()
@@ -47,6 +49,9 @@ namespace Kopernicus
 
                 if (isNoiseModWrapper)
                     noiseModWrapperWindow = NoiseModWrapper.Render(noiseModWrapperWindow, "NoiseMod Wrapper");
+
+                if (isLerpRange)
+                    lerpRangeWindow = LerpRange.Render(lerpRangeWindow, "LerpRange");
             }
 
             // Awake() => set our Instance member
