@@ -80,29 +80,111 @@ namespace Kopernicus
                 meshRenderer.material.SetTexture("_rimColorRamp", texture);
             }
 
-            // Credit goes to Kragrathea.
-            public static Texture2D BumpToNormalMap(Texture2D source, float strength)
+            /*===============================================*\
+             * Kopernicus Code! Modified to work at runtime! *
+            \*===============================================*/
+            public static void UpdateScaledMesh(GameObject scaledVersion, PQS pqs, CelestialBody body, string path, string cacheFile, bool exportBin, bool useSpherical)
             {
-                strength = Mathf.Clamp(strength, 0.0F, 10.0F);
-                var result = new Texture2D(source.width, source.height, TextureFormat.ARGB32, true);
-                for (int by = 0; by < result.height; by++)
+                const double rJool = 6000000.0;
+                const float rScaled = 1000.0f;
+
+                // Compute scale between Jool and this body
+                float scale = (float)(body.Radius / rJool);
+                scaledVersion.transform.localScale = new Vector3(scale, scale, scale);
+
+                Mesh scaledMesh;
+                // Get the Paths for ScaledSpace
+                string CacheDirectory = KSPUtil.ApplicationRootPath + path;
+                string CacheFile = CacheDirectory + "/" + body.name + ".bin";
+
+                // Write the Mesh
+                Directory.CreateDirectory(CacheDirectory);
+                Logger.Active.Log("[KittopiaTech]: Generating scaled space mesh: " + body.name);
+                scaledMesh = Utils.ComputeScaledSpaceMesh(body, useSpherical ? null : pqs);
+                Utility.RecalculateTangents(scaledMesh);
+                scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledMesh;
+                if (exportBin)
+                    Utility.SerializeMesh(scaledMesh, CacheFile);
+
+                // Apply mesh to the body
+                SphereCollider collider = scaledVersion.GetComponent<SphereCollider>();
+                if (collider != null) collider.radius = rScaled;
+                if (pqs != null && scaledVersion.gameObject != null && scaledVersion.gameObject.transform != null)
                 {
-                    for (var bx = 0; bx < result.width; bx++)
-                    {
-                        var xLeft = source.GetPixel(bx - 1, by).grayscale * strength;
-                        var xRight = source.GetPixel(bx + 1, by).grayscale * strength;
-                        var yUp = source.GetPixel(bx, by - 1).grayscale * strength;
-                        var yDown = source.GetPixel(bx, by + 1).grayscale * strength;
-                        var xDelta = ((xLeft - xRight) + 1) * 0.5f;
-                        var yDelta = ((yUp - yDown) + 1) * 0.5f;
-                        result.SetPixel(bx, by, new Color(xDelta, yDelta, 1.0f, xDelta));
-                    }
+                    scaledVersion.gameObject.transform.localScale = Vector3.one * (float)(pqs.radius / rJool);
                 }
-                result.Apply();
-                return result;
             }
 
+            // Generate the scaled space mesh using PQS (all results use scale of 1)
+            public static Mesh ComputeScaledSpaceMesh(CelestialBody body, PQS pqs)
+            {
+                // We need to get the body for Jool (to steal it's mesh)
+                const double rScaledJool = 1000.0f;
+                double rMetersToScaledUnits = (float)(rScaledJool / body.Radius);
+
+                // Generate a duplicate of the Jool mesh
+                Mesh mesh = Utility.DuplicateMesh(Utility.ReferenceGeosphere());
+
+                // If this body has a PQS, we can create a more detailed object
+                if (pqs != null)
+                {
+                    // first we enable all maps
+                    OnDemand.OnDemandStorage.EnableBody(body.bodyName);
+
+                    // Balcklisted Mods
+                    Type[] blacklist = new Type[] { typeof(PQSMod_MapDecal), typeof(OnDemand.PQSMod_OnDemandHandler) };
+
+                    // Deactivate blacklisted Mods
+                    foreach (PQSMod mod in pqs.GetComponentsInChildren<PQSMod>(true).Where(m => blacklist.Contains(m.GetType())))
+                        mod.modEnabled = false;
+
+                    // Find the PQS mods
+                    IEnumerable<PQSMod> mods = pqs.GetComponentsInChildren<PQSMod>(true).Where(m => m.modEnabled);
+
+                    // If we were able to find PQS mods
+                    if (mods.Count() > 0)
+                    {
+                        // Generate the PQS modifications
+                        Vector3[] vertices = mesh.vertices;
+                        for (int i = 0; i < mesh.vertexCount; i++)
+                        {
+                            // Get the UV coordinate of this vertex
+                            Vector2 uv = mesh.uv[i];
+
+                            // Since this is a geosphere, normalizing the vertex gives the direction from center center
+                            Vector3 direction = vertices[i];
+                            direction.Normalize();
+
+                            // Build the vertex data object for the PQS mods
+                            PQS.VertexBuildData vertex = new PQS.VertexBuildData();
+                            vertex.directionFromCenter = direction;
+                            vertex.vertHeight = body.Radius;
+                            vertex.u = uv.x;
+                            vertex.v = uv.y;
+
+                            // Build from the PQS
+                            foreach (PQSMod mod in mods)
+                            {
+                                mod.OnVertexBuild(vertex); // Why in heaven are there mods who modify height in OnVertexBuild() rather than OnVertexBuildHeight()?!?!
+                                mod.OnVertexBuildHeight(vertex);
+                            }
+
+                            // Check for sea level
+                            if (body.ocean && vertex.vertHeight < body.Radius)
+                                vertex.vertHeight = body.Radius;
+
+                            // Adjust the displacement
+                            vertices[i] = direction * (float)(vertex.vertHeight * rMetersToScaledUnits);
+                        }
+                        mesh.vertices = vertices;
+                        mesh.RecalculateNormals();
+                        mesh.RecalculateBounds();
+                    }
+                }
+
+                // Return the generated scaled space mesh
+                return mesh;
+            }
         }
     }
-
 }
