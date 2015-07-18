@@ -30,6 +30,9 @@ namespace Kopernicus
             public static PQS currentPQS;
             public static PQSMod currentPQSMod;
 
+            // PQSMod Stuff
+            private static string pqsModSphereName = "";
+
             // Return an OnGUI()-Window.
             public static void Render()
             {
@@ -79,7 +82,16 @@ namespace Kopernicus
                 {
                     if (GUI.Button(new Rect(20, offset, 350, 20), "" + pqs))
                     {
+                        // Select the PQS
                         currentPQS = pqs;
+
+                        // Set the current Sphere-Name
+                        if (pqsModSphereName == "" && currentPQS.parentSphere != null)
+                            pqsModSphereName = currentPQS.parentSphere.name;
+                        else
+                            pqsModSphereName = "";
+
+                        // Set the Mode
                         mode = Modes.PQS;
                     }
                     offset += 25;
@@ -91,7 +103,16 @@ namespace Kopernicus
                 {
                     if (GUI.Button(new Rect(20, offset, 350, 20), pqsMod.name + " (" + pqsMod.GetType().Name + ")"))
                     {
+                        // Select the PQSMod
                         currentPQSMod = pqsMod;
+                        
+                        // Set the current Sphere-Name
+                        if (pqsModSphereName == "" && currentPQSMod.sphere != null)
+                            pqsModSphereName = currentPQSMod.sphere.name;
+                        else
+                            pqsModSphereName = "";
+
+                        // Set the Mode
                         mode = Modes.PQSMod;
                     } 
                     offset += 25;
@@ -117,7 +138,7 @@ namespace Kopernicus
                 int scrollOffset = currentPQSMod.GetType().GetFields().Where(f => supportedTypes.Contains(f.FieldType)).Count() * 25;
 
                 // Render the Scrollbar
-                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollOffset + 40));
+                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollOffset + 90));
 
                 // Display the Fields of the PQSMod
                 foreach (FieldInfo key in currentPQSMod.GetType().GetFields())
@@ -225,67 +246,30 @@ namespace Kopernicus
                 }
                 offset += 25;
 
-                /*
-                //PQS Variable Selector.
+                // PQS Variable Selector.
                 GUI.Label(new Rect(20, offset, 178, 20), "ParentSphere");
-                if (GUI.Button(new Rect(150, offset, 50, 20), "Edit"))
-                {
-                    UIController.Instance.isPQS = true;
-                }
-                if (GUI.Button(new Rect(200, offset, 80, 20), "Save Edit"))
-                {
-                    currentPQSMod.transform.parent = PQSSelector.sphere.transform;
-                }
-
+                pqsModSphereName = GUI.TextField(new Rect(200, offset, 170, 20), pqsModSphereName);
                 offset += 25;
-                 * */
 
+                // Apply the PQS-Changes
+                if (GUI.Button(new Rect(200, offset, 80, 20), "Apply"))
+                {
+                    // Get the new PQS and reparent the Mod
+                    PQS pqs = Utils.FindLocal(pqsModSphereName.Replace("Ocean", "")).GetComponentsInChildren<PQS>(true).FirstOrDefault(s => s.name == pqsModSphereName);
+                    currentPQSMod.sphere = pqs;
+                    currentPQSMod.transform.parent = pqs.transform;
+                }
+                offset += 25;
+
+                // Rebuild the PQS-Sphere
                 if (GUI.Button(new Rect(20, offset, 200, 20), "Rebuild"))
-                {
                     currentPQSMod.RebuildSphere();
-                }
-
-                GUI.EndScrollView();
-            }
-            
-            // PQS Adder
-            // GUI for adding more PQSMods to a body.
-            private static void AddMod()
-            {
-                // Get all PQSMod-Types
-                List<Type> types = Assembly.GetAssembly(typeof(PQSMod)).GetTypes().Where(type => type.IsSubclassOf(typeof(PQSMod))).ToList();
-                types.AddRange(AssemblyLoader.loadedAssemblies.SelectMany(a => a.assembly.GetTypes()).Where(type => type.IsSubclassOf(typeof(PQSMod))));
-
-                // Create the Height for the Scrollbar
-                int scrollOffset = (types.Count() + 1) * 25;
-
-                // Render-Stuff
-                int offset = 280;
-
-                // Render the Scrollbar
-                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollOffset));
-
-                // Go through all Types and display them		
-                foreach (Type type in types)
-                {
-                    if (GUI.Button(new Rect(20, offset, 350, 20), "" + type.Name))
-                    {
-                        // Hack^6
-                        GameObject pqsModObject = new GameObject(type.Name);
-                        pqsModObject.transform.parent = PlanetUI.currentBody.pqsController.transform;
-                        PQSMod mod = pqsModObject.AddComponent(type) as PQSMod;
-                        mod.sphere = PlanetUI.currentBody.pqsController;
-
-                        // Revert to the List
-                        mode = Modes.List;
-                    } 
-                    offset += 25;
-                }
 
                 // Finish
                 GUI.EndScrollView();
             }
 
+            // GUI for modifing a PQS-Sphere
             private static void PQS()
             {
                 // Render Stuff
@@ -383,18 +367,20 @@ namespace Kopernicus
                     }
                     catch { }
                 }
-                /*
+
                 // PQS Variable Selector.
-                GUI.Label(new Rect(20, offset, 178, 20), "Parent Sphere");
-                if (GUI.Button(new Rect(150, offset, 50, 20), "Edit"))
+                GUI.Label(new Rect(20, offset, 178, 20), "ParentSphere");
+                pqsModSphereName = GUI.TextField(new Rect(200, offset, 170, 20), pqsModSphereName);
+                offset += 25;
+
+                // Apply the PQS-Changes
+                if (GUI.Button(new Rect(200, offset, 80, 20), "Apply"))
                 {
-                                
+                    // Get the new PQS and reparent the Mod
+                    PQS pqs = Utils.FindLocal(pqsModSphereName.Replace("Ocean", "")).GetComponentsInChildren<PQS>(true).FirstOrDefault(s => s.name == pqsModSphereName);
+                    currentPQS.parentSphere = pqs;
+                    currentPQS.transform.parent = pqs.transform;
                 }
-                if (GUI.Button(new Rect(200, offset, 80, 20), "Save Edit"))
-                {
-                                
-                }
-                 * */
                 offset += 25;
 
                 if (GUI.Button(new Rect(20, offset, 200, 20), "Rebuild"))
@@ -402,6 +388,43 @@ namespace Kopernicus
                     currentPQS.RebuildSphere();
                 }
 
+                GUI.EndScrollView();
+            }
+
+            // GUI for adding more PQSMods to a body.
+            private static void AddMod()
+            {
+                // Get all PQSMod-Types
+                List<Type> types = Assembly.GetAssembly(typeof(PQSMod)).GetTypes().Where(type => type.IsSubclassOf(typeof(PQSMod))).ToList();
+                types.AddRange(AssemblyLoader.loadedAssemblies.SelectMany(a => a.assembly.GetTypes()).Where(type => type.IsSubclassOf(typeof(PQSMod))));
+
+                // Create the Height for the Scrollbar
+                int scrollOffset = (types.Count() + 1) * 25;
+
+                // Render-Stuff
+                int offset = 280;
+
+                // Render the Scrollbar
+                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollOffset));
+
+                // Go through all Types and display them		
+                foreach (Type type in types)
+                {
+                    if (GUI.Button(new Rect(20, offset, 350, 20), "" + type.Name))
+                    {
+                        // Hack^6
+                        GameObject pqsModObject = new GameObject(type.Name);
+                        pqsModObject.transform.parent = PlanetUI.currentBody.pqsController.transform;
+                        PQSMod mod = pqsModObject.AddComponent(type) as PQSMod;
+                        mod.sphere = PlanetUI.currentBody.pqsController;
+
+                        // Revert to the List
+                        mode = Modes.List;
+                    }
+                    offset += 25;
+                }
+
+                // Finish
                 GUI.EndScrollView();
             }
         }
