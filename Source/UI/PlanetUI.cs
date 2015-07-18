@@ -90,7 +90,8 @@ namespace Kopernicus
                     mode = Modes.Rings;
 
                 if (GUI.Button(new Rect(20, 310, 200, 20), "HACK: Instantiate " + currentName))
-                    ScreenMessages.PostScreenMessage("Instantiation Tools deactivated!", 5f, ScreenMessageStyle.UPPER_CENTER);
+                    Utils.Instantiate(Utils.FindBody(PSystemManager.Instance.systemPrefab.rootBody, currentName), "Test" + new System.Random().Next(1000));
+                    //ScreenMessages.PostScreenMessage("Instantiation Tools deactivated!", 5f, ScreenMessageStyle.UPPER_CENTER);
 
                 if (GUI.Button(new Rect(20, 340, 200, 20), "Planetary Particles"))
                     mode = Modes.Particles;

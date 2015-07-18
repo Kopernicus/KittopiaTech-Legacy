@@ -80,6 +80,88 @@ namespace Kopernicus
                 meshRenderer.material.SetTexture("_rimColorRamp", texture);
             }
 
+            /// <summary>
+            /// [HACK] Spawn a new body from the PSystem-Prefab
+            /// </summary>
+            /// <param name="template">The Template-Body</param>
+            /// <param name="name">The new name of the body</param>
+            public static void Instantiate(PSystemBody template, string name)
+            {
+                // Spawn Message
+                ScreenMessages.PostScreenMessage("Creating new Planet " + name + ", based on " + template.name + "!", 5f, ScreenMessageStyle.UPPER_CENTER);
+                ScreenMessages.PostScreenMessage("This tool is meant to be used by modders, it can break mods!", 5f, ScreenMessageStyle.UPPER_CENTER);
+
+                // Clone the Template
+                GameObject bodyObject = MonoBehaviour.Instantiate(template.gameObject) as GameObject;
+                PSystemBody body = bodyObject.GetComponent<PSystemBody>();
+
+                // Alter it's name and flight-Number
+                body.name = name;
+                body.celestialBody.bodyName = name;
+                body.celestialBody.transform.name = name;
+                body.celestialBody.bodyTransform.name = name;
+                body.scaledVersion.name = name;
+                if (body.pqsVersion != null)
+                {
+                    body.pqsVersion.name = name;
+                    body.pqsVersion.gameObject.name = name;
+                    body.pqsVersion.transform.name = name;
+                    foreach (PQS p in body.pqsVersion.GetComponentsInChildren(typeof(PQS), true))
+                        p.name = p.name.Replace(template.celestialBody.bodyName, name);
+                }
+                body.flightGlobalsIndex = PSystemManager.Instance.localBodies.Last().flightGlobalsIndex + 1;
+
+                // Change it's Orbit
+                body.orbitDriver.orbit = Orbit.CreateRandomOrbitAround(PSystemManager.Instance.localBodies.First(), 4000000000, 60000000000);
+                //body.orbitRenderer.driver = body.orbitDriver;
+                body.orbitRenderer.orbitColor = body.orbitDriver.orbitColor = Color.red;
+                body.orbitDriver.referenceBody = PSystemManager.Instance.localBodies.First();
+                body.orbitDriver.orbit.referenceBody = body.orbitDriver.referenceBody;
+                body.orbitRenderer.lowerCamVsSmaRatio = template.orbitRenderer.lowerCamVsSmaRatio;
+                body.orbitRenderer.upperCamVsSmaRatio = template.orbitRenderer.upperCamVsSmaRatio;
+
+                // Clear it's childs
+                body.children = new List<PSystemBody>();
+
+                // Hack^6 - Hack the PSystemManager to spawn this thing
+                MethodInfo spawnBody = typeof(PSystemManager).GetMethod("SpawnBody", BindingFlags.NonPublic | BindingFlags.Instance);
+                spawnBody.Invoke(PSystemManager.Instance, new object[] { PSystemManager.Instance.localBodies.First(), body });
+                CelestialBody cBody = PSystemManager.Instance.localBodies.Last();
+
+                // Add the body to FlightGlobals.Bodies
+                FlightGlobals.fetch.bodies.Add(cBody);
+
+                // Start the CelestialBody
+                typeof(CelestialBody).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(cBody, null);
+                
+                // Start the OrbitDriver
+                if (cBody.orbitDriver != null)
+                    typeof(OrbitDriver).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(cBody.orbitDriver, null);
+                
+                // Start the OrbitRenderer
+                foreach (OrbitRenderer r in Resources.FindObjectsOfTypeAll<OrbitRenderer>())
+                    Debug.Log(r + " - " + r.celestialBody);
+
+                // Fix and start the OrbitRenderer
+                if (Resources.FindObjectsOfTypeAll<OrbitRenderer>().Where(r => r.name == cBody.name).Count() == 1)
+                {
+                    OrbitRenderer renderer = Resources.FindObjectsOfTypeAll<OrbitRenderer>().Where(r => r.name == cBody.name).First();
+                    renderer.driver = cBody.orbitDriver;
+                    renderer.celestialBody = cBody;
+                    typeof(OrbitRenderer).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(renderer, null);
+                }
+
+                // Force the start of the PQS-Spheres
+                foreach (PQS p in FindLocal(cBody.name).GetComponentsInChildren<PQS>(true))
+                    p.ForceStart();
+
+                // Fix the ScaledVersion
+                if (cBody.scaledBody.GetComponents<ScaledSpaceFader>().Length == 1)
+                    cBody.scaledBody.GetComponent<ScaledSpaceFader>().celestialBody = cBody;
+                if (cBody.scaledBody.GetComponents<AtmosphereFromGround>().Length == 1)
+                    cBody.scaledBody.GetComponent<AtmosphereFromGround>().planet = cBody;
+            }
+
             /*===============================================*\
              * Kopernicus Code! Modified to work at runtime! *
             \*===============================================*/
