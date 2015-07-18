@@ -138,7 +138,7 @@ namespace Kopernicus
                 int scrollOffset = currentPQSMod.GetType().GetFields().Where(f => supportedTypes.Contains(f.FieldType)).Count() * 25;
 
                 // Render the Scrollbar
-                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollOffset + 90));
+                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollOffset + 115));
 
                 // Display the Fields of the PQSMod
                 foreach (FieldInfo key in currentPQSMod.GetType().GetFields())
@@ -264,6 +264,16 @@ namespace Kopernicus
                 // Rebuild the PQS-Sphere
                 if (GUI.Button(new Rect(20, offset, 200, 20), "Rebuild"))
                     currentPQSMod.RebuildSphere();
+                offset += 25;
+
+                // Remove the PQSMod
+                if (GUI.Button(new Rect(20, offset, 200, 20), "Remove PQSMod"))
+                {
+                    currentPQSMod.sphere = null;
+                    MonoBehaviour.Destroy(currentPQSMod);
+                    currentPQSMod = null;
+                    mode = Modes.List;
+                }
 
                 // Finish
                 GUI.EndScrollView();
@@ -280,7 +290,7 @@ namespace Kopernicus
                 int scrollOffset = currentPQS.GetType().GetFields().Where(f => supportedTypes.Contains(f.FieldType)).Count() * 25;
 
                 // Render the Scrollbar
-                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollOffset + 40));
+                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollOffset + 65));
 
                 // Display the Fields of the PQSMod
                 foreach (FieldInfo key in currentPQS.GetType().GetFields())
