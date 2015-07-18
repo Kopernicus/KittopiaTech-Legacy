@@ -55,6 +55,8 @@ namespace Kopernicus
                 mode = Mode.VertexPlanet;
                 state = State.Select;
                 vertexPlanetClasses = landClassArray;
+                UIController.Instance.isLandClass = true;
+                
             }
 
             // Set edited object
@@ -63,6 +65,14 @@ namespace Kopernicus
                 mode = Mode.LandControl;
                 state = State.Select;
                 landControlClasses = landClassArray;
+                UIController.Instance.isLandClass = true;
+            }
+            public static void SetEditedObject(PQSMod_HeightColorMap.LandClass[] landClassArray)
+            {
+                mode = Mode.HeightColorMap;
+                state = State.Select;
+                heightColorClasses = landClassArray;
+                UIController.Instance.isLandClass = true;
             }
 
             // GUI stuff
@@ -72,7 +82,6 @@ namespace Kopernicus
             {
                 int offset = 30;
                 scrollPosition = GUI.BeginScrollView(new Rect(0, 30, 300, 250), scrollPosition, new Rect(0, 0, 400, 10000));
-
                 if (mode == Mode.LandControl) //PQSLandControl
                 {
                     if (state == State.Select)
@@ -212,6 +221,78 @@ namespace Kopernicus
                         }
                         offset += 30;
                     }
+                }
+                else if (mode == Mode.HeightColorMap)
+                {
+                    if (state == State.Select)
+                    {
+                        foreach (PQSMod_HeightColorMap.LandClass landClass in heightColorClasses)
+                        {
+                            if (GUI.Button(new Rect(20, offset, 200, 20), "" + landClass.name))
+                            {
+                                heightColorClass = landClass;
+                                state = State.Modify;
+                            }
+                            offset += 30;
+                        }
+                    }
+                    if (state == State.Modify)
+                    {
+                        foreach (FieldInfo key in heightColorClass.GetType().GetFields())
+                        {
+                            try
+                            {
+                                System.Object obj = (System.Object)heightColorClass;
+                                if (key.FieldType == typeof(string))
+                                {
+                                    GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
+                                    key.SetValue(obj, GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj)));
+                                    offset += 30;
+                                }
+                                else if (key.FieldType == typeof(bool))
+                                {
+                                    GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
+                                    key.SetValue(obj, GUI.Toggle(new Rect(200, offset, 200, 20), (bool)key.GetValue(obj), "Bool"));
+                                    offset += 30;
+                                }
+                                else if (key.FieldType == typeof(int))
+                                {
+                                    GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
+                                    key.SetValue(obj, Int32.Parse(GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj))));
+                                    offset += 30;
+                                }
+                                else if (key.FieldType == typeof(float))
+                                {
+                                    GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
+                                    key.SetValue(obj, Single.Parse(GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj))));
+                                    offset += 30;
+                                }
+                                else if (key.FieldType == typeof(double))
+                                {
+                                    GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
+                                    key.SetValue(obj, Double.Parse(GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj))));
+                                    offset += 30;
+                                }
+                                else if (key.FieldType == typeof(Color))
+                                {
+                                    GUI.Label(new Rect(20, offset, 100, 20), "" + key.Name);
+                                    if (GUI.Button(new Rect(150, offset, 50, 20), "Edit"))
+                                    {
+                                        Color getColour;
+                                        getColour = (Color)key.GetValue(obj);
+                                        ColorPicker.SetEditedObject(key, getColour, obj);
+                                        UIController.Instance.isColor = true;
+                                    }
+                                    //key.SetValue( obj, (double)StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
+                                    offset += 30;
+                                }
+                            }
+                            catch { }
+                        }
+                    }
+                }
+                {
+
                 }
 
                 offset += 30;

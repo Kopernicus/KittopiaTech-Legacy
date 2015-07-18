@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>DevelopmentBuild\</OutputPath>
+    <OutputPath>..\..\..\KSP Test Install\GameData\KittopiaSpace\plugins\</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -41,11 +41,11 @@
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\System.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\Programme\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>Z:\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\Programme\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>Z:\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="mscorlib">
@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="UI\CelestialBodyEditor.cs" />
+    <Compile Include="UI\NoiseModWrapper.cs" />
     <Compile Include="UI\OrbitEditor.cs" />
     <Compile Include="UI\PlanetSelector.cs" />
     <Compile Include="UI\LandClassModifier.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="UI\Planet_GUI.cs" />
     <Compile Include="UI\PQSEditor.cs" />
     <Compile Include="UI\Rings.cs" />
+    <Compile Include="UI\SimplexWrapper.cs" />
     <Compile Include="UI\UIController.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="PlanetaryUtilClass.cs" />

@@ -17,6 +17,8 @@ namespace Kopernicus
             public bool isGUI = false;
             public bool isColor = false;
             public bool isLandClass = false;
+            public bool isSimplexWrapper = false;
+            public bool isNoiseModWrapper = false;
 
             // Instance memeber
             public static UIController Instance { get; private set; }
@@ -25,6 +27,8 @@ namespace Kopernicus
             Rect mainWindow = new Rect(20, 20, 420, 560);
             Rect colorWindow = new Rect(420, 20, 400, 200);
             Rect landClassWindow = new Rect(420, 400, 400, 400);
+            Rect simplexWrapperWindow = new Rect(420, 20, 400, 400);
+            Rect noiseModWrapperWindow = new Rect(420, 20, 400, 400);
 
             // OnGUI() => Render the planetary UI
             public void OnGUI()
@@ -37,6 +41,12 @@ namespace Kopernicus
 
                 if (isLandClass)
                     landClassWindow = LandClassModifier.Render(landClassWindow, "LandClass Modifier");
+
+                if (isSimplexWrapper)
+                    simplexWrapperWindow = SimplexWrapper.Render(simplexWrapperWindow, "Simplex Wrapper");
+
+                if (isNoiseModWrapper)
+                    noiseModWrapperWindow = NoiseModWrapper.Render(noiseModWrapperWindow, "NoiseMod Wrapper");
             }
 
             // Awake() => set our Instance member
