@@ -71,7 +71,7 @@ namespace Kopernicus
                 IEnumerable<PQSMod> pqsModList = Utils.FindLocal(PlanetUI.currentName).GetComponentsInChildren<PQSMod>(true);
 
                 // Render the scrollbar
-                int scrollSize = ((pqsList.Count() + pqsModList.Count()) * 25) + 90;
+                int scrollSize = ((pqsList.Count() + pqsModList.Count()) * 25) + 20;
                 scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollSize + 25));
 
                 // Display every PQS
@@ -208,7 +208,6 @@ namespace Kopernicus
                                 NoiseModWrapper.SetEditedObject((PQSMod_VertexPlanet.NoiseModWrapper)key.GetValue(obj));
                             offset += 25;
                         }
-
                             /*
                         else if (key.FieldType == typeof(MapSO))
                         {
@@ -218,23 +217,6 @@ namespace Kopernicus
                             {
                                 FileBrowser browser = new FileBrowser(new Rect(420, 400, 400, 400), "Load MapSO", onFileBrowserSelected);
                             }
-                            offset += 25;
-                        }
-                             * */
-                            /*
-                        else if (key.GetValue(obj).GetType() == typeof(PQS))
-                        {
-                            // PQS Variable Selector.
-                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
-                            if (GUI.Button(new Rect(150, offset, 50, 20), "Edit"))
-                            {
-                                
-                            }
-                            if (GUI.Button(new Rect(200, offset, 80, 20), "Save Edit"))
-                            {
-                                
-                            }
-
                             offset += 25;
                         }
                              * */
@@ -265,161 +247,45 @@ namespace Kopernicus
 
                 GUI.EndScrollView();
             }
-
-            private static void onFileBrowserSelected(string s) 
+            
+            // PQS Adder
+            // GUI for adding more PQSMods to a body.
+            private static void AddMod()
             {
+                // Get all PQSMod-Types
+                List<Type> types = Assembly.GetAssembly(typeof(PQSMod)).GetTypes().Where(type => type.IsSubclassOf(typeof(PQSMod))).ToList();
+                types.AddRange(AssemblyLoader.loadedAssemblies.SelectMany(a => a.assembly.GetTypes()).Where(type => type.IsSubclassOf(typeof(PQSMod))));
 
-            }
-            /*
-            //PQS Modder PT3
-            //GUI for modifying a PQS class.
-            private void PQSModderPT3()
-            {
-                ScrollPosition2 = GUI.BeginScrollView(new Rect(20, 280, 380, 250), ScrollPosition2, new Rect(20, 280, 380, 10000));
+                // Create the Height for the Scrollbar
+                int scrollOffset = (types.Count() + 1) * 25;
 
+                // Render-Stuff
                 int offset = 280;
-                foreach (FieldInfo key in pqstoMod.GetType().GetFields())
+
+                // Render the Scrollbar
+                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollOffset));
+
+                // Go through all Types and display them		
+                foreach (Type type in types)
                 {
-                    try
+                    if (GUI.Button(new Rect(20, offset, 350, 20), "" + type.Name))
                     {
-                        System.Object obj = (System.Object)pqstoMod;
-                        if (key.FieldType == typeof(string))
-                        {
-                            GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                            key.SetValue(obj, GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj)));
-                            offset += 30;
-                        }
-                        else if (key.FieldType == typeof(bool))
-                        {
-                            GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                            key.SetValue(obj, GUI.Toggle(new Rect(200, offset, 200, 20), (bool)key.GetValue(obj), "Bool"));
-                            offset += 30;
-                        }
-                        else if (key.FieldType == typeof(int))
-                        {
-                            GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                            key.SetValue(obj, (int)StrToFloat(GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj))));
-                            offset += 30;
-                        }
-                        else if (key.FieldType == typeof(float))
-                        {
-                            GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                            key.SetValue(obj, StrToFloat(GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj))));
-                            offset += 30;
-                        }
-                        else if (key.FieldType == typeof(double))
-                        {
-                            GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                            key.SetValue(obj, (double)StrToFloat(GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj))));
-                            offset += 30;
-                        }
-                        else if (key.FieldType == typeof(Color))
-                        {
-                            GUI.Label(new Rect(20, offset, 100, 20), "" + key.Name);
-                            if (GUI.Button(new Rect(150, offset, 50, 20), "Edit"))
-                            {
-                                Color getColour;
-                                getColour = (Color)key.GetValue(obj);
-                                rVal = getColour.r;
-                                gVal = getColour.g;
-                                bVal = getColour.b;
-                                aVal = getColour.a;
+                        // Hack^6
+                        GameObject pqsModObject = new GameObject(type.Name);
+                        pqsModObject.transform.parent = PlanetUI.currentBody.pqsController.transform;
+                        PQSMod mod = pqsModObject.AddComponent(type) as PQSMod;
+                        mod.sphere = PlanetUI.currentBody.pqsController;
 
-                                objToEdit = obj;
-                                KeyToEdit = key;
-
-                                isshowingColourEditor = true;
-                            }
-                            //key.SetValue( obj, (double)StrToFloat( GUI.TextField( new Rect( 200 , offset, 200, 20), ""+key.GetValue(obj) ) ));
-                            offset += 30;
-                        }
-                        else if (key.FieldType == typeof(Vector3))
-                        {
-                            GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                            offset += 30;
-
-                            Vector3 blah = (Vector3)key.GetValue(obj);
-
-                            blah.x = Convert.ToSingle(GUI.TextField(new Rect(20, offset, 50, 20), "" + blah.x));
-                            blah.y = Convert.ToSingle(GUI.TextField(new Rect(80, offset, 50, 20), "" + blah.y));
-                            blah.z = Convert.ToSingle(GUI.TextField(new Rect(140, offset, 50, 20), "" + blah.z));
-
-                            key.SetValue(obj, blah);
-
-                            offset += 30;
-                        }
-                        else if (key.FieldType == typeof(PQSLandControl.LandClass[]))
-                        {
-                            if (GUI.Button(new Rect(20, offset, 200, 20), "Mod Land Classes"))
-                            {
-                                LandclassestoMod = (PQSLandControl.LandClass[])key.GetValue(obj);
-                                landmodder_mode = 0;
-                                landmodder_state = 0;
-                                showLandClassmenu = true;
-                            }
-                            offset += 30;
-                        }
-                        else if (key.FieldType == typeof(PQSMod_VertexPlanet.LandClass[]))
-                        {
-                            if (GUI.Button(new Rect(20, offset, 200, 20), "Mod Land Classes"))
-                            {
-                                VertexLandclassestoMod = (PQSMod_VertexPlanet.LandClass[])key.GetValue(obj);
-                                landmodder_mode = 1;
-                                landmodder_state = 0;
-                                showLandClassmenu = true;
-                            }
-                            offset += 30;
-                        }
-                    }
-                    catch { }
-                }
-                offset += 30;
-                if (GUI.Button(new Rect(20, offset, 200, 20), "Rebuild"))
-                {
-                    pqstoMod.RebuildSphere();
+                        // Revert to the List
+                        mode = Modes.List;
+                    } 
+                    offset += 25;
                 }
 
+                // Finish
                 GUI.EndScrollView();
             }
 
-            //PQS Adder
-            //GUI for adding more PQSMods to a body.
-            void PQSAdderFunc()
-            {
-                //Urrgg... hacky at best :/
-                Type[] types = Assembly.GetAssembly(typeof(PQSMod)).GetTypes();
-
-                int scrollbaroffsetter = 30;
-                foreach (Type type in types)
-                {
-                    if (type.IsSubclassOf(typeof(PQSMod)))
-                    {
-                        scrollbaroffsetter += 30;
-                    }
-                }
-
-                int offset = 280;
-                ScrollPosition2 = GUI.BeginScrollView(new Rect(20, 280, 380, 250), ScrollPosition2, new Rect(20, 280, 380, scrollbaroffsetter));
-
-                //Still hacky, Im not proud.			
-                foreach (Type type in types)
-                {
-                    if (type.IsSubclassOf(typeof(PQSMod)))
-                    {
-                        if (GUI.Button(new Rect(20, offset, 200, 20), "" + type.Name))
-                        {
-                            //Hack^6
-                            PQS mainSphere = Utils.FindLocal(TemplateName).GetComponentInChildren<PQS>();
-                            PlanetUtils.AddPQSMod(mainSphere, type);
-
-                            pqsModderStage = 0;
-                        } if (GUI.Button(new Rect(220, offset, 20, 20), "?")) { (NewWindows["HelpWindow"] as HelpWindow).CustomToggle("" + type.Name); }
-                        offset += 30;
-                    }
-                }
-
-                GUI.EndScrollView();
-            }*/
             private static void PQS()
             {
                 // Render Stuff
@@ -514,59 +380,26 @@ namespace Kopernicus
 
                             offset += 25;
                         }
-
-                        /*
-                    else if (key.FieldType == typeof(MapSO))
-                    {
-                        GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name + ":");
-                        offset += 30;
-                        if (GUI.Button(new Rect(200, offset, 170, 20), "Load texture"))
-                        {
-                            FileBrowser browser = new FileBrowser(new Rect(420, 400, 400, 400), "Load MapSO", onFileBrowserSelected);
-                        }
-                        offset += 25;
-                    }
-                         * */
-                        /*
-                    else if (key.GetValue(obj).GetType() == typeof(PQS))
-                    {
-                        // PQS Variable Selector.
-                        GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
-                        if (GUI.Button(new Rect(150, offset, 50, 20), "Edit"))
-                        {
-                                
-                        }
-                        if (GUI.Button(new Rect(200, offset, 80, 20), "Save Edit"))
-                        {
-                                
-                        }
-
-                        offset += 25;
-                    }
-                         * */
                     }
                     catch { }
                 }
-                offset += 25;
-
                 /*
-                //PQS Variable Selector.
-                GUI.Label(new Rect(20, offset, 178, 20), "ParentSphere");
+                // PQS Variable Selector.
+                GUI.Label(new Rect(20, offset, 178, 20), "Parent Sphere");
                 if (GUI.Button(new Rect(150, offset, 50, 20), "Edit"))
                 {
-                    UIController.Instance.isPQS = true;
+                                
                 }
                 if (GUI.Button(new Rect(200, offset, 80, 20), "Save Edit"))
                 {
-                    currentPQSMod.transform.parent = PQSSelector.sphere.transform;
+                                
                 }
-
-                offset += 25;
                  * */
+                offset += 25;
 
                 if (GUI.Button(new Rect(20, offset, 200, 20), "Rebuild"))
                 {
-                    currentPQSMod.RebuildSphere();
+                    currentPQS.RebuildSphere();
                 }
 
                 GUI.EndScrollView();
