@@ -47,6 +47,7 @@ namespace Kopernicus
 
             // ScaledMesh Export
             private static bool exportScaled;
+            private static bool exportMaps;
 
             // Create the GUI-Elements
             public static void RenderWindow(int windowID)
@@ -74,9 +75,10 @@ namespace Kopernicus
                 if (GUI.Button(new Rect(20, 160, 200, 20), "Orbit Editor"))
                     mode = Modes.OrbitEditor;
 
-                exportScaled = GUI.Toggle(new Rect(240, 190, 300, 20), exportScaled, "Export?");
+                exportScaled = GUI.Toggle(new Rect(240, 178, 300, 20), exportScaled, "Export Mesh?");
+                exportMaps = GUI.Toggle(new Rect(240, 202, 300, 20), exportMaps, "Export Textures?");
                 if (GUI.Button(new Rect(20, 190, 200, 20), "ScaledSpace updater"))
-                    Utils.UpdateScaledMesh(currentBody.scaledBody, currentBody.pqsController, currentBody, Body.ScaledSpaceCacheDirectory, "", exportScaled, false);
+                    Utils.UpdateScaledMesh(currentBody.scaledBody, currentBody.pqsController, currentBody, Body.ScaledSpaceCacheDirectory, "", exportScaled, false, exportMaps);
 
                 if (GUI.Button(new Rect(20, 220, 200, 20), "Ocean Tools"))
                     mode = Modes.Ocean;

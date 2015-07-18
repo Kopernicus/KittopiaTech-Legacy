@@ -83,7 +83,7 @@ namespace Kopernicus
             /*===============================================*\
              * Kopernicus Code! Modified to work at runtime! *
             \*===============================================*/
-            public static void UpdateScaledMesh(GameObject scaledVersion, PQS pqs, CelestialBody body, string path, string cacheFile, bool exportBin, bool useSpherical)
+            public static void UpdateScaledMesh(GameObject scaledVersion, PQS pqs, CelestialBody body, string path, string cacheFile, bool exportBin, bool useSpherical, bool exportMaps)
             {
                 const double rJool = 6000000.0;
                 const float rScaled = 1000.0f;
@@ -105,6 +105,17 @@ namespace Kopernicus
                 scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledMesh;
                 if (exportBin)
                     Utility.SerializeMesh(scaledMesh, CacheFile);
+                if (exportMaps)
+                {
+                    Directory.CreateDirectory(KSPUtil.ApplicationRootPath + "/GameData/KittopiaTech/Textures/" + pqs.name + "/");
+                    Texture2D[] textures = pqs.CreateMaps(2048, pqs.mapMaxHeight, pqs.mapOcean, pqs.mapOceanHeight, pqs.mapOceanColor);
+                    byte[] raw = textures[0].EncodeToPNG();
+                    File.WriteAllBytes(KSPUtil.ApplicationRootPath + "/GameData/KittopiaTech/Textures/" + pqs.name + "/" + pqs.name + "_color.png", raw);
+                    raw = textures[1].EncodeToPNG();
+                    File.WriteAllBytes(KSPUtil.ApplicationRootPath + "/GameData/KittopiaTech/Textures/" + pqs.name + "/" + pqs.name + "_height.png", raw);
+                    raw = BumpToNormalMap(textures[1], 9f).EncodeToPNG();
+                    File.WriteAllBytes(KSPUtil.ApplicationRootPath + "/GameData/KittopiaTech/Textures/" + pqs.name + "/" + pqs.name + "_normal.png", raw);
+                }
 
                 // Apply mesh to the body
                 SphereCollider collider = scaledVersion.GetComponent<SphereCollider>();
