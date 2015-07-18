@@ -10,7 +10,7 @@ namespace Kopernicus
 {
     namespace UI
     {
-        [KSPAddon(KSPAddon.Startup.Instantly, false)] // For GUI-Testing, will be changed later
+        [KSPAddon(KSPAddon.Startup.MainMenu, false)]
         public class UIController : MonoBehaviour
         {
             // Window states
@@ -26,9 +26,9 @@ namespace Kopernicus
             // Window Positions
             Rect mainWindow = new Rect(20, 20, 420, 560);
             Rect colorWindow = new Rect(420, 20, 400, 200);
-            Rect landClassWindow = new Rect(420, 400, 400, 400);
-            Rect simplexWrapperWindow = new Rect(420, 20, 400, 400);
-            Rect noiseModWrapperWindow = new Rect(420, 20, 400, 400);
+            Rect landClassWindow = new Rect(420, 400, 420, 250);
+            Rect simplexWrapperWindow = new Rect(420, 20, 420, 190);
+            Rect noiseModWrapperWindow = new Rect(420, 20, 420, 170);
 
             // OnGUI() => Render the planetary UI
             public void OnGUI()

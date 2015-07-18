@@ -196,13 +196,15 @@ namespace Kopernicus
                         }
                         else if (key.FieldType == typeof(PQSMod_VertexPlanet.SimplexWrapper))
                         {
-                            if (GUI.Button(new Rect(20, offset, 178, 20), "" + key.Name))
+                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                            if (GUI.Button(new Rect(200, offset, 170, 20), "Edit Simplex Wrapper"))
                                 SimplexWrapper.SetEditedObject((PQSMod_VertexPlanet.SimplexWrapper)key.GetValue(obj));
                             offset += 25;
                         }
                         else if (key.FieldType == typeof(PQSMod_VertexPlanet.NoiseModWrapper))
                         {
-                            if (GUI.Button(new Rect(20, offset, 178, 20), "" + key.Name))
+                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                            if (GUI.Button(new Rect(200, offset, 170, 20), "Edit NoiseMod Wrapper"))
                                 NoiseModWrapper.SetEditedObject((PQSMod_VertexPlanet.NoiseModWrapper)key.GetValue(obj));
                             offset += 25;
                         }

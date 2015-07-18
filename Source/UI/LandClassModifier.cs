@@ -14,15 +14,12 @@ namespace Kopernicus
         {
             // VertexPlanet
             private static PQSMod_VertexPlanet.LandClass[] vertexPlanetClasses;
-            private static PQSMod_VertexPlanet.LandClass vertexPlanetClass;
 
             // LandControl
             private static PQSLandControl.LandClass[] landControlClasses;
-            private static PQSLandControl.LandClass landControlClass;
 
             // HeightColorMap
             private static PQSMod_HeightColorMap.LandClass[] heightColorClasses;
-            private static PQSMod_HeightColorMap.LandClass heightColorClass;
 
             // Mode
             public enum Mode : int
@@ -78,232 +75,153 @@ namespace Kopernicus
             // GUI stuff
             private static Vector2 scrollPosition;
 
+            // Current Object
+            private static object obj;
+
             public static void RenderWindow(int windowID)
             {
-                int offset = 30;
-                scrollPosition = GUI.BeginScrollView(new Rect(0, 30, 300, 250), scrollPosition, new Rect(0, 0, 400, 10000));
-                if (mode == Mode.LandControl) //PQSLandControl
+                // Render Stuff
+                int offset = 40;
+
+                if (state == State.Select)
                 {
-                    if (state == State.Select)
+                    // PQSLandControl
+                    if (mode == Mode.LandControl)
                     {
+                        // Get the size of the Scrollbar
+                        int scrollSize = landControlClasses.Count() * 25;
+
+                        // Render the Scrollbar
+                        scrollPosition = GUI.BeginScrollView(new Rect(10, 30, 400, 200), scrollPosition, new Rect(0, 38, 380, scrollSize + 50));
+
+                        // Render the LandClasses
                         foreach (PQSLandControl.LandClass landClass in landControlClasses)
                         {
                             if (GUI.Button(new Rect(20, offset, 200, 20), "" + landClass.landClassName))
                             {
-                                landControlClass = landClass;
+                                obj = landClass;
                                 state = State.Modify;
                             }
-                            offset += 30;
+                            offset += 25;
                         }
                     }
-                    if (state == State.Modify)
+
+                    // PQSMod_VertexPlanet
+                    if (mode == Mode.VertexPlanet)
                     {
-                        foreach (FieldInfo key in landControlClass.GetType().GetFields())
-                        {
-                            try
-                            {
-                                System.Object obj = (System.Object)landControlClass;
-                                if (key.FieldType == typeof(string))
-                                {
-                                    GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                                    key.SetValue(obj, GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj)));
-                                    offset += 30;
-                                }
-                                else if (key.FieldType == typeof(bool))
-                                {
-                                    GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                                    key.SetValue(obj, GUI.Toggle(new Rect(200, offset, 200, 20), (bool)key.GetValue(obj), "Bool"));
-                                    offset += 30;
-                                }
-                                else if (key.FieldType == typeof(int))
-                                {
-                                    GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                                    key.SetValue(obj, Int32.Parse(GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj))));
-                                    offset += 30;
-                                }
-                                else if (key.FieldType == typeof(float))
-                                {
-                                    GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                                    key.SetValue(obj, Single.Parse(GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj))));
-                                    offset += 30;
-                                }
-                                else if (key.FieldType == typeof(double))
-                                {
-                                    GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                                    key.SetValue(obj, Double.Parse(GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj))));
-                                    offset += 30;
-                                }
-                                else if (key.FieldType == typeof(Color))
-                                {
-                                    GUI.Label(new Rect(20, offset, 100, 20), "" + key.Name);
-                                    if (GUI.Button(new Rect(150, offset, 50, 20), "Edit"))
-                                    {
-                                        Color getColour;
-                                        getColour = (Color)key.GetValue(obj);
-                                        ColorPicker.SetEditedObject(key, getColour, obj);
-                                        UIController.Instance.isColor = true;
-                                    }
-                                    //key.SetValue( obj, (double)StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
-                                    offset += 30;
-                                }
-                            }
-                            catch { }
-                        }
-                        offset += 30;
-                    }
-                }
-                else if (mode == Mode.VertexPlanet)
-                {
-                    if (state == State.Select)
-                    {
+                        // Get the size of the Scrollbar
+                        int scrollSize = vertexPlanetClasses.Count() * 25;
+
+                        // Render the Scrollbar
+                        scrollPosition = GUI.BeginScrollView(new Rect(10, 30, 400, 200), scrollPosition, new Rect(0, 28, 380, scrollSize + 50));
+
+                        // Render the LandClasses
                         foreach (PQSMod_VertexPlanet.LandClass landClass in vertexPlanetClasses)
                         {
                             if (GUI.Button(new Rect(20, offset, 200, 20), "" + landClass.name))
                             {
-                                vertexPlanetClass = landClass;
+                                obj = landClass;
                                 state = State.Modify;
                             }
-                            offset += 30;
+                            offset += 25;
                         }
                     }
-                    if (state == State.Modify)
+
+                    // PQSMod_HeightColorMap
+                    if (mode == Mode.HeightColorMap)
                     {
-                        foreach (FieldInfo key in vertexPlanetClass.GetType().GetFields())
-                        {
-                            try
-                            {
-                                System.Object obj = (System.Object)vertexPlanetClass;
-                                if (key.FieldType == typeof(string))
-                                {
-                                    GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                                    key.SetValue(obj, GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj)));
-                                    offset += 30;
-                                }
-                                else if (key.FieldType == typeof(bool))
-                                {
-                                    GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                                    key.SetValue(obj, GUI.Toggle(new Rect(200, offset, 200, 20), (bool)key.GetValue(obj), "Bool"));
-                                    offset += 30;
-                                }
-                                else if (key.FieldType == typeof(int))
-                                {
-                                    GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                                    key.SetValue(obj, Int32.Parse(GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj))));
-                                    offset += 30;
-                                }
-                                else if (key.FieldType == typeof(float))
-                                {
-                                    GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                                    key.SetValue(obj, Single.Parse(GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj))));
-                                    offset += 30;
-                                }
-                                else if (key.FieldType == typeof(double))
-                                {
-                                    GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                                    key.SetValue(obj, Double.Parse(GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj))));
-                                    offset += 30;
-                                }
-                                else if (key.FieldType == typeof(Color))
-                                {
-                                    GUI.Label(new Rect(20, offset, 100, 20), "" + key.Name);
-                                    if (GUI.Button(new Rect(150, offset, 50, 20), "Edit"))
-                                    {
-                                        Color getColour;
-                                        getColour = (Color)key.GetValue(obj);
-                                        ColorPicker.SetEditedObject(key, getColour, obj);
-                                        UIController.Instance.isColor = true;
-                                    }
-                                    //key.SetValue( obj, (double)StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
-                                    offset += 30;
-                                }
-                            }
-                            catch { }
-                        }
-                        offset += 30;
-                    }
-                }
-                else if (mode == Mode.HeightColorMap)
-                {
-                    if (state == State.Select)
-                    {
+                        // Get the size of the Scrollbar
+                        int scrollSize = heightColorClasses.Count() * 25;
+
+                        // Render the Scrollbar
+                        scrollPosition = GUI.BeginScrollView(new Rect(10, 30, 400, 200), scrollPosition, new Rect(0, 28, 380, scrollSize + 50));
+
+                        // Render the LandClasses
                         foreach (PQSMod_HeightColorMap.LandClass landClass in heightColorClasses)
                         {
                             if (GUI.Button(new Rect(20, offset, 200, 20), "" + landClass.name))
                             {
-                                heightColorClass = landClass;
+                                obj = landClass;
                                 state = State.Modify;
                             }
-                            offset += 30;
+                            offset += 25;
                         }
                     }
-                    if (state == State.Modify)
-                    {
-                        foreach (FieldInfo key in heightColorClass.GetType().GetFields())
-                        {
-                            try
-                            {
-                                System.Object obj = (System.Object)heightColorClass;
-                                if (key.FieldType == typeof(string))
-                                {
-                                    GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                                    key.SetValue(obj, GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj)));
-                                    offset += 30;
-                                }
-                                else if (key.FieldType == typeof(bool))
-                                {
-                                    GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                                    key.SetValue(obj, GUI.Toggle(new Rect(200, offset, 200, 20), (bool)key.GetValue(obj), "Bool"));
-                                    offset += 30;
-                                }
-                                else if (key.FieldType == typeof(int))
-                                {
-                                    GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                                    key.SetValue(obj, Int32.Parse(GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj))));
-                                    offset += 30;
-                                }
-                                else if (key.FieldType == typeof(float))
-                                {
-                                    GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                                    key.SetValue(obj, Single.Parse(GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj))));
-                                    offset += 30;
-                                }
-                                else if (key.FieldType == typeof(double))
-                                {
-                                    GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                                    key.SetValue(obj, Double.Parse(GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj))));
-                                    offset += 30;
-                                }
-                                else if (key.FieldType == typeof(Color))
-                                {
-                                    GUI.Label(new Rect(20, offset, 100, 20), "" + key.Name);
-                                    if (GUI.Button(new Rect(150, offset, 50, 20), "Edit"))
-                                    {
-                                        Color getColour;
-                                        getColour = (Color)key.GetValue(obj);
-                                        ColorPicker.SetEditedObject(key, getColour, obj);
-                                        UIController.Instance.isColor = true;
-                                    }
-                                    //key.SetValue( obj, (double)StrToFloat( GUI.TextField( new Rect( 200 , yoffset, 200, 20), ""+key.GetValue(obj) ) ));
-                                    offset += 30;
-                                }
-                            }
-                            catch { }
-                        }
-                    }
+                    offset += 20;
                 }
+
+
+                if (state == State.Modify)
                 {
+                    // Reset Offset, just to be sure
+                    offset = 35;
 
+                    // Modify the Scroll-Size
+                    Type[] supportedTypes = new Type[] { typeof(string), typeof(bool), typeof(int), typeof(float), typeof(double), typeof(Color), typeof(Vector3), typeof(PQSLandControl.LandClass[]), typeof(PQSMod_VertexPlanet.LandClass[]), typeof(MapSO), typeof(PQS), typeof(PQSMod_VertexPlanet.SimplexWrapper), typeof(PQSMod_VertexPlanet.NoiseModWrapper) };
+                    int scrollSize = obj.GetType().GetFields().Where(f => supportedTypes.Contains(f.FieldType)).Count() * 25;
+
+                    // Render the Scrollbar
+                    scrollPosition = GUI.BeginScrollView(new Rect(10, 30, 400, 200), scrollPosition, new Rect(0, 28, 380, scrollSize + 50));
+
+                    // Render the Fields
+                    foreach (FieldInfo key in obj.GetType().GetFields())
+                    {
+                        try
+                        {
+                            if (key.FieldType == typeof(string))
+                            {
+                                GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                                key.SetValue(obj, GUI.TextField(new Rect(200, offset, 170, 20), "" + key.GetValue(obj)));
+                                offset += 25;
+                            }
+                            else if (key.FieldType == typeof(bool))
+                            {
+                                GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                                key.SetValue(obj, GUI.Toggle(new Rect(200, offset, 170, 20), (bool)key.GetValue(obj), "Bool"));
+                                offset += 25;
+                            }
+                            else if (key.FieldType == typeof(int))
+                            {
+                                GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                                key.SetValue(obj, Int32.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + key.GetValue(obj))));
+                                offset += 25;
+                            }
+                            else if (key.FieldType == typeof(float))
+                            {
+                                GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                                key.SetValue(obj, Single.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + key.GetValue(obj))));
+                                offset += 25;
+                            }
+                            else if (key.FieldType == typeof(double))
+                            {
+                                GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                                key.SetValue(obj, Double.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + key.GetValue(obj))));
+                                offset += 25;
+                            }
+                            else if (key.FieldType == typeof(Color))
+                            {
+                                GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                                if (GUI.Button(new Rect(200, offset, 50, 20), "Edit"))
+                                    ColorPicker.SetEditedObject(key, (Color)key.GetValue(obj), obj);
+
+                                offset += 25;
+                            }
+                        }
+                        catch { }
+                    }
+                    offset += 20;
                 }
-
-                offset += 30;
 
                 if (GUI.Button(new Rect(20, offset, 200, 20), "Exit"))
                 {
-                    UIController.Instance.isLandClass = false;
-                    state = State.Select;
+                    if (state == State.Modify)
+                        state = State.Select;
+                    else
+                        UIController.Instance.isLandClass = false;
                 }
-                GUI.EndScrollView();
 
+                // Exit
+                GUI.EndScrollView();
                 GUI.DragWindow();
             }
         }

@@ -9,48 +9,63 @@ namespace Kopernicus
 {
     namespace UI
     {
-
+        // Class that renders a window to edit NoiseModWrappers
         public class NoiseModWrapper
         {
+            // The Wrapper we're editing
             private static PQSMod_VertexPlanet.NoiseModWrapper nWrapper;
 
+            // GUI-Stuff
             private static Vector2 scrollPosition;
 
+            // Return the Window
             public static Rect Render(Rect rect, string title)
             {
-                return GUI.Window(38564, rect, RenderWindow, title);
+                return GUI.Window(54799, rect, RenderWindow, title);
             }
 
+            // Activate the Window
             public static void SetEditedObject(PQSMod_VertexPlanet.NoiseModWrapper nWrap)
             {
                 nWrapper = nWrap;
+                UIController.Instance.isSimplexWrapper = false;
                 UIController.Instance.isNoiseModWrapper = true;
             }
 
+            // Window-Function
             public static void RenderWindow(int windowID)
             {
-                int offset = 30;
-                scrollPosition = GUI.BeginScrollView(new Rect(0, 30, 300, 250), scrollPosition, new Rect(0, 0, 400, 10000));
+                // Render-Stuff
+                int offset = 40;
 
+                // Get the height of the scroll list
+                Type[] supportedTypes = new Type[] { typeof(string), typeof(bool), typeof(int), typeof(float), typeof(double), typeof(Color), typeof(Vector3), typeof(PQSLandControl.LandClass[]), typeof(PQSMod_VertexPlanet.LandClass[]), typeof(MapSO), typeof(PQS), typeof(PQSMod_VertexPlanet.SimplexWrapper), typeof(PQSMod_VertexPlanet.NoiseModWrapper) };
+                int scrollOffset = nWrapper.GetType().GetFields().Where(f => supportedTypes.Contains(f.FieldType)).Count() * 25;
+
+                // Render the Scroll-Box
+                scrollPosition = GUI.BeginScrollView(new Rect(10, 30, 400, 200), scrollPosition, new Rect(0, 38, 380, scrollOffset + 50));
+
+                // Loop through all the Fields
                 foreach (FieldInfo key in nWrapper.GetType().GetFields())
                 {
                     System.Object obj = (System.Object)nWrapper;
                     if (key.FieldType == typeof(double))
                     {
-                        GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-                        key.SetValue(obj, Double.Parse(GUI.TextField(new Rect(200, offset, 200, 20), "" + key.GetValue(obj))));
-                        offset += 30;
+                        GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                        key.SetValue(obj, Double.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + key.GetValue(obj))));
+                        offset += 25;
                     }
                 }
-                offset += 30;
+                offset += 20;
 
+                // Exit
                 if (GUI.Button(new Rect(20, offset, 200, 20), "Exit"))
                 {
                     UIController.Instance.isNoiseModWrapper = false;
                 }
 
+                // Finish
                 GUI.EndScrollView();
-
                 GUI.DragWindow();
             }
 
