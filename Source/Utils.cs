@@ -87,6 +87,13 @@ namespace Kopernicus
             /// <param name="name">The new name of the body</param>
             public static void Instantiate(PSystemBody template, string name)
             {
+                // Fix Templates
+                if (template == null)
+                {
+                    ScreenMessages.PostScreenMessage("You can only copy Stock-Bodies!", 3f, ScreenMessageStyle.UPPER_CENTER);
+                    return;
+                }
+
                 // Spawn Message
                 ScreenMessages.PostScreenMessage("Created new Planet " + name + ", based on " + template.name + "!", 5f, ScreenMessageStyle.UPPER_CENTER);
                 ScreenMessages.PostScreenMessage("This tool is meant to be used by modders, it can break mods!", 5f, ScreenMessageStyle.UPPER_CENTER);
@@ -113,8 +120,6 @@ namespace Kopernicus
 
                 // Change it's Orbit
                 body.orbitDriver.orbit = Orbit.CreateRandomOrbitAround(PSystemManager.Instance.localBodies.First(), 4000000000, 60000000000);
-                //body.orbitRenderer.driver = body.orbitDriver;
-                body.orbitRenderer.orbitColor = body.orbitDriver.orbitColor = Color.red;
                 body.orbitDriver.referenceBody = PSystemManager.Instance.localBodies.First();
                 body.orbitDriver.orbit.referenceBody = body.orbitDriver.referenceBody;
                 body.orbitRenderer.lowerCamVsSmaRatio = template.orbitRenderer.lowerCamVsSmaRatio;
@@ -156,6 +161,27 @@ namespace Kopernicus
                     cBody.scaledBody.GetComponent<ScaledSpaceFader>().celestialBody = cBody;
                 if (cBody.scaledBody.GetComponents<AtmosphereFromGround>().Length == 1)
                     cBody.scaledBody.GetComponent<AtmosphereFromGround>().planet = cBody;
+
+                // Register the Template
+                PlanetUI.templates.Add(cBody.transform.name, template.name);
+            }
+
+            private static Dictionary<string, string> kopernicusFields = new Dictionary<string,string>() 
+            {
+                {"longitudeOfAscendingNode", "LAN"},
+            };
+
+            /// <summary>
+            /// Returns a field-name based on a Kopernicus-ParserTarget
+            /// </summary>
+            /// <param name="input">The Kopernicus Parser-Target</param>
+            /// <returns></returns>
+            public static string GetField(string input)
+            {
+                if (kopernicusFields.ContainsKey(input))
+                    return kopernicusFields[input];
+                else
+                    return input;
             }
 
             /*===============================================*\
@@ -193,6 +219,10 @@ namespace Kopernicus
                     File.WriteAllBytes(KSPUtil.ApplicationRootPath + "/GameData/KittopiaTech/Textures/" + pqs.name + "/" + pqs.name + "_height.png", raw);
                     raw = BumpToNormalMap(textures[1], 9f).EncodeToPNG();
                     File.WriteAllBytes(KSPUtil.ApplicationRootPath + "/GameData/KittopiaTech/Textures/" + pqs.name + "/" + pqs.name + "_normal.png", raw);
+
+                    // Replace ScaledSpace Textures
+                    scaledVersion.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", textures[0]);
+                    scaledVersion.GetComponent<MeshRenderer>().material.SetTexture("_Bump", textures[2]);
                 }
 
                 // Apply mesh to the body
