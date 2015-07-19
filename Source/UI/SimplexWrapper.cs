@@ -56,6 +56,7 @@ namespace Kopernicus
                         offset += 25;
                     }
                 }
+
                 offset += 20;
 
                 // Exit

@@ -206,6 +206,13 @@ namespace Kopernicus
 
                                 offset += 25;
                             }
+                            else if (key.FieldType == typeof(PQSMod_VertexPlanet.SimplexWrapper))
+                            {
+                                GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                                if (GUI.Button(new Rect(200, offset, 50, 20), "Edit"))
+                                    SimplexWrapper.SetEditedObject((PQSMod_VertexPlanet.SimplexWrapper)key.GetValue(obj));
+                                offset += 25;
+                            }
                             else if (key.FieldType == typeof(PQSLandControl.LerpRange))
                             {
                                 GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
