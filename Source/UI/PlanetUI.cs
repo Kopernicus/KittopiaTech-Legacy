@@ -81,7 +81,21 @@ namespace Kopernicus
                 exportScaled = GUI.Toggle(new Rect(240, 178, 300, 20), exportScaled, "Export Mesh?");
                 exportMaps = GUI.Toggle(new Rect(240, 202, 300, 20), exportMaps, "Export Textures?");
                 if (GUI.Button(new Rect(20, 190, 200, 20), "ScaledSpace updater"))
-                    Utils.UpdateScaledMesh(currentBody.scaledBody, currentBody.pqsController, currentBody, Body.ScaledSpaceCacheDirectory, "", exportScaled, false, exportMaps);
+                {
+                    // Stuff
+                    GameObject scaled = Utils.FindScaled(currentName);
+                    PQS pqs = Utils.FindLocal(currentName).GetComponentsInChildren<PQS>(true).First();
+
+                    // Generate the ScaledSpace-Mesh
+                    ScaledPlanetMesh mesh = ScaledPlanetMesh.Generate(pqs, scaled.GetComponentInChildren<MeshFilter>().mesh);
+                    mesh.ApplyToScaledSpace(scaled);
+
+                    // Export the Mesh
+                    if (exportScaled)
+                        Utils.SerializeMesh(Utils.FindScaled(currentName).GetComponentInChildren<MeshFilter>().sharedMesh, KSPUtil.ApplicationRootPath + Body.ScaledSpaceCacheDirectory + "/" + currentName + ".bin");
+                    if (exportMaps)
+                        Utils.GeneratePQSMaps(currentBody);
+                }
 
                 if (GUI.Button(new Rect(20, 220, 200, 20), "Save Body"))
                     ConfigIO.SaveCelestial(currentBody);

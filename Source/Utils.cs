@@ -184,128 +184,35 @@ namespace Kopernicus
                     return input;
             }
 
-            /*===============================================*\
-             * Kopernicus Code! Modified to work at runtime! *
-            \*===============================================*/
-            public static void UpdateScaledMesh(GameObject scaledVersion, PQS pqs, CelestialBody body, string path, string cacheFile, bool exportBin, bool useSpherical, bool exportMaps)
-            {
-                const double rJool = 6000000.0;
-                const float rScaled = 1000.0f;
-
-                // Compute scale between Jool and this body
-                float scale = (float)(body.Radius / rJool);
-                scaledVersion.transform.localScale = new Vector3(scale, scale, scale);
-
-                Mesh scaledMesh;
-                // Get the Paths for ScaledSpace
-                string CacheDirectory = KSPUtil.ApplicationRootPath + path;
-                string CacheFile = CacheDirectory + "/" + body.name + ".bin";
-
-                // Write the Mesh
-                Directory.CreateDirectory(CacheDirectory);
-                Logger.Active.Log("[KittopiaTech]: Generating scaled space mesh: " + body.name);
-                scaledMesh = Utils.ComputeScaledSpaceMesh(body, useSpherical ? null : pqs);
-                Utility.RecalculateTangents(scaledMesh);
-                scaledVersion.GetComponent<MeshFilter>().sharedMesh = scaledMesh;
-                if (exportBin)
-                    Utility.SerializeMesh(scaledMesh, CacheFile);
-                if (exportMaps)
-                {
-                    Directory.CreateDirectory(KSPUtil.ApplicationRootPath + "/GameData/KittopiaTech/Textures/" + pqs.name + "/");
-                    Texture2D[] textures = pqs.CreateMaps(2048, pqs.mapMaxHeight, pqs.mapOcean, pqs.mapOceanHeight, pqs.mapOceanColor);
-                    byte[] raw = textures[0].EncodeToPNG();
-                    File.WriteAllBytes(KSPUtil.ApplicationRootPath + "/GameData/KittopiaTech/Textures/" + pqs.name + "/" + pqs.name + "_color.png", raw);
-                    raw = textures[1].EncodeToPNG();
-                    File.WriteAllBytes(KSPUtil.ApplicationRootPath + "/GameData/KittopiaTech/Textures/" + pqs.name + "/" + pqs.name + "_height.png", raw);
-                    raw = BumpToNormalMap(textures[1], 9f).EncodeToPNG();
-                    File.WriteAllBytes(KSPUtil.ApplicationRootPath + "/GameData/KittopiaTech/Textures/" + pqs.name + "/" + pqs.name + "_normal.png", raw);
-
-                    // Replace ScaledSpace Textures
-                    scaledVersion.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", textures[0]);
-                    scaledVersion.GetComponent<MeshRenderer>().material.SetTexture("_Bump", BumpToNormalMap(textures[1], 9f));
-                }
-
-                // Apply mesh to the body
-                SphereCollider collider = scaledVersion.GetComponent<SphereCollider>();
-                if (collider != null) collider.radius = rScaled;
-                if (pqs != null && scaledVersion.gameObject != null && scaledVersion.gameObject.transform != null)
-                {
-                    scaledVersion.gameObject.transform.localScale = Vector3.one * (float)(pqs.radius / rJool);
-                }
-            }
-
             // Generate the scaled space mesh using PQS (all results use scale of 1)
-            public static Mesh ComputeScaledSpaceMesh(CelestialBody body, PQS pqs)
+            public static void GeneratePQSMaps(CelestialBody body)
             {
-                // We need to get the body for Jool (to steal it's mesh)
-                const double rScaledJool = 1000.0f;
-                double rMetersToScaledUnits = (float)(rScaledJool / body.Radius);
+                // Get the PQS and the ScaledSpace
+                PQS pqs = FindLocal(body.name).GetComponentsInChildren<PQS>(true).First();
+                GameObject scaledVersion = FindScaled(body.name);
 
-                // Generate a duplicate of the Jool mesh
-                Mesh mesh = Utility.DuplicateMesh(Utility.ReferenceGeosphere());
+                // Get the Textures from the PQS
+                List<Texture2D> textures = pqs.CreateMaps(2048, pqs.mapMaxHeight, pqs.mapOcean, pqs.mapOceanHeight, pqs.mapOceanColor).ToList();
+                textures.Add(BumpToNormalMap(textures[1], 9));
 
-                // If this body has a PQS, we can create a more detailed object
-                if (pqs != null)
-                {
-                    // first we enable all maps
-                    OnDemand.OnDemandStorage.EnableBody(body.bodyName);
+                // Remove Alpha
+                Color32[] pixels = textures[0].GetPixels32();
+                for (int i = 0; i < pixels.Count(); i++)
+                    if (pixels[i] != pqs.mapOceanColor)
+                        pixels[i].a = 255;
+                textures[0].SetPixels32(pixels);
+                textures[0].Apply();
 
-                    // Balcklisted Mods
-                    Type[] blacklist = new Type[] { typeof(OnDemand.PQSMod_OnDemandHandler) };
+                // Serialize them to disk
+                string path = KSPUtil.ApplicationRootPath + "/GameData/KittopiaTech/Textures/" + body.name + "/";
+                Directory.CreateDirectory(path);
+                File.WriteAllBytes(path + body.name + "_Color.png", textures[0].EncodeToPNG());
+                File.WriteAllBytes(path + body.name + "_Height.png", textures[1].EncodeToPNG());
+                File.WriteAllBytes(path + body.name + "_Normal.png", textures[2].EncodeToPNG());
 
-                    // Deactivate blacklisted Mods
-                    foreach (PQSMod mod in pqs.GetComponentsInChildren<PQSMod>(true).Where(m => blacklist.Contains(m.GetType())))
-                        mod.modEnabled = false;
-
-                    // Find the PQS mods
-                    IEnumerable<PQSMod> mods = pqs.GetComponentsInChildren<PQSMod>(true).Where(m => m.modEnabled);
-                    pqs.isBuildingMaps = true;
-
-                    // If we were able to find PQS mods
-                    if (mods.Count() > 0)
-                    {
-                        // Generate the PQS modifications
-                        Vector3[] vertices = mesh.vertices;
-                        for (int i = 0; i < mesh.vertexCount; i++)
-                        {
-                            // Get the UV coordinate of this vertex
-                            Vector2 uv = mesh.uv[i];
-
-                            // Since this is a geosphere, normalizing the vertex gives the direction from center center
-                            Vector3 direction = vertices[i];
-                            direction.Normalize();
-
-                            // Build the vertex data object for the PQS mods
-                            PQS.VertexBuildData vertex = new PQS.VertexBuildData();
-                            vertex.directionFromCenter = direction;
-                            vertex.vertHeight = body.Radius;
-                            vertex.u = uv.x;
-                            vertex.v = uv.y;
-
-                            // Build from the PQS
-                            foreach (PQSMod mod in mods)
-                            {
-                                mod.OnVertexBuild(vertex); // Why in heaven are there mods who modify height in OnVertexBuild() rather than OnVertexBuildHeight()?!?!
-                                mod.OnVertexBuildHeight(vertex);
-                            }
-
-                            // Check for sea level
-                            if (body.ocean && vertex.vertHeight < body.Radius)
-                                vertex.vertHeight = body.Radius;
-
-                            // Adjust the displacement
-                            vertices[i] = direction * (float)(vertex.vertHeight * rMetersToScaledUnits);
-                        }
-                        mesh.vertices = vertices;
-                        mesh.RecalculateNormals();
-                        mesh.RecalculateBounds();
-                    }
-
-                    pqs.isBuildingMaps = false;
-                }
-
-                // Return the generated scaled space mesh
-                return mesh;
+                // Apply them to the ScaledVersion
+                scaledVersion.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", textures[0]);
+                scaledVersion.GetComponent<MeshRenderer>().material.SetTexture("_BumpMap", textures[2]);
             }
         }
     }

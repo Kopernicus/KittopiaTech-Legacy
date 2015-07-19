@@ -66,6 +66,7 @@
     <Compile Include="UI\Planet_GUI.cs" />
     <Compile Include="UI\PQSEditor.cs" />
     <Compile Include="UI\Rings.cs" />
+    <Compile Include="UI\ScaledPlanetMesh.cs" />
     <Compile Include="UI\SimplexWrapper.cs" />
     <Compile Include="UI\UIController.cs" />
     <Compile Include="Utils.cs" />
