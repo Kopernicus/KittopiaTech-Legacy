@@ -221,7 +221,7 @@ namespace Kopernicus
                     OnDemand.OnDemandStorage.EnableBody(body.bodyName);
 
                     // Balcklisted Mods
-                    Type[] blacklist = new Type[] { typeof(PQSMod_MapDecal), typeof(OnDemand.PQSMod_OnDemandHandler) };
+                    Type[] blacklist = new Type[] { typeof(OnDemand.PQSMod_OnDemandHandler) };
 
                     // Deactivate blacklisted Mods
                     foreach (PQSMod mod in pqs.GetComponentsInChildren<PQSMod>(true).Where(m => blacklist.Contains(m.GetType())))
@@ -229,6 +229,7 @@ namespace Kopernicus
 
                     // Find the PQS mods
                     IEnumerable<PQSMod> mods = pqs.GetComponentsInChildren<PQSMod>(true).Where(m => m.modEnabled);
+                    pqs.isBuildingMaps = true;
 
                     // If we were able to find PQS mods
                     if (mods.Count() > 0)
@@ -269,6 +270,8 @@ namespace Kopernicus
                         mesh.RecalculateNormals();
                         mesh.RecalculateBounds();
                     }
+
+                    pqs.isBuildingMaps = false;
                 }
 
                 // Return the generated scaled space mesh
