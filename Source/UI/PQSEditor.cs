@@ -272,6 +272,11 @@ namespace Kopernicus
                     currentPQSMod.sphere = null;
                     MonoBehaviour.Destroy(currentPQSMod);
                     currentPQSMod = null;
+                    
+                    // Hack
+                    PlanetUI.currentBody.pqsController.SetupExternalRender();
+                    PlanetUI.currentBody.pqsController.CloseExternalRender();
+
                     mode = Modes.List;
                 }
 

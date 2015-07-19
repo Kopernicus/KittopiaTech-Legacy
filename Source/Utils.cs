@@ -88,7 +88,7 @@ namespace Kopernicus
             public static void Instantiate(PSystemBody template, string name)
             {
                 // Spawn Message
-                ScreenMessages.PostScreenMessage("Creating new Planet " + name + ", based on " + template.name + "!", 5f, ScreenMessageStyle.UPPER_CENTER);
+                ScreenMessages.PostScreenMessage("Created new Planet " + name + ", based on " + template.name + "!", 5f, ScreenMessageStyle.UPPER_CENTER);
                 ScreenMessages.PostScreenMessage("This tool is meant to be used by modders, it can break mods!", 5f, ScreenMessageStyle.UPPER_CENTER);
 
                 // Clone the Template
