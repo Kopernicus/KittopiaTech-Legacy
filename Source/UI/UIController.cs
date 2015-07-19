@@ -36,7 +36,7 @@ namespace Kopernicus
             public void OnGUI()
             {
                 if (isGUI)
-                    mainWindow = PlanetUI.Render(mainWindow, "KittopiaTech");
+                    mainWindow = PlanetUI.Render(mainWindow, "KittopiaTech - a Kopernicus Visual Editor");
 
                 if (isColor)
                     colorWindow = ColorPicker.Render(colorWindow, "Color Picker");
