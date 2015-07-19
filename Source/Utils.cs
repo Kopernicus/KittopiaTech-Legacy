@@ -222,7 +222,7 @@ namespace Kopernicus
 
                     // Replace ScaledSpace Textures
                     scaledVersion.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", textures[0]);
-                    scaledVersion.GetComponent<MeshRenderer>().material.SetTexture("_Bump", textures[2]);
+                    scaledVersion.GetComponent<MeshRenderer>().material.SetTexture("_Bump", BumpToNormalMap(textures[1], 9f));
                 }
 
                 // Apply mesh to the body
