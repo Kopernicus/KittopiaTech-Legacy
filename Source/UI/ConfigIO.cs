@@ -104,7 +104,8 @@ namespace Kopernicus
                 }
 
                 // If the node has values, add it to the root
-                bodyNode.AddNode(orbit);
+                if (orbit.values.Count > 0)
+                    bodyNode.AddNode(orbit);
 
                 // Glue the nodes together
                 root.AddNode(bodyNode);
