@@ -149,6 +149,53 @@ namespace Kopernicus
                     }
                 }
 
+                //Start getting the PQS stuff
+                ConfigNode pqs = (isCopy) ? new ConfigNode("PQS") : new ConfigNode("@PQS");
+
+                // Discover members tagged with parser attributes
+                foreach (MemberInfo member in typeof(PQSLoader).GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
+                {
+                    // Is this member a parser target?
+                    ParserTarget[] attributes = member.GetCustomAttributes((typeof(ParserTarget)), true) as ParserTarget[];
+                    if (attributes.Length > 0)
+                    {
+                        // Get the Parser Target
+                        ParserTarget target = attributes.First();
+                        string value = "";
+                        string preset = "";
+                        
+                        // Get matching Fields / Properties
+                        IEnumerable<FieldInfo> fields = body.pqsController.GetType().GetFields().Where(f => f.Name == Utils.GetField(target.fieldName));
+                        IEnumerable<PropertyInfo> properties = body.pqsController.GetType().GetProperties().Where(p => p.Name == Utils.GetField(target.fieldName));
+
+                        // Get the current and the previous value
+                        if (fields.Count() == 1)
+                        {
+                            value = Format(fields.First().GetValue(body.pqsController));
+                            preset = Format(fields.First().GetValue(pBody.pqsVersion));
+                        }
+                        else if (properties.Count() == 1)
+                        {
+                            value = Format(properties.First().GetValue(body.pqsController, null));
+                            preset = Format(properties.First().GetValue(pBody.pqsVersion, null));
+                        }
+                        else if (target.fieldName == "color")
+                        {
+                            value = Format(body.pqsController);
+                            preset = Format(pBody.pqsVersion);
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
+                        // Check if the value has changed
+                        if (value != preset)
+                            pqs.AddValue(target.fieldName, value);
+                    }
+                    
+                }
+
                 // Parse the biomes, do that manually, reflection would be a bit silly for three values :P
                 ConfigNode oldBiomes = Utils.SearchNode("Biomes", body.transform.name);
                 ConfigNode biomes = oldBiomes == null ? new ConfigNode("Biomes") : new ConfigNode("@Biomes");
@@ -203,6 +250,8 @@ namespace Kopernicus
                     prop.AddNode(biomes);
                 if (prop.values.Count > 0)
                     bodyNode.AddNode(prop);
+                if (pqs.values.Count > 0)
+                    bodyNode.AddNode(pqs);
 
                 // Glue the nodes together
                 root.AddNode(bodyNode);
