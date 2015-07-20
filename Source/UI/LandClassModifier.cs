@@ -21,6 +21,10 @@ namespace Kopernicus
             // HeightColorMap
             private static PQSMod_HeightColorMap.LandClass[] heightColorClasses;
 
+            // FieldInfo to apply additions / removals
+            private static FieldInfo fieldInfo;
+            private static object modObj;
+
             // Mode
             public enum Mode : int
             {
@@ -47,28 +51,34 @@ namespace Kopernicus
             }
 
             // Set edited object
-            public static void SetEditedObject (PQSMod_VertexPlanet.LandClass[] landClassArray)
+            public static void SetEditedObject(PQSMod_VertexPlanet.LandClass[] landClassArray, FieldInfo field, object modObject)
             {
                 mode = Mode.VertexPlanet;
                 state = State.Select;
                 vertexPlanetClasses = landClassArray;
+                fieldInfo = field;
+                modObj = modObject;
                 UIController.Instance.isLandClass = true;
                 
             }
 
             // Set edited object
-            public static void SetEditedObject(PQSLandControl.LandClass[] landClassArray)
+            public static void SetEditedObject(PQSLandControl.LandClass[] landClassArray, FieldInfo field, object modObject)
             {
                 mode = Mode.LandControl;
                 state = State.Select;
                 landControlClasses = landClassArray;
+                fieldInfo = field;
+                modObj = modObject;
                 UIController.Instance.isLandClass = true;
             }
-            public static void SetEditedObject(PQSMod_HeightColorMap.LandClass[] landClassArray)
+            public static void SetEditedObject(PQSMod_HeightColorMap.LandClass[] landClassArray, FieldInfo field, object modObject)
             {
                 mode = Mode.HeightColorMap;
                 state = State.Select;
                 heightColorClasses = landClassArray;
+                fieldInfo = field;
+                modObj = modObject;
                 UIController.Instance.isLandClass = true;
             }
 
@@ -148,6 +158,84 @@ namespace Kopernicus
                         }
                     }
                     offset += 20;
+
+                    // Add a landclass
+                    if (GUI.Button(new Rect(20, offset, 200, 20), "Add LandClass"))
+                    {
+                        if (mode == Mode.VertexPlanet)
+                        {
+                            PQSMod_VertexPlanet.LandClass landClass = new PQSMod_VertexPlanet.LandClass("LandClass", 0, 0, new Color(), new Color(), 0);
+                            List<PQSMod_VertexPlanet.LandClass> classes = new List<PQSMod_VertexPlanet.LandClass>(vertexPlanetClasses);
+                            classes.Add(landClass);
+                            vertexPlanetClasses = classes.ToArray();
+                            fieldInfo.SetValue(modObj, vertexPlanetClasses);
+                        }
+
+                        if (mode == Mode.HeightColorMap)
+                        {
+                            PQSMod_HeightColorMap.LandClass landClass = new PQSMod_HeightColorMap.LandClass("LandClass", 0, 0, new Color(), new Color(), 0);
+                            List<PQSMod_HeightColorMap.LandClass> classes = new List<PQSMod_HeightColorMap.LandClass>(heightColorClasses);
+                            classes.Add(landClass);
+                            heightColorClasses = classes.ToArray();
+                            fieldInfo.SetValue(modObj, heightColorClasses);
+                        }
+
+                        if (mode == Mode.LandControl)
+                        {
+                            PQSLandControl.LandClass landClass = new PQSLandControl.LandClass();
+                            PQSLandControl.LerpRange range;
+
+                            // Initialize default parameters
+                            landClass.altDelta = 1;
+                            landClass.color = new Color(0, 0, 0, 0);
+                            landClass.coverageFrequency = 1;
+                            landClass.coverageOctaves = 1;
+                            landClass.coveragePersistance = 1;
+                            landClass.coverageSeed = 1;
+                            landClass.landClassName = "Base";
+                            landClass.latDelta = 1;
+                            landClass.lonDelta = 1;
+                            landClass.noiseColor = new Color(0, 0, 0, 0);
+                            landClass.noiseFrequency = 1;
+                            landClass.noiseOctaves = 1;
+                            landClass.noisePersistance = 1;
+                            landClass.noiseSeed = 1;
+
+                            range = new PQSLandControl.LerpRange();
+                            range.endEnd = 1;
+                            range.endStart = 1;
+                            range.startEnd = 0;
+                            range.startStart = 0;
+                            landClass.altitudeRange = range;
+
+                            range = new PQSLandControl.LerpRange();
+                            range.endEnd = 1;
+                            range.endStart = 1;
+                            range.startEnd = 0;
+                            range.startStart = 0;
+                            landClass.latitudeRange = range;
+
+                            range = new PQSLandControl.LerpRange();
+                            range.endEnd = 1;
+                            range.endStart = 1;
+                            range.startEnd = 0;
+                            range.startStart = 0;
+                            landClass.latitudeDoubleRange = range;
+
+                            range = new PQSLandControl.LerpRange();
+                            range.endEnd = 2;
+                            range.endStart = 2;
+                            range.startEnd = -1;
+                            range.startStart = -1;
+                            landClass.longitudeRange = range;
+
+                            List<PQSLandControl.LandClass> classes = new List<PQSLandControl.LandClass>(landControlClasses);
+                            classes.Add(landClass);
+                            landControlClasses = classes.ToArray();
+                            fieldInfo.SetValue(modObj, landControlClasses);
+                        }
+                    }
+                    offset += 25;
                 }
 
 
@@ -225,6 +313,38 @@ namespace Kopernicus
                         catch { }
                     }
                     offset += 20;
+
+                    // Remove a landclass
+                    if (GUI.Button(new Rect(20, offset, 200, 20), "Remove LandClass"))
+                    {
+                        if (mode == Mode.VertexPlanet)
+                        {
+                            List<PQSMod_VertexPlanet.LandClass> classes = vertexPlanetClasses.ToList();
+                            classes.Remove(obj as PQSMod_VertexPlanet.LandClass);
+                            vertexPlanetClasses = classes.ToArray();
+                            fieldInfo.SetValue(modObj, vertexPlanetClasses);
+                        }
+
+                        if (mode == Mode.HeightColorMap)
+                        {
+                            List<PQSMod_HeightColorMap.LandClass> classes = heightColorClasses.ToList();
+                            classes.Remove(obj as PQSMod_HeightColorMap.LandClass);
+                            heightColorClasses = classes.ToArray();
+                            fieldInfo.SetValue(modObj, heightColorClasses);
+                        }
+
+                        if (mode == Mode.LandControl)
+                        {
+                            List<PQSLandControl.LandClass> classes = landControlClasses.ToList();
+                            classes.Remove(obj as PQSLandControl.LandClass);
+                            landControlClasses = classes.ToArray();
+                            fieldInfo.SetValue(modObj, landControlClasses);
+                        }
+
+                        obj = null;
+                        state = State.Select;
+                    }
+                    offset += 25;
                 }
 
                 if (GUI.Button(new Rect(20, offset, 200, 20), "Exit"))

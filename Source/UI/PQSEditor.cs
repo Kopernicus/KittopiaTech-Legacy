@@ -200,19 +200,19 @@ namespace Kopernicus
                         else if (key.FieldType == typeof(PQSLandControl.LandClass[]))
                         {
                             if (GUI.Button(new Rect(20, offset, 178, 20), "Mod Land Classes"))
-                                LandClassModifier.SetEditedObject((PQSLandControl.LandClass[])key.GetValue(obj));
+                                LandClassModifier.SetEditedObject((PQSLandControl.LandClass[])key.GetValue(obj), key, obj);
                             offset += 25;
                         }
                         else if (key.FieldType == typeof(PQSMod_VertexPlanet.LandClass[]))
                         {
                             if (GUI.Button(new Rect(20, offset, 178, 20), "Mod Land Classes"))
-                                LandClassModifier.SetEditedObject((PQSMod_VertexPlanet.LandClass[])key.GetValue(obj));
+                                LandClassModifier.SetEditedObject((PQSMod_VertexPlanet.LandClass[])key.GetValue(obj), key, obj);
                             offset += 25;
                         }
                         else if (key.FieldType == typeof(PQSMod_HeightColorMap.LandClass[]))
                         {
                             if (GUI.Button(new Rect(20, offset, 178, 20), "Mod Land Classes"))
-                                LandClassModifier.SetEditedObject((PQSMod_HeightColorMap.LandClass[])key.GetValue(obj));
+                                LandClassModifier.SetEditedObject((PQSMod_HeightColorMap.LandClass[])key.GetValue(obj), key, obj);
                             offset += 25;
                         }
                         else if (key.FieldType == typeof(PQSMod_VertexPlanet.SimplexWrapper))
@@ -357,19 +357,19 @@ namespace Kopernicus
                         else if (key.FieldType == typeof(PQSLandControl.LandClass[]))
                         {
                             if (GUI.Button(new Rect(20, offset, 178, 20), "Mod Land Classes"))
-                                LandClassModifier.SetEditedObject((PQSLandControl.LandClass[])key.GetValue(obj));
+                                LandClassModifier.SetEditedObject((PQSLandControl.LandClass[])key.GetValue(obj), key, obj);
                             offset += 25;
                         }
                         else if (key.FieldType == typeof(PQSMod_VertexPlanet.LandClass[]))
                         {
                             if (GUI.Button(new Rect(20, offset, 178, 20), "Mod Land Classes"))
-                                LandClassModifier.SetEditedObject((PQSMod_VertexPlanet.LandClass[])key.GetValue(obj));
+                                LandClassModifier.SetEditedObject((PQSMod_VertexPlanet.LandClass[])key.GetValue(obj), key, obj);
                             offset += 25;
                         }
                         else if (key.FieldType == typeof(PQSMod_HeightColorMap.LandClass[]))
                         {
                             if (GUI.Button(new Rect(20, offset, 178, 20), "Mod Land Classes"))
-                                LandClassModifier.SetEditedObject((PQSMod_HeightColorMap.LandClass[])key.GetValue(obj));
+                                LandClassModifier.SetEditedObject((PQSMod_HeightColorMap.LandClass[])key.GetValue(obj), key, obj);
                             offset += 25;
                         }
                         else if (key.FieldType == typeof(PQSMod_VertexPlanet.SimplexWrapper))
