@@ -433,6 +433,17 @@ namespace Kopernicus
                         PQSMod mod = pqsModObject.AddComponent(type) as PQSMod;
                         mod.sphere = PlanetUI.currentBody.pqsController;
 
+                        if (type.Name == "PQSMod_VoronoiCraters")
+                        {
+                            CelestialBody mun = Utils.FindCB("Mun");
+                            PQSMod_VoronoiCraters craters = mun.GetComponentsInChildren<PQSMod_VoronoiCraters>()[0];
+
+                            PQSMod_VoronoiCraters nc = pqsModObject.GetComponentsInChildren<PQSMod_VoronoiCraters>()[0];
+                            nc.craterColourRamp = craters.craterColourRamp;
+                            nc.craterCurve = craters.craterCurve;
+                            nc.jitterCurve = craters.jitterCurve;
+                        }
+
                         // Revert to the List
                         mode = Modes.List;
                     }

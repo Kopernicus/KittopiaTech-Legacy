@@ -53,28 +53,24 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="UI\CelestialBodyEditor.cs" />
-    <Compile Include="UI\ConfigIO.cs" />
-    <Compile Include="UI\LerpRange.cs" />
-    <Compile Include="UI\NoiseModWrapper.cs" />
-    <Compile Include="UI\OrbitEditor.cs" />
-    <Compile Include="UI\PlanetSelector.cs" />
-    <Compile Include="UI\LandClassModifier.cs" />
-    <Compile Include="UI\ColorPicker.cs" />
-    <Compile Include="UI\PlanetUI.cs" />
-    <Compile Include="UI\Planet_GUI.cs" />
-    <Compile Include="UI\PQSEditor.cs" />
-    <Compile Include="UI\Rings.cs" />
-    <Compile Include="UI\ScaledPlanetMesh.cs" />
-    <Compile Include="UI\SimplexWrapper.cs" />
-    <Compile Include="UI\UIController.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CelestialBodyEditor.cs" />
+    <Compile Include="ConfigIO.cs" />
+    <Compile Include="LerpRange.cs" />
+    <Compile Include="NoiseModWrapper.cs" />
+    <Compile Include="OrbitEditor.cs" />
+    <Compile Include="PlanetSelector.cs" />
+    <Compile Include="LandClassModifier.cs" />
+    <Compile Include="ColorPicker.cs" />
+    <Compile Include="PlanetUI.cs" />
+    <Compile Include="Planet_GUI.cs" />
+    <Compile Include="PQSEditor.cs" />
+    <Compile Include="Rings.cs" />
+    <Compile Include="ScaledPlanetMesh.cs" />
+    <Compile Include="SimplexWrapper.cs" />
+    <Compile Include="UIController.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="PlanetaryUtilClass.cs" />
-    <Compile Include="Starfix_Controller_Module.cs" />
-    <Compile Include="GuiUtils.cs" />
-    <Compile Include="ButtonDef.cs" />
-    <Compile Include="UtilityComponents.cs" />
     <Compile Include="Particle_controller_module.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
