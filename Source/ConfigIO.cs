@@ -103,9 +103,57 @@ namespace Kopernicus
                     }
                 }
 
+                //Parse the Properties from CelestialBody
+                ConfigNode prop = (isCopy) ? new ConfigNode("Properties") : new ConfigNode("@Properties");
+
+                // Discover members tagged with parser attributes
+                foreach (MemberInfo member in typeof(Properties).GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
+                {
+                    // Is this member a parser target?
+                    ParserTarget[] attributes = member.GetCustomAttributes((typeof(ParserTarget)), true) as ParserTarget[];
+                    if (attributes.Length > 0)
+                    {
+                        // Get the Parser Target
+                        ParserTarget target = attributes.First();
+                        string value = "";
+                        string preset = "";
+
+                        // Get matching Fields / Properties
+                        IEnumerable<FieldInfo> fields = body.GetType().GetFields().Where(f => f.Name == Utils.GetField(target.fieldName));
+                        IEnumerable<PropertyInfo> properties = body.GetType().GetProperties().Where(p => p.Name == Utils.GetField(target.fieldName));
+
+                        // Get the current and the previous value
+                        if (fields.Count() == 1)
+                        {
+                            value = Format(fields.First().GetValue(body));
+                            preset = Format(fields.First().GetValue(pBody.celestialBody));
+                        }
+                        else if (properties.Count() == 1)
+                        {
+                            value = Format(properties.First().GetValue(body, null));
+                            preset = Format(properties.First().GetValue(pBody.celestialBody, null));
+                        }
+                        else if (target.fieldName == "color")
+                        {
+                            value = Format(body);
+                            preset = Format(pBody.celestialBody);
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
+                        // Check if the value has changed
+                        if (value != preset)
+                            prop.AddValue(target.fieldName, value);
+                    }
+                }
+
                 // If the node has values, add it to the root
                 if (orbit.values.Count > 0)
                     bodyNode.AddNode(orbit);
+                if (prop.values.Count > 0)
+                    bodyNode.AddNode(prop);
 
                 // Glue the nodes together
                 root.AddNode(bodyNode);

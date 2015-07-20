@@ -169,6 +169,10 @@ namespace Kopernicus
             private static Dictionary<string, string> kopernicusFields = new Dictionary<string,string>() 
             {
                 {"longitudeOfAscendingNode", "LAN"},
+                {"description", "bodyDescription"},
+                {"radius", "Radius"},
+                {"geeASL", "GeeASL"},
+                {"mass", "Mass"},
             };
 
             /// <summary>
