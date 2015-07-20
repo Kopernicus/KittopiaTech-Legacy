@@ -20,6 +20,7 @@ namespace Kopernicus
             public bool isSimplexWrapper = false;
             public bool isNoiseModWrapper = false;
             public bool isLerpRange = false;
+            public bool isFileBrowser = false;
 
             // Instance memeber
             public static UIController Instance { get; private set; }
@@ -31,6 +32,7 @@ namespace Kopernicus
             Rect simplexWrapperWindow = new Rect(420, 20, 420, 190);
             Rect noiseModWrapperWindow = new Rect(420, 20, 420, 170);
             Rect lerpRangeWindow = new Rect(420, 20, 420, 260);
+            Rect fileBrowserWindow = new Rect(500, 20, 530, 380);
 
             // OnGUI() => Render the planetary UI
             public void OnGUI()
@@ -52,6 +54,9 @@ namespace Kopernicus
 
                 if (isLerpRange)
                     lerpRangeWindow = LerpRange.Render(lerpRangeWindow, "LerpRange");
+
+                if (isFileBrowser)
+                    fileBrowserWindow = FileBrowser.Render(fileBrowserWindow, "Browse Files");
             }
 
             // Awake() => set our Instance member

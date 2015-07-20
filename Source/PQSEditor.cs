@@ -1,6 +1,7 @@
 ﻿using Kopernicus.Configuration;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -32,6 +33,7 @@ namespace Kopernicus
 
             // PQSMod Stuff
             private static string pqsModSphereName = "";
+            private static int currentMapDepth = 5;
 
             // Return an OnGUI()-Window.
             public static void Render()
@@ -134,8 +136,9 @@ namespace Kopernicus
                 int offset = 280;
 
                 // Create the height of the Scroll-List
-                Type[] supportedTypes = new Type[] { typeof(string), typeof(bool), typeof(int), typeof(float), typeof(double), typeof(Color), typeof(Vector3), typeof(PQSLandControl.LandClass[]), typeof(PQSMod_VertexPlanet.LandClass[]), typeof(MapSO), typeof(PQS), typeof(PQSMod_VertexPlanet.SimplexWrapper), typeof(PQSMod_VertexPlanet.NoiseModWrapper) };
+                Type[] supportedTypes = new Type[] { typeof(string), typeof(bool), typeof(int), typeof(float), typeof(double), typeof(Color), typeof(Vector3), typeof(PQSLandControl.LandClass[]), typeof(PQSMod_VertexPlanet.LandClass[]), typeof(PQS), typeof(PQSMod_VertexPlanet.SimplexWrapper), typeof(PQSMod_VertexPlanet.NoiseModWrapper) };
                 int scrollOffset = currentPQSMod.GetType().GetFields().Where(f => supportedTypes.Contains(f.FieldType)).Count() * 25;
+                scrollOffset += currentPQSMod.GetType().GetFields().Where(f => f.FieldType == typeof(MapSO)).Count() * 75;
 
                 // Render the Scrollbar
                 scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollOffset + 115));
@@ -229,18 +232,34 @@ namespace Kopernicus
                                 NoiseModWrapper.SetEditedObject((PQSMod_VertexPlanet.NoiseModWrapper)key.GetValue(obj));
                             offset += 25;
                         }
-                            /*
                         else if (key.FieldType == typeof(MapSO))
                         {
+                            // Stuff
+                            if (currentMapDepth == 5 && key.GetValue(obj) != null)
+                                currentMapDepth = (int)(key.GetValue(obj) as MapSO).Depth;
+                            else if (currentMapDepth == 5 && key.GetValue(obj) == null)
+                                currentMapDepth = 0;
+
+                            // Load the MapSO
                             GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name + ":");
-                            offset += 30;
-                            if (GUI.Button(new Rect(200, offset, 170, 20), "Load texture"))
+                            if (GUI.Button(new Rect(200, offset, 170, 20), "Load"))
                             {
-                                FileBrowser browser = new FileBrowser(new Rect(420, 400, 400, 400), "Load MapSO", onFileBrowserSelected);
+                                UIController.Instance.isFileBrowser = !UIController.Instance.isFileBrowser;
+                                FileBrowser.location = "";
+                            }
+                            offset += 25;
+                            currentMapDepth = GUI.SelectionGrid(new Rect(20, offset, 350, 20), currentMapDepth, new string[] { "Greyscale", "HeightAlpha", "RGB", "RGBA" }, 4);
+                            offset += 25;
+                            if (GUI.Button(new Rect(200, offset, 170, 20), "Apply"))
+                            {
+                                string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
+                                Texture2D texture = Utility.LoadTexture(path, false, false, false);
+                                MapSO mapSO = ScriptableObject.CreateInstance<MapSO>();
+                                mapSO.CreateMap((MapSO.MapDepth)currentMapDepth, texture);
+                                key.SetValue(obj, mapSO);
                             }
                             offset += 25;
                         }
-                             * */
                     }
                     catch { }
                 }
