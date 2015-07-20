@@ -149,9 +149,58 @@ namespace Kopernicus
                     }
                 }
 
+                // Parse the biomes, do that manually, reflection would be a bit silly for three values :P
+                ConfigNode oldBiomes = Utils.SearchNode("Biomes", body.transform.name);
+                ConfigNode biomes = oldBiomes == null ? new ConfigNode("Biomes") : new ConfigNode("@Biomes");
+
+                // Loop through the Biomes
+                if (body.BiomeMap != null)
+                {
+                    // Add the biome-map definition (Builtin maps not allowed here)
+                    if (Utils.TextureExists(body.BiomeMap.MapName))
+                    {
+                        if (oldBiomes != null)
+                            if (Utils.SearchNode("Properties", body.transform.name).HasValue("biomeMap"))
+                                prop.AddValue("@biomeMap", body.BiomeMap.MapName);
+                            else
+                                prop.AddValue("biomeMap", body.BiomeMap.MapName);
+                        else
+                            prop.AddValue("biomeMap", body.BiomeMap.MapName);
+                    }
+
+                    // Add the Biomes
+                    foreach (CBAttributeMapSO.MapAttribute biome in body.BiomeMap.Attributes)
+                    {
+                        if (oldBiomes == null || (oldBiomes != null && oldBiomes.GetNodes().Where(n => n.HasValue("name") && n.GetValue("name") == biome.name).Count() == 0))
+                        {
+                            ConfigNode biomeNode = new ConfigNode("Biome");
+                            biomeNode.AddValue("name", biome.name);
+                            biomeNode.AddValue("value", biome.value);
+                            biomeNode.AddValue("color", Format(biome.mapColor));
+                            biomes.AddNode(biomeNode);
+                        } 
+                        else if (oldBiomes != null && oldBiomes.GetNodes().Where(n => n.HasValue("name") && n.GetValue("name") == biome.name).Count() > 0)
+                        {
+                            ConfigNode biomeNode = new ConfigNode("@Biome[" + biome.name + "]");
+                            biomeNode.AddValue("@name", biome.name);
+                            biomeNode.AddValue("@value", biome.value);
+                            biomeNode.AddValue("@color", Format(biome.mapColor));
+                            biomes.AddNode(biomeNode);
+                        }
+                    }
+
+                    // Post process them, to delete the deleted biomes
+                    if (oldBiomes != null)
+                        foreach (ConfigNode n in oldBiomes.nodes)
+                            if (!body.BiomeMap.Attributes.Select(b => b.name).Contains(n.GetValue("name")))
+                                biomes.AddNode("!Biome[" + n.GetValue("name") + "]");
+                }
+
                 // If the node has values, add it to the root
                 if (orbit.values.Count > 0)
                     bodyNode.AddNode(orbit);
+                if (biomes.nodes.Count > 0)
+                    prop.AddNode(biomes);
                 if (prop.values.Count > 0)
                     bodyNode.AddNode(prop);
 
@@ -173,7 +222,7 @@ namespace Kopernicus
                 if (input.GetType() == typeof(Color))
                     return input.ToString().Replace("RGBA(", "").Replace(")", "");
 
-                return input.ToString();
+                return input.ToString().Replace("(" + input.GetType().FullName + ")", "").Trim();
             }
         }
     }

@@ -12,7 +12,7 @@ namespace Kopernicus
         // Class that renders a BiomeModder
         public class BiomeModifier
         {
-            // VertexPlanet
+            // Biomes
             private static CBAttributeMapSO.MapAttribute[] biomes;
 
             // FieldInfo to apply additions / removals
@@ -64,7 +64,7 @@ namespace Kopernicus
                     // Render the Scrollbar
                     scrollPosition = GUI.BeginScrollView(new Rect(10, 30, 400, 200), scrollPosition, new Rect(0, 28, 380, scrollSize + 80));
 
-                    // Render the LandClasses
+                    // Render the Biomes
                     foreach (CBAttributeMapSO.MapAttribute biome in biomes)
                     {
                         if (GUI.Button(new Rect(20, offset, 200, 20), "" + biome.name))
@@ -133,7 +133,7 @@ namespace Kopernicus
                     }
                     offset += 20;
 
-                    // Remove a landclass
+                    // Remove a Biome
                     if (GUI.Button(new Rect(20, offset, 200, 20), "Remove Biome"))
                     {
                         List<CBAttributeMapSO.MapAttribute> Biomes = biomes.ToList();

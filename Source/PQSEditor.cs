@@ -72,8 +72,8 @@ namespace Kopernicus
                 int offset = 280;
 
                 // Get the PQS-Spheres and their mods
-                IEnumerable<PQS> pqsList = Utils.FindLocal(PlanetUI.currentName).GetComponentsInChildren<PQS>(true);
-                IEnumerable<PQSMod> pqsModList = Utils.FindLocal(PlanetUI.currentName).GetComponentsInChildren<PQSMod>(true);
+                IEnumerable<PQS> pqsList = Utils.FindLocal(PlanetUI.currentBody.transform.name).GetComponentsInChildren<PQS>(true);
+                IEnumerable<PQSMod> pqsModList = Utils.FindLocal(PlanetUI.currentBody.transform.name).GetComponentsInChildren<PQSMod>(true);
 
                 // Render the scrollbar
                 int scrollSize = ((pqsList.Count() + pqsModList.Count()) * 25) + 20;

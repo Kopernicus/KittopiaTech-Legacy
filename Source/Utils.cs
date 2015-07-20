@@ -218,6 +218,37 @@ namespace Kopernicus
                 scaledVersion.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", textures[0]);
                 scaledVersion.GetComponent<MeshRenderer>().material.SetTexture("_BumpMap", textures[2]);
             }
+
+            public static ConfigNode SearchNode(string name, string planet, ConfigNode node = null)
+            {
+                // Get the Body-Node
+                if (node == null)
+                {
+                    ConfigNode root = GameDatabase.Instance.GetConfigNodes("Kopernicus").First();
+                    IEnumerable<ConfigNode> bodies = root.GetNodes().Where(n => n.HasValue("name") && n.GetValue("name") == planet);
+
+                    // If we didn't found a body, abort
+                    if (bodies.Count() == 0)
+                        return null;
+
+                    node = bodies.First();
+                }
+
+                // Are we already the searched node?
+                if (node.name == name)
+                    return node;
+
+                // Loop through the nodes, to find the node
+                foreach (ConfigNode subNode in node.nodes)
+                {
+                    ConfigNode result = SearchNode(name, planet, subNode);
+                    if (result != null)
+                        return result;
+                }
+
+                // Return null, if we didn't find sth.
+                return null;
+            }
         }
     }
 }

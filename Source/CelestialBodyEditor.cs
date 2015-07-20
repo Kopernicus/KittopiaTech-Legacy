@@ -121,6 +121,7 @@ namespace Kopernicus
                             {
                                 string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
                                 Texture2D texture = Utility.LoadTexture(path, false, false, false);
+                                texture.name = path.Replace("\\", "/");
                                 CBAttributeMapSO mapSO = ScriptableObject.CreateInstance<CBAttributeMapSO>();
                                 mapSO.exactSearch = false;
                                 mapSO.nonExactThreshold = 0.05f;
