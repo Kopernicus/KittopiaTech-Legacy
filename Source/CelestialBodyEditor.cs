@@ -1,6 +1,7 @@
 ﻿using Kopernicus.Configuration;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -32,6 +33,7 @@ namespace Kopernicus
                 // Create the height of the Scroll-List
                 Type[] supportedTypes = new Type[] { typeof(string), typeof(bool), typeof(int), typeof(float), typeof(double), typeof(Color), typeof(Vector3) };
                 int scrollOffset = PlanetUI.currentBody.GetType().GetFields().Where(f => supportedTypes.Contains(f.FieldType)).Count() * 25;
+                scrollOffset += PlanetUI.currentBody.GetType().GetFields().Where(f => f.FieldType == typeof(CBAttributeMapSO)).Count() * 75;
 
                 // Render the Scrollbar
                 scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollOffset + 50));
@@ -92,6 +94,40 @@ namespace Kopernicus
 
                             key.SetValue(obj, value);
 
+                            offset += 25;
+                        }
+                        else if (key.FieldType == typeof(CBAttributeMapSO))
+                        {
+                            // Load the MapSO
+                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name + ":");
+                            if (GUI.Button(new Rect(200, offset, 170, 20), "Load"))
+                            {
+                                UIController.Instance.isFileBrowser = !UIController.Instance.isFileBrowser;
+                                FileBrowser.location = "";
+                            }
+                            offset += 25;
+
+                            // Edit the Biome-Definitions
+                            if (GUI.Button(new Rect(200, offset, 170, 20), "Mod Biomes"))
+                            {
+                                FieldInfo attributes = typeof(CBAttributeMapSO).GetField("Attributes");
+                                object att = attributes.GetValue(key.GetValue(obj));
+                                BiomeModifier.SetEditedObject(att as CBAttributeMapSO.MapAttribute[], attributes, key.GetValue(obj));
+                            }    
+                            offset += 25;
+
+                            // Apply the new MapSO
+                            if (GUI.Button(new Rect(200, offset, 170, 20), "Apply"))
+                            {
+                                string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
+                                Texture2D texture = Utility.LoadTexture(path, false, false, false);
+                                CBAttributeMapSO mapSO = ScriptableObject.CreateInstance<CBAttributeMapSO>();
+                                mapSO.exactSearch = false;
+                                mapSO.nonExactThreshold = 0.05f;
+                                mapSO.CreateMap(MapSO.MapDepth.RGB, texture);
+                                mapSO.Attributes = (key.GetValue(obj) as CBAttributeMapSO).Attributes;
+                                key.SetValue(obj, mapSO);
+                            }
                             offset += 25;
                         }
                     }

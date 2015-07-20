@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileBrowser.cs" />
+    <Compile Include="BiomeModifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CelestialBodyEditor.cs" />
     <Compile Include="ConfigIO.cs" />
