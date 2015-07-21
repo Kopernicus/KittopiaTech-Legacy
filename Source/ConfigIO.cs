@@ -1,4 +1,6 @@
-﻿using Kopernicus.Configuration;
+﻿// This file could get a bit large....
+
+using Kopernicus.Configuration;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -58,7 +60,8 @@ namespace Kopernicus
                 }
 
                 // Orbit
-                ConfigNode orbit = (isCopy) ? new ConfigNode("Orbit") : new ConfigNode("@Orbit");
+                ConfigNode oldOrbit = Utils.SearchNode("Orbit", body.transform.name);
+                ConfigNode orbit = (oldOrbit == null) ? new ConfigNode("Orbit") : new ConfigNode("@Orbit");
 
                 // Discover members tagged with parser attributes
                 foreach (MemberInfo member in typeof(OrbitLoader).GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
@@ -97,14 +100,22 @@ namespace Kopernicus
                             continue;
                         }
 
-                        // Check if the value has changed
+                        // Check if the value has changed and how to flag it
                         if (value != preset)
-                            orbit.AddValue(target.fieldName, value);
+                        {
+                            if (oldOrbit == null)
+                                orbit.AddValue(target.fieldName, value);
+                            else if (oldOrbit != null && oldOrbit.HasValue(target.fieldName))
+                                orbit.AddValue("@" + target.fieldName, value);
+                            else
+                                orbit.AddValue(target.fieldName, value);
+                        }
                     }
                 }
 
                 //Parse the Properties from CelestialBody
-                ConfigNode prop = (isCopy) ? new ConfigNode("Properties") : new ConfigNode("@Properties");
+                ConfigNode oldProp = Utils.SearchNode("Properties", body.transform.name);
+                ConfigNode prop = (oldOrbit == null) ? new ConfigNode("Properties") : new ConfigNode("@Properties");
 
                 // Discover members tagged with parser attributes
                 foreach (MemberInfo member in typeof(Properties).GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
@@ -143,57 +154,75 @@ namespace Kopernicus
                             continue;
                         }
 
-                        // Check if the value has changed
+                        // Check if the value has changed and how to flag it
                         if (value != preset)
-                            prop.AddValue(target.fieldName, value);
+                        {
+                            if (oldProp == null)
+                                prop.AddValue(target.fieldName, value);
+                            else if (oldProp != null && oldProp.HasValue(target.fieldName))
+                                prop.AddValue("@" + target.fieldName, value);
+                            else
+                                prop.AddValue(target.fieldName, value);
+                        }
                     }
                 }
 
                 //Start getting the PQS stuff
-                ConfigNode pqs = (isCopy) ? new ConfigNode("PQS") : new ConfigNode("@PQS");
+                ConfigNode oldPQS = Utils.SearchNode("PQS", body.transform.name);
+                ConfigNode pqs = (oldPQS == null) ? new ConfigNode("PQS") : new ConfigNode("@PQS");
+  
+                // Store the values
+                string[] values = new string[7];
+                string[] presets = new string[7];
+                string[] parsed = new string[7];
 
-                // Discover members tagged with parser attributes
-                foreach (MemberInfo member in typeof(PQSLoader).GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
+                // minLevel
+                values[0] = Format(body.pqsController.minLevel);
+                presets[0] = Format(pBody.pqsVersion.minLevel);
+                parsed[0] = "minLevel";
+                
+                // maxLevel
+                values[1] = Format(body.pqsController.maxLevel);
+                presets[1] = Format(pBody.pqsVersion.maxLevel);
+                parsed[1] = "maxLevel";
+
+                // minDetailDistance
+                values[2] = Format(body.pqsController.minDetailDistance);
+                presets[2] = Format(pBody.pqsVersion.minDetailDistance);
+                parsed[2] = "minDetailDistance";
+
+                // maxQuadLenghtsPerFrame
+                values[3] = Format(body.pqsController.maxQuadLenghtsPerFrame);
+                presets[3] = Format(pBody.pqsVersion.maxQuadLenghtsPerFrame);
+                parsed[3] = "maxQuadLenghtsPerFrame";
+
+                // pqsFadeStart
+                values[4] = Format(body.pqsController.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)[0].planetFade.fadeStart);
+                presets[4] = Format(pBody.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)[0].planetFade.fadeStart);
+                parsed[4] = "pqsFadeStart";
+
+                // pqsFadeStart
+                values[5] = Format(body.pqsController.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)[0].planetFade.fadeEnd);
+                presets[5] = Format(pBody.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)[0].planetFade.fadeEnd);
+                parsed[5] = "pqsFadeEnd";
+
+                // pqsFadeStart
+                values[6] = Format(body.pqsController.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)[0].deactivateAltitude);
+                presets[6] = Format(pBody.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)[0].deactivateAltitude);
+                parsed[6] = "deactivateAltitude";
+
+                // Create the config
+                for (int i = 0; i < values.Count(); i++)
                 {
-                    // Is this member a parser target?
-                    ParserTarget[] attributes = member.GetCustomAttributes((typeof(ParserTarget)), true) as ParserTarget[];
-                    if (attributes.Length > 0)
+                    if (values[i] != presets[i])
                     {
-                        // Get the Parser Target
-                        ParserTarget target = attributes.First();
-                        string value = "";
-                        string preset = "";
-                        
-                        // Get matching Fields / Properties
-                        IEnumerable<FieldInfo> fields = body.pqsController.GetType().GetFields().Where(f => f.Name == Utils.GetField(target.fieldName));
-                        IEnumerable<PropertyInfo> properties = body.pqsController.GetType().GetProperties().Where(p => p.Name == Utils.GetField(target.fieldName));
-
-                        // Get the current and the previous value
-                        if (fields.Count() == 1)
-                        {
-                            value = Format(fields.First().GetValue(body.pqsController));
-                            preset = Format(fields.First().GetValue(pBody.pqsVersion));
-                        }
-                        else if (properties.Count() == 1)
-                        {
-                            value = Format(properties.First().GetValue(body.pqsController, null));
-                            preset = Format(properties.First().GetValue(pBody.pqsVersion, null));
-                        }
-                        else if (target.fieldName == "color")
-                        {
-                            value = Format(body.pqsController);
-                            preset = Format(pBody.pqsVersion);
-                        }
+                        if (oldPQS == null)
+                            pqs.AddValue(parsed[i], values[i]);
+                        else if (oldPQS != null && oldPQS.HasValue(parsed[i]))
+                            pqs.AddValue("@" + parsed[i], values[i]);
                         else
-                        {
-                            continue;
-                        }
-
-                        // Check if the value has changed
-                        if (value != preset)
-                            pqs.AddValue(target.fieldName, value);
+                            pqs.AddValue(parsed[i], values[i]);
                     }
-                    
                 }
 
                 // Parse the biomes, do that manually, reflection would be a bit silly for three values :P
@@ -218,6 +247,8 @@ namespace Kopernicus
                     // Add the Biomes
                     foreach (CBAttributeMapSO.MapAttribute biome in body.BiomeMap.Attributes)
                     {
+                        Func<ConfigNode, bool> p = n => n.HasValue("name") && n.GetValue("name") == biome.name;
+
                         if (oldBiomes == null || (oldBiomes != null && oldBiomes.GetNodes().Where(n => n.HasValue("name") && n.GetValue("name") == biome.name).Count() == 0))
                         {
                             ConfigNode biomeNode = new ConfigNode("Biome");
@@ -226,12 +257,21 @@ namespace Kopernicus
                             biomeNode.AddValue("color", Format(biome.mapColor));
                             biomes.AddNode(biomeNode);
                         } 
-                        else if (oldBiomes != null && oldBiomes.GetNodes().Where(n => n.HasValue("name") && n.GetValue("name") == biome.name).Count() > 0)
+                        else if (oldBiomes != null && oldBiomes.GetNodes().Where(p).Count() > 0)
                         {
+                            // Stuff
+                            bool isSame = false;
+                            ConfigNode oldBiome = oldBiomes.GetNodes().Where(p).First();
+
+                            // Create the node, and check changes
                             ConfigNode biomeNode = new ConfigNode("@Biome[" + biome.name + "]");
-                            biomeNode.AddValue("@name", biome.name);
-                            biomeNode.AddValue("@value", biome.value);
-                            biomeNode.AddValue("@color", Format(biome.mapColor));
+                            biomeNode.AddValue("@name", biome.name); isSame = biome.name == oldBiome.GetValue("name");
+                            biomeNode.AddValue("@value", biome.value); isSame = biome.value.ToString() == oldBiome.GetValue("value");
+                            biomeNode.AddValue("@color", Format(biome.mapColor)); isSame = biome.value.ToString() == oldBiome.GetValue("value");
+
+                            // If nothing changed, do nothing
+
+
                             biomes.AddNode(biomeNode);
                         }
                     }
