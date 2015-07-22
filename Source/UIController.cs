@@ -22,6 +22,7 @@ namespace Kopernicus
             public bool isLerpRange = false;
             public bool isFileBrowser = false;
             public bool isBiome = false;
+            public bool isMaterial = false;
 
             // Instance memeber
             public static UIController Instance { get; private set; }
@@ -35,6 +36,7 @@ namespace Kopernicus
             Rect lerpRangeWindow = new Rect(420, 20, 420, 260);
             Rect fileBrowserWindow = new Rect(500, 20, 530, 380);
             Rect biomeWindow = new Rect(420, 400, 420, 250);
+            Rect materialWindow = new Rect(500, 20, 420, 450);
 
             // OnGUI() => Render the planetary UI
             public void OnGUI()
@@ -62,6 +64,9 @@ namespace Kopernicus
 
                 if (isBiome)
                     biomeWindow = BiomeModifier.Render(biomeWindow, "Biome Modifier");
+
+                if (isMaterial)
+                    materialWindow = MaterialEditor.Render(materialWindow, "Material Modifier");
             }
 
             // Awake() => set our Instance member

@@ -373,29 +373,11 @@ namespace Kopernicus
 
                             offset += 25;
                         }
-                        else if (key.FieldType == typeof(PQSLandControl.LandClass[]))
+                        else if (key.GetValue(obj) is Material) // Kopernicus creates Wrappers for the Materials, so key.FieldType == typeof(Material) would return false. :/
                         {
-                            if (GUI.Button(new Rect(20, offset, 178, 20), "Mod Land Classes"))
-                                LandClassModifier.SetEditedObject((PQSLandControl.LandClass[])key.GetValue(obj), key, obj);
-                            offset += 25;
-                        }
-                        else if (key.FieldType == typeof(PQSMod_VertexPlanet.LandClass[]))
-                        {
-                            if (GUI.Button(new Rect(20, offset, 178, 20), "Mod Land Classes"))
-                                LandClassModifier.SetEditedObject((PQSMod_VertexPlanet.LandClass[])key.GetValue(obj), key, obj);
-                            offset += 25;
-                        }
-                        else if (key.FieldType == typeof(PQSMod_HeightColorMap.LandClass[]))
-                        {
-                            if (GUI.Button(new Rect(20, offset, 178, 20), "Mod Land Classes"))
-                                LandClassModifier.SetEditedObject((PQSMod_HeightColorMap.LandClass[])key.GetValue(obj), key, obj);
-                            offset += 25;
-                        }
-                        else if (key.FieldType == typeof(PQSMod_VertexPlanet.SimplexWrapper))
-                        {
-                            if (GUI.Button(new Rect(20, offset, 178, 20), "" + key.Name))
-                                SimplexWrapper.SetEditedObject((PQSMod_VertexPlanet.SimplexWrapper)key.GetValue(obj));
-
+                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                            if (GUI.Button(new Rect(200, offset, 170, 20), "Edit Material"))
+                                MaterialEditor.SetEditedObject(key.GetValue(obj) as Material, key, obj);
                             offset += 25;
                         }
                     }
