@@ -310,7 +310,7 @@ namespace Kopernicus
                 int offset = 280;
 
                 // Create the height of the Scroll-List
-                Type[] supportedTypes = new Type[] { typeof(string), typeof(bool), typeof(int), typeof(float), typeof(double), typeof(Color), typeof(Vector3), typeof(PQSLandControl.LandClass[]), typeof(PQSMod_VertexPlanet.LandClass[]), typeof(MapSO), typeof(PQS) };
+                Type[] supportedTypes = new Type[] { typeof(string), typeof(bool), typeof(int), typeof(float), typeof(double), typeof(Color), typeof(Vector3), typeof(PQSLandControl.LandClass[]), typeof(PQSMod_VertexPlanet.LandClass[]), typeof(MapSO), typeof(PQS), typeof(Material) };
                 int scrollOffset = currentPQS.GetType().GetFields().Where(f => supportedTypes.Contains(f.FieldType)).Count() * 25;
 
                 // Render the Scrollbar
