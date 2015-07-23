@@ -20,9 +20,10 @@ namespace Kopernicus
             public static void SaveCelestial(CelestialBody body)
             {
                 // The conifg-node where we save the body
-                ConfigNode root = new ConfigNode("@Kopernicus:AFTER[Kopernicus]");
+                ConfigNode root = new ConfigNode("@Kopernicus:NEEDS[Kopernicus]:FINAL");
                 ConfigNode bodyNode = null;
 
+                #region Body
                 // Are we instanced?
                 bool isCopy = false;
 
@@ -58,7 +59,9 @@ namespace Kopernicus
                     template.AddValue("name", pBody.name);
                     bodyNode.AddNode(template);
                 }
+                #endregion
 
+                #region Orbit
                 // Orbit
                 ConfigNode oldOrbit = Utils.SearchNode("Orbit", body.transform.name);
                 ConfigNode orbit = (oldOrbit == null) ? new ConfigNode("Orbit") : new ConfigNode("@Orbit");
@@ -112,10 +115,12 @@ namespace Kopernicus
                         }
                     }
                 }
+                #endregion
 
+                #region Properties
                 //Parse the Properties from CelestialBody
                 ConfigNode oldProp = Utils.SearchNode("Properties", body.transform.name);
-                ConfigNode prop = (oldOrbit == null) ? new ConfigNode("Properties") : new ConfigNode("@Properties");
+                ConfigNode prop = (oldProp == null) ? new ConfigNode("Properties") : new ConfigNode("@Properties");
 
                 // Discover members tagged with parser attributes
                 foreach (MemberInfo member in typeof(Properties).GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
@@ -166,7 +171,10 @@ namespace Kopernicus
                         }
                     }
                 }
+                #endregion
 
+                #region PQS
+                #region Start
                 //Start getting the PQS stuff
                 ConfigNode oldPQS = Utils.SearchNode("PQS", body.transform.name);
                 ConfigNode pqs = (oldPQS == null) ? new ConfigNode("PQS") : new ConfigNode("@PQS");
@@ -224,7 +232,89 @@ namespace Kopernicus
                             pqs.AddValue(parsed[i], values[i]);
                     }
                 }
+                #endregion
 
+                #region Material
+                // Materials
+                ConfigNode oldMat = null;
+                ConfigNode mat = null;
+
+                if (oldPQS == null)
+                    mat = new ConfigNode("Material");
+                else if (oldPQS != null && oldPQS.HasNode("Material"))
+                    mat = new ConfigNode("@Material");
+                else
+                    mat = new ConfigNode("Material");
+
+                if (mat.name.StartsWith("@"))
+                    oldMat = Utils.SearchNode("Material", body.transform.name, oldPQS);
+
+                // Get the Parser-Type of the Material
+                object obj = null;
+                object pObj = null;
+                if (body.pqsController.surfaceMaterial != null)
+                {
+                    IEnumerable<Type> types = Assembly.GetAssembly(typeof(Injector)).GetTypes();
+                    IEnumerable<Type> materials = types.Where(t => t.BaseType == typeof(Material));
+                    foreach (Type t in materials)
+                    {
+                        // Big Reflection, because of internal class
+                        Type singleton = types.First(t2 => t2.FullName == t.FullName + "+Properties");
+                        string shaderName = (singleton.GetProperty("shader", BindingFlags.Static | BindingFlags.Public).GetValue(null, null) as Shader).name;
+
+                        // Compare things and break
+                        if (shaderName == body.pqsController.surfaceMaterial.shader.name)
+                        {
+                            Type loader = types.First(l => l.Name == t.Name + "Loader");
+                            obj = Activator.CreateInstance(loader, new object[] { body.pqsController.surfaceMaterial });
+                            pObj = Activator.CreateInstance(loader, new object[] { pBody.pqsVersion.surfaceMaterial });
+                            break;
+                        }
+                    }
+                }
+
+                // Discover members tagged with parser attributes
+                foreach (MemberInfo member in obj.GetType().GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
+                {
+                    // Is this member a parser target?
+                    ParserTarget[] attributes = member.GetCustomAttributes((typeof(ParserTarget)), true) as ParserTarget[];
+                    if (attributes.Length > 0)
+                    {
+                        // Get the Parser Target
+                        ParserTarget target = attributes.First();
+                        string value = "";
+                        string preset = "";
+
+                        // Get matching Fields / Properties
+                        IEnumerable<PropertyInfo> properties = obj.GetType().GetProperties().Where(p => p.Name == target.fieldName);
+
+                        // Get the current and the previous value
+                        if (properties.Count() == 1)
+                        {
+                            value = Format(properties.First().GetValue(obj, null));
+                            preset = Format(properties.First().GetValue(pObj, null));
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
+                        // Check if the value has changed and how to flag it
+                        if (value != preset)
+                        {
+                            if (oldMat == null)
+                                mat.AddValue(target.fieldName, value);
+                            else if (oldMat != null && oldMat.HasValue(target.fieldName))
+                                mat.AddValue("@" + target.fieldName, value);
+                            else
+                                mat.AddValue(target.fieldName, value);
+                        }
+                    }
+                }
+                #endregion
+                #endregion
+
+                #region Biomes
                 // Parse the biomes, do that manually, reflection would be a bit silly for three values :P
                 ConfigNode oldBiomes = Utils.SearchNode("Biomes", body.transform.name);
                 ConfigNode biomes = oldBiomes == null ? new ConfigNode("Biomes") : new ConfigNode("@Biomes");
@@ -282,6 +372,7 @@ namespace Kopernicus
                             if (!body.BiomeMap.Attributes.Select(b => b.name).Contains(n.GetValue("name")))
                                 biomes.AddNode("!Biome[" + n.GetValue("name") + "]");
                 }
+                #endregion
 
                 // If the node has values, add it to the root
                 if (orbit.values.Count > 0)
@@ -290,6 +381,8 @@ namespace Kopernicus
                     prop.AddNode(biomes);
                 if (prop.values.Count > 0)
                     bodyNode.AddNode(prop);
+                if (mat.values.Count > 0)
+                    pqs.AddNode(mat);
                 if (pqs.values.Count > 0)
                     bodyNode.AddNode(pqs);
 
