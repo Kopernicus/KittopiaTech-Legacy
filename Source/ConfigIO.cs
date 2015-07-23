@@ -120,7 +120,7 @@ namespace Kopernicus
                 #region Properties
                 //Parse the Properties from CelestialBody
                 ConfigNode oldProp = Utils.SearchNode("Properties", body.transform.name);
-                ConfigNode prop = (oldOrbit == null) ? new ConfigNode("Properties") : new ConfigNode("@Properties");
+                ConfigNode prop = (oldProp == null) ? new ConfigNode("Properties") : new ConfigNode("@Properties");
 
                 // Discover members tagged with parser attributes
                 foreach (MemberInfo member in typeof(Properties).GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
