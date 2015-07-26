@@ -33,6 +33,9 @@
     <NoStdLib>true</NoStdLib>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\..\Programme\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
     <Reference Include="Kopernicus">
       <HintPath>..\References\Kopernicus.dll</HintPath>
       <Private>False</Private>
@@ -53,30 +56,44 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AtmosphereSFX.cs" />
-    <Compile Include="FileBrowser.cs" />
-    <Compile Include="BiomeModifier.cs" />
-    <Compile Include="MaterialEditor.cs" />
+    <Compile Include="Legacy\Particle_controller_module.cs" />
+    <Compile Include="Legacy\PlanetaryUtilClass.cs" />
+    <Compile Include="Legacy\Planet_GUI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CelestialBodyEditor.cs" />
-    <Compile Include="ConfigIO.cs" />
-    <Compile Include="LerpRange.cs" />
-    <Compile Include="NoiseModWrapper.cs" />
-    <Compile Include="OrbitEditor.cs" />
-    <Compile Include="PlanetSelector.cs" />
-    <Compile Include="LandClassModifier.cs" />
-    <Compile Include="ColorPicker.cs" />
-    <Compile Include="PlanetUI.cs" />
-    <Compile Include="Planet_GUI.cs" />
-    <Compile Include="PQSEditor.cs" />
-    <Compile Include="Rings.cs" />
-    <Compile Include="ScaledPlanetMesh.cs" />
-    <Compile Include="SimplexWrapper.cs" />
     <Compile Include="UIController.cs" />
-    <Compile Include="Utils.cs" />
-    <Compile Include="PlanetaryUtilClass.cs" />
-    <Compile Include="Particle_controller_module.cs" />
+    <Compile Include="Utils\ConfigIO.cs" />
+    <Compile Include="Utils\ScaledPlanetMesh.cs" />
+    <Compile Include="Utils\Shaders.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Shaders.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\Utils.cs" />
+    <Compile Include="Windows\BiomeModifier.cs" />
+    <Compile Include="Windows\ColorPicker.cs" />
+    <Compile Include="Windows\Editors\AtmosphereSFX.cs" />
+    <Compile Include="Windows\Editors\CelestialBodyEditor.cs" />
+    <Compile Include="Windows\Editors\OrbitEditor.cs" />
+    <Compile Include="Windows\Editors\PlanetSelector.cs" />
+    <Compile Include="Windows\Editors\PQSEditor.cs" />
+    <Compile Include="Windows\Editors\Rings.cs" />
+    <Compile Include="Windows\FileBrowser.cs" />
+    <Compile Include="Windows\LandClassModifier.cs" />
+    <Compile Include="Windows\LerpRange.cs" />
+    <Compile Include="Windows\MaterialEditor.cs" />
+    <Compile Include="Windows\NoiseModWrapper.cs" />
+    <Compile Include="Windows\PlanetUI.cs" />
+    <Compile Include="Windows\PQSBrowser.cs" />
+    <Compile Include="Windows\SimplexWrapper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Utils\Shaders.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Shaders.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\Outline.txt" />
+  </ItemGroup>
 </Project>

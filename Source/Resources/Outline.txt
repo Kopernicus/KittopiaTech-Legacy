@@ -1,0 +1,508 @@
+// Compiled shader for all platforms, uncompressed size: 15.0KB
+
+Shader "Outlined/Silhouette Only" {
+Properties {
+ _OutlineColor ("Outline Color", Color) = (0,0,0,1)
+ _Outline ("Outline width", Range(0,0.03)) = 0.005
+}
+SubShader { 
+ Tags { "QUEUE"="Transparent" }
+ Pass {
+  Name "BASE"
+  Tags { "QUEUE"="Transparent" }
+  Blend Zero One
+  SetTexture [_OutlineColor] { ConstantColor (0,0,0,0) combine constant }
+ }
+
+
+ // Stats for Vertex shader:
+ //       d3d11 : 11 math
+ //    d3d11_9x : 11 math
+ //        d3d9 : 14 math
+ //       metal : 7 math
+ //      opengl : 14 math
+ // Stats for Fragment shader:
+ //        d3d9 : 1 math
+ //      opengl : 1 math
+ Pass {
+  Name "OUTLINE"
+  Tags { "LIGHTMODE"="Always" "QUEUE"="Transparent" }
+  Cull Front
+  Blend One OneMinusDstColor
+Program "vp" {
+SubProgram "opengl " {
+// Stats: 14 math
+Bind "vertex" Vertex
+Bind "normal" Normal
+Float 13 [_Outline]
+Vector 14 [_OutlineColor]
+"!!ARBvp1.0
+PARAM c[15] = { program.local[0],
+		state.matrix.projection,
+		state.matrix.mvp,
+		state.matrix.modelview[0].invtrans,
+		program.local[13..14] };
+TEMP R0;
+TEMP R1;
+DP3 R0.x, vertex.normal, c[9];
+DP3 R0.y, vertex.normal, c[10];
+MUL R0.zw, R0.xyxy, c[2].xyxy;
+MUL R1.xy, R0, c[1];
+ADD R0.w, R0.z, R0;
+DP4 R0.x, vertex.position, c[7];
+ADD R0.z, R1.x, R1.y;
+MUL R1.xy, R0.zwzw, R0.x;
+DP4 R0.z, vertex.position, c[5];
+DP4 R0.w, vertex.position, c[6];
+MAD result.position.xy, R1, c[13].x, R0.zwzw;
+MOV result.color, c[14];
+DP4 result.position.w, vertex.position, c[8];
+MOV result.position.z, R0.x;
+END
+# 14 instructions, 2 R-regs
+"
+}
+SubProgram "d3d9 " {
+// Stats: 14 math
+Bind "vertex" Vertex
+Bind "normal" Normal
+Matrix 0 [glstate_matrix_projection]
+Matrix 4 [glstate_matrix_mvp]
+Matrix 8 [glstate_matrix_invtrans_modelview0]
+Float 12 [_Outline]
+Vector 13 [_OutlineColor]
+"vs_2_0
+dcl_position0 v0
+dcl_normal0 v1
+dp3 r0.x, v1, c8
+dp3 r0.y, v1, c9
+mul r0.zw, r0.xyxy, c1.xyxy
+mul r1.xy, r0, c0
+add r0.w, r0.z, r0
+dp4 r0.x, v0, c6
+add r0.z, r1.x, r1.y
+mul r1.xy, r0.zwzw, r0.x
+dp4 r0.z, v0, c4
+dp4 r0.w, v0, c5
+mad oPos.xy, r1, c12.x, r0.zwzw
+mov oD0, c13
+dp4 oPos.w, v0, c7
+mov oPos.z, r0.x
+"
+}
+SubProgram "d3d11 " {
+// Stats: 11 math
+Bind "vertex" Vertex
+Bind "normal" Normal
+ConstBuffer "$Globals" 48
+Float 16 [_Outline]
+Vector 32 [_OutlineColor]
+ConstBuffer "UnityPerDraw" 336
+Matrix 0 [glstate_matrix_mvp]
+Matrix 128 [glstate_matrix_invtrans_modelview0]
+ConstBuffer "UnityPerFrame" 208
+Matrix 0 [glstate_matrix_projection]
+BindCB  "$Globals" 0
+BindCB  "UnityPerDraw" 1
+BindCB  "UnityPerFrame" 2
+"vs_4_0
+eefiecedpeglhjdhjlphdcijpflophcmlpmdphfeabaaaaaabaadaaaaadaaaaaa
+cmaaaaaahmaaaaaanaaaaaaaejfdeheoeiaaaaaaacaaaaaaaiaaaaaadiaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaebaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaahahaaaafaepfdejfeejepeoaaeoepfcenebemaaepfdeheo
+emaaaaaaacaaaaaaaiaaaaaadiaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaa
+apaaaaaaeeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapaaaaaafdfgfpfa
+gphdgjhegjgpgoaaedepemepfcaaklklfdeieefcdiacaaaaeaaaabaaioaaaaaa
+fjaaaaaeegiocaaaaaaaaaaaadaaaaaafjaaaaaeegiocaaaabaaaaaaalaaaaaa
+fjaaaaaeegiocaaaacaaaaaaacaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaad
+hcbabaaaabaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaadpccabaaa
+abaaaaaagiaaaaacacaaaaaadiaaaaaidcaabaaaaaaaaaaafgbfbaaaabaaaaaa
+egiacaaaabaaaaaaajaaaaaadcaaaaakdcaabaaaaaaaaaaaegiacaaaabaaaaaa
+aiaaaaaaagbabaaaabaaaaaaegaabaaaaaaaaaaadcaaaaakdcaabaaaaaaaaaaa
+egiacaaaabaaaaaaakaaaaaakgbkbaaaabaaaaaaegaabaaaaaaaaaaadiaaaaai
+gcaabaaaaaaaaaaafgafbaaaaaaaaaaaagibcaaaacaaaaaaabaaaaaadcaaaaak
+dcaabaaaaaaaaaaaegiacaaaacaaaaaaaaaaaaaaagaabaaaaaaaaaaajgafbaaa
+aaaaaaaadiaaaaaipcaabaaaabaaaaaafgbfbaaaaaaaaaaaegiocaaaabaaaaaa
+abaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaaabaaaaaaaaaaaaaaagbabaaa
+aaaaaaaaegaobaaaabaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaaabaaaaaa
+acaaaaaakgbkbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaakpcaabaaaabaaaaaa
+egiocaaaabaaaaaaadaaaaaapgbpbaaaaaaaaaaaegaobaaaabaaaaaadiaaaaah
+dcaabaaaaaaaaaaaegaabaaaaaaaaaaakgakbaaaabaaaaaadcaaaaakdccabaaa
+aaaaaaaaegaabaaaaaaaaaaaagiacaaaaaaaaaaaabaaaaaaegaabaaaabaaaaaa
+dgaaaaafmccabaaaaaaaaaaakgaobaaaabaaaaaadgaaaaagpccabaaaabaaaaaa
+egiocaaaaaaaaaaaacaaaaaadoaaaaab"
+}
+SubProgram "d3d11_9x " {
+// Stats: 11 math
+Bind "vertex" Vertex
+Bind "normal" Normal
+ConstBuffer "$Globals" 48
+Float 16 [_Outline]
+Vector 32 [_OutlineColor]
+ConstBuffer "UnityPerDraw" 336
+Matrix 0 [glstate_matrix_mvp]
+Matrix 128 [glstate_matrix_invtrans_modelview0]
+ConstBuffer "UnityPerFrame" 208
+Matrix 0 [glstate_matrix_projection]
+BindCB  "$Globals" 0
+BindCB  "UnityPerDraw" 1
+BindCB  "UnityPerFrame" 2
+"vs_4_0_level_9_1
+eefiecedepjeoiobldfhlchgnikebhnojkbnefodabaaaaaaimaeaaaaaeaaaaaa
+daaaaaaakiabaaaaoiadaaaadiaeaaaaebgpgodjhaabaaaahaabaaaaaaacpopp
+biabaaaafiaaaaaaaeaaceaaaaaafeaaaaaafeaaaaaaceaaabaafeaaaaaaabaa
+acaaabaaaaaaaaaaabaaaaaaaeaaadaaaaaaaaaaabaaaiaaadaaahaaaaaaaaaa
+acaaaaaaacaaakaaaaaaaaaaaaaaaaaaaaacpoppbpaaaaacafaaaaiaaaaaapja
+bpaaaaacafaaabiaabaaapjaafaaaaadaaaaadiaabaaffjaaiaaoekaaeaaaaae
+aaaaadiaahaaoekaabaaaajaaaaaoeiaaeaaaaaeaaaaadiaajaaoekaabaakkja
+aaaaoeiaafaaaaadaaaaagiaaaaaffiaalaanakaaeaaaaaeaaaaadiaakaaoeka
+aaaaaaiaaaaaojiaafaaaaadabaaapiaaaaaffjaaeaaoekaaeaaaaaeabaaapia
+adaaoekaaaaaaajaabaaoeiaaeaaaaaeabaaapiaafaaoekaaaaakkjaabaaoeia
+aeaaaaaeabaaapiaagaaoekaaaaappjaabaaoeiaafaaaaadaaaaadiaaaaaoeia
+abaakkiaaeaaaaaeaaaaadiaaaaaoeiaabaaaakaabaaoeiaaeaaaaaeaaaaadma
+abaappiaaaaaoekaaaaaoeiaabaaaaacaaaaammaabaaoeiaabaaaaacaaaaapoa
+acaaoekappppaaaafdeieefcdiacaaaaeaaaabaaioaaaaaafjaaaaaeegiocaaa
+aaaaaaaaadaaaaaafjaaaaaeegiocaaaabaaaaaaalaaaaaafjaaaaaeegiocaaa
+acaaaaaaacaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadhcbabaaaabaaaaaa
+ghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaadpccabaaaabaaaaaagiaaaaac
+acaaaaaadiaaaaaidcaabaaaaaaaaaaafgbfbaaaabaaaaaaegiacaaaabaaaaaa
+ajaaaaaadcaaaaakdcaabaaaaaaaaaaaegiacaaaabaaaaaaaiaaaaaaagbabaaa
+abaaaaaaegaabaaaaaaaaaaadcaaaaakdcaabaaaaaaaaaaaegiacaaaabaaaaaa
+akaaaaaakgbkbaaaabaaaaaaegaabaaaaaaaaaaadiaaaaaigcaabaaaaaaaaaaa
+fgafbaaaaaaaaaaaagibcaaaacaaaaaaabaaaaaadcaaaaakdcaabaaaaaaaaaaa
+egiacaaaacaaaaaaaaaaaaaaagaabaaaaaaaaaaajgafbaaaaaaaaaaadiaaaaai
+pcaabaaaabaaaaaafgbfbaaaaaaaaaaaegiocaaaabaaaaaaabaaaaaadcaaaaak
+pcaabaaaabaaaaaaegiocaaaabaaaaaaaaaaaaaaagbabaaaaaaaaaaaegaobaaa
+abaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaaabaaaaaaacaaaaaakgbkbaaa
+aaaaaaaaegaobaaaabaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaaabaaaaaa
+adaaaaaapgbpbaaaaaaaaaaaegaobaaaabaaaaaadiaaaaahdcaabaaaaaaaaaaa
+egaabaaaaaaaaaaakgakbaaaabaaaaaadcaaaaakdccabaaaaaaaaaaaegaabaaa
+aaaaaaaaagiacaaaaaaaaaaaabaaaaaaegaabaaaabaaaaaadgaaaaafmccabaaa
+aaaaaaaakgaobaaaabaaaaaadgaaaaagpccabaaaabaaaaaaegiocaaaaaaaaaaa
+acaaaaaadoaaaaabejfdeheoeiaaaaaaacaaaaaaaiaaaaaadiaaaaaaaaaaaaaa
+aaaaaaaaadaaaaaaaaaaaaaaapapaaaaebaaaaaaaaaaaaaaaaaaaaaaadaaaaaa
+abaaaaaaahahaaaafaepfdejfeejepeoaaeoepfcenebemaaepfdeheoemaaaaaa
+acaaaaaaaiaaaaaadiaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaa
+eeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapaaaaaafdfgfpfagphdgjhe
+gjgpgoaaedepemepfcaaklkl"
+}
+SubProgram "gles " {
+"!!GLES
+
+
+#ifdef VERTEX
+
+attribute vec4 _glesVertex;
+attribute vec3 _glesNormal;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+uniform highp mat4 glstate_matrix_projection;
+uniform highp float _Outline;
+uniform highp vec4 _OutlineColor;
+varying highp vec4 xlv_COLOR;
+void main ()
+{
+  highp vec4 tmpvar_1;
+  highp vec4 tmpvar_2;
+  tmpvar_2 = (glstate_matrix_mvp * _glesVertex);
+  tmpvar_1.zw = tmpvar_2.zw;
+  highp mat3 tmpvar_3;
+  tmpvar_3[0] = glstate_matrix_invtrans_modelview0[0].xyz;
+  tmpvar_3[1] = glstate_matrix_invtrans_modelview0[1].xyz;
+  tmpvar_3[2] = glstate_matrix_invtrans_modelview0[2].xyz;
+  highp mat2 tmpvar_4;
+  tmpvar_4[0] = glstate_matrix_projection[0].xy;
+  tmpvar_4[1] = glstate_matrix_projection[1].xy;
+  tmpvar_1.xy = (tmpvar_2.xy + ((
+    (tmpvar_4 * (tmpvar_3 * normalize(_glesNormal)).xy)
+   * tmpvar_2.z) * _Outline));
+  gl_Position = tmpvar_1;
+  xlv_COLOR = _OutlineColor;
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+varying highp vec4 xlv_COLOR;
+void main ()
+{
+  mediump vec4 tmpvar_1;
+  tmpvar_1 = xlv_COLOR;
+  gl_FragData[0] = tmpvar_1;
+}
+
+
+
+#endif"
+}
+SubProgram "flash " {
+Bind "vertex" Vertex
+Bind "normal" Normal
+Matrix 0 [glstate_matrix_projection]
+Matrix 4 [glstate_matrix_mvp]
+Matrix 8 [glstate_matrix_invtrans_modelview0]
+Float 12 [_Outline]
+Vector 13 [_OutlineColor]
+"agal_vs
+[bc]
+bcaaaaaaaaaaabacabaaaaoeaaaaaaaaaiaaaaoeabaaaaaa dp3 r0.x, a1, c8
+bcaaaaaaaaaaacacabaaaaoeaaaaaaaaajaaaaoeabaaaaaa dp3 r0.y, a1, c9
+adaaaaaaaaaaamacaaaaaaefacaaaaaaabaaaaeeabaaaaaa mul r0.zw, r0.yyxy, c1.xyxy
+adaaaaaaabaaadacaaaaaafeacaaaaaaaaaaaaoeabaaaaaa mul r1.xy, r0.xyyy, c0
+abaaaaaaaaaaaiacaaaaaakkacaaaaaaaaaaaappacaaaaaa add r0.w, r0.z, r0.w
+bdaaaaaaaaaaabacaaaaaaoeaaaaaaaaagaaaaoeabaaaaaa dp4 r0.x, a0, c6
+abaaaaaaaaaaaeacabaaaaaaacaaaaaaabaaaaffacaaaaaa add r0.z, r1.x, r1.y
+adaaaaaaabaaadacaaaaaapoacaaaaaaaaaaaaaaacaaaaaa mul r1.xy, r0.zwww, r0.x
+bdaaaaaaaaaaaeacaaaaaaoeaaaaaaaaaeaaaaoeabaaaaaa dp4 r0.z, a0, c4
+bdaaaaaaaaaaaiacaaaaaaoeaaaaaaaaafaaaaoeabaaaaaa dp4 r0.w, a0, c5
+adaaaaaaabaaadacabaaaafeacaaaaaaamaaaaaaabaaaaaa mul r1.xy, r1.xyyy, c12.x
+abaaaaaaaaaaadadabaaaafeacaaaaaaaaaaaapoacaaaaaa add o0.xy, r1.xyyy, r0.zwww
+aaaaaaaaahaaapaeanaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v7, c13
+bdaaaaaaaaaaaiadaaaaaaoeaaaaaaaaahaaaaoeabaaaaaa dp4 o0.w, a0, c7
+aaaaaaaaaaaaaeadaaaaaaaaacaaaaaaaaaaaaaaaaaaaaaa mov o0.z, r0.x
+"
+}
+SubProgram "glesdesktop " {
+"!!GLES
+
+
+#ifdef VERTEX
+
+attribute vec4 _glesVertex;
+attribute vec3 _glesNormal;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+uniform highp mat4 glstate_matrix_projection;
+uniform highp float _Outline;
+uniform highp vec4 _OutlineColor;
+varying highp vec4 xlv_COLOR;
+void main ()
+{
+  highp vec4 tmpvar_1;
+  highp vec4 tmpvar_2;
+  tmpvar_2 = (glstate_matrix_mvp * _glesVertex);
+  tmpvar_1.zw = tmpvar_2.zw;
+  highp mat3 tmpvar_3;
+  tmpvar_3[0] = glstate_matrix_invtrans_modelview0[0].xyz;
+  tmpvar_3[1] = glstate_matrix_invtrans_modelview0[1].xyz;
+  tmpvar_3[2] = glstate_matrix_invtrans_modelview0[2].xyz;
+  highp mat2 tmpvar_4;
+  tmpvar_4[0] = glstate_matrix_projection[0].xy;
+  tmpvar_4[1] = glstate_matrix_projection[1].xy;
+  tmpvar_1.xy = (tmpvar_2.xy + ((
+    (tmpvar_4 * (tmpvar_3 * normalize(_glesNormal)).xy)
+   * tmpvar_2.z) * _Outline));
+  gl_Position = tmpvar_1;
+  xlv_COLOR = _OutlineColor;
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+varying highp vec4 xlv_COLOR;
+void main ()
+{
+  mediump vec4 tmpvar_1;
+  tmpvar_1 = xlv_COLOR;
+  gl_FragData[0] = tmpvar_1;
+}
+
+
+
+#endif"
+}
+SubProgram "gles3 " {
+"!!GLES3#version 300 es
+
+
+#ifdef VERTEX
+
+
+in vec4 _glesVertex;
+in vec3 _glesNormal;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+uniform highp mat4 glstate_matrix_projection;
+uniform highp float _Outline;
+uniform highp vec4 _OutlineColor;
+out highp vec4 xlv_COLOR;
+void main ()
+{
+  highp vec4 tmpvar_1;
+  highp vec4 tmpvar_2;
+  tmpvar_2 = (glstate_matrix_mvp * _glesVertex);
+  tmpvar_1.zw = tmpvar_2.zw;
+  highp mat3 tmpvar_3;
+  tmpvar_3[0] = glstate_matrix_invtrans_modelview0[0].xyz;
+  tmpvar_3[1] = glstate_matrix_invtrans_modelview0[1].xyz;
+  tmpvar_3[2] = glstate_matrix_invtrans_modelview0[2].xyz;
+  highp mat2 tmpvar_4;
+  tmpvar_4[0] = glstate_matrix_projection[0].xy;
+  tmpvar_4[1] = glstate_matrix_projection[1].xy;
+  tmpvar_1.xy = (tmpvar_2.xy + ((
+    (tmpvar_4 * (tmpvar_3 * normalize(_glesNormal)).xy)
+   * tmpvar_2.z) * _Outline));
+  gl_Position = tmpvar_1;
+  xlv_COLOR = _OutlineColor;
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+
+layout(location=0) out mediump vec4 _glesFragData[4];
+in highp vec4 xlv_COLOR;
+void main ()
+{
+  mediump vec4 tmpvar_1;
+  tmpvar_1 = xlv_COLOR;
+  _glesFragData[0] = tmpvar_1;
+}
+
+
+
+#endif"
+}
+SubProgram "metal " {
+// Stats: 7 math
+Bind "vertex" ATTR0
+Bind "normal" ATTR1
+ConstBuffer "$Globals" 224
+Matrix 0 [glstate_matrix_mvp]
+Matrix 64 [glstate_matrix_invtrans_modelview0]
+Matrix 128 [glstate_matrix_projection]
+Float 192 [_Outline]
+Vector 208 [_OutlineColor]
+"metal_vs
+#include <metal_stdlib>
+using namespace metal;
+struct xlatMtlShaderInput {
+  float4 _glesVertex [[attribute(0)]];
+  float3 _glesNormal [[attribute(1)]];
+};
+struct xlatMtlShaderOutput {
+  float4 gl_Position [[position]];
+  float4 xlv_COLOR;
+};
+struct xlatMtlShaderUniform {
+  float4x4 glstate_matrix_mvp;
+  float4x4 glstate_matrix_invtrans_modelview0;
+  float4x4 glstate_matrix_projection;
+  float _Outline;
+  float4 _OutlineColor;
+};
+vertex xlatMtlShaderOutput xlatMtlMain (xlatMtlShaderInput _mtl_i [[stage_in]], constant xlatMtlShaderUniform& _mtl_u [[buffer(0)]])
+{
+  xlatMtlShaderOutput _mtl_o;
+  float4 tmpvar_1;
+  float4 tmpvar_2;
+  tmpvar_2 = (_mtl_u.glstate_matrix_mvp * _mtl_i._glesVertex);
+  tmpvar_1.zw = tmpvar_2.zw;
+  float3x3 tmpvar_3;
+  tmpvar_3[0] = _mtl_u.glstate_matrix_invtrans_modelview0[0].xyz;
+  tmpvar_3[1] = _mtl_u.glstate_matrix_invtrans_modelview0[1].xyz;
+  tmpvar_3[2] = _mtl_u.glstate_matrix_invtrans_modelview0[2].xyz;
+  float2x2 tmpvar_4;
+  tmpvar_4[0] = _mtl_u.glstate_matrix_projection[0].xy;
+  tmpvar_4[1] = _mtl_u.glstate_matrix_projection[1].xy;
+  tmpvar_1.xy = (tmpvar_2.xy + ((
+    (tmpvar_4 * (tmpvar_3 * normalize(_mtl_i._glesNormal)).xy)
+   * tmpvar_2.z) * _mtl_u._Outline));
+  _mtl_o.gl_Position = tmpvar_1;
+  _mtl_o.xlv_COLOR = _mtl_u._OutlineColor;
+  return _mtl_o;
+}
+
+"
+}
+}
+Program "fp" {
+SubProgram "opengl " {
+// Stats: 1 math
+"!!ARBfp1.0
+MOV result.color, fragment.color.primary;
+END
+# 1 instructions, 0 R-regs
+"
+}
+SubProgram "d3d9 " {
+// Stats: 1 math
+"ps_2_0
+dcl v0
+mov_pp oC0, v0
+"
+}
+SubProgram "d3d11 " {
+"ps_4_0
+eefiecedfjdhpkdkgghddlkgegpmkbogokjhaahjabaaaaaapeaaaaaaadaaaaaa
+cmaaaaaaiaaaaaaaleaaaaaaejfdeheoemaaaaaaacaaaaaaaiaaaaaadiaaaaaa
+aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaeeaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaapapaaaafdfgfpfagphdgjhegjgpgoaaedepemepfcaaklkl
+epfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaa
+aaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcdiaaaaaaeaaaaaaa
+aoaaaaaagcbaaaadpcbabaaaabaaaaaagfaaaaadpccabaaaaaaaaaaadgaaaaaf
+pccabaaaaaaaaaaaegbobaaaabaaaaaadoaaaaab"
+}
+SubProgram "d3d11_9x " {
+"ps_4_0_level_9_1
+eefiecedkffcjbcgnefjpmiocihmccclhnheaohoabaaaaaaeeabaaaaaeaaaaaa
+daaaaaaahmaaaaaalmaaaaaabaabaaaaebgpgodjeeaaaaaaeeaaaaaaaaacpppp
+caaaaaaaceaaaaaaaaaaceaaaaaaceaaaaaaceaaaaaaceaaaaaaceaaaaacpppp
+bpaaaaacaaaaaaiaaaaacplaabaaaaacaaaicpiaaaaaoelappppaaaafdeieefc
+diaaaaaaeaaaaaaaaoaaaaaagcbaaaadpcbabaaaabaaaaaagfaaaaadpccabaaa
+aaaaaaaadgaaaaafpccabaaaaaaaaaaaegbobaaaabaaaaaadoaaaaabejfdeheo
+emaaaaaaacaaaaaaaiaaaaaadiaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaa
+apaaaaaaeeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapapaaaafdfgfpfa
+gphdgjhegjgpgoaaedepemepfcaaklklepfdeheocmaaaaaaabaaaaaaaiaaaaaa
+caaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgf
+heaaklkl"
+}
+SubProgram "gles " {
+"!!GLES"
+}
+SubProgram "flash " {
+"agal_ps
+[bc]
+aaaaaaaaaaaaapadahaaaaoeaeaaaaaaaaaaaaaaaaaaaaaa mov o0, v7
+"
+}
+SubProgram "glesdesktop " {
+"!!GLES"
+}
+SubProgram "gles3 " {
+"!!GLES3"
+}
+SubProgram "metal " {
+"metal_fs
+#include <metal_stdlib>
+using namespace metal;
+struct xlatMtlShaderInput {
+  float4 xlv_COLOR;
+};
+struct xlatMtlShaderOutput {
+  half4 _glesFragData_0 [[color(0)]];
+};
+struct xlatMtlShaderUniform {
+};
+fragment xlatMtlShaderOutput xlatMtlMain (xlatMtlShaderInput _mtl_i [[stage_in]], constant xlatMtlShaderUniform& _mtl_u [[buffer(0)]])
+{
+  xlatMtlShaderOutput _mtl_o;
+  half4 tmpvar_1;
+  tmpvar_1 = half4(_mtl_i.xlv_COLOR);
+  _mtl_o._glesFragData_0 = tmpvar_1;
+  return _mtl_o;
+}
+
+"
+}
+}
+ }
+}
+Fallback "Diffuse"
+}

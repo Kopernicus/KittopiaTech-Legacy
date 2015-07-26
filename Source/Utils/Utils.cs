@@ -23,8 +23,6 @@ namespace Kopernicus
             /// <summary>
             /// Returns the LocalSpace GameObject for a Body
             /// </summary>
-            /// <param name="name">The name of the Body</param>
-            /// <returns>The LocalSpace GameObject of the Body</returns>
             public static GameObject FindLocal(string name)
             {
                 if (LocalSpace.transform.FindChild(name) != null)
@@ -36,8 +34,6 @@ namespace Kopernicus
             /// <summary>
             /// Returns the ScaledSpace GameObject for a Body
             /// </summary>
-            /// <param name="name">The name of the Body</param>
-            /// <returns>The ScaledSpace GameObject of the Body</returns>
             public static GameObject FindScaled(string name)
             {
                 if (ScaledSpace.Instance.transform.FindChild(name) != null)
@@ -49,8 +45,6 @@ namespace Kopernicus
             /// <summary>
             /// Returns the CelestialBody Component for a Body
             /// </summary>
-            /// <param name="name">The name of the Body</param>
-            /// <returns>The CelestialBody Component of the body</returns>
             public static CelestialBody FindCB(string name)
             {
                 return PSystemManager.Instance.localBodies.Find(b => b.name == name);
@@ -59,8 +53,6 @@ namespace Kopernicus
             /// <summary>
             /// Loads a Texture from GameDatabase or from the Game-Assets
             /// </summary>
-            /// <param name="path">The GameData-relative path of the Texture</param>
-            /// <returns>The loaded Texture</returns>
             public static Texture2D LoadTexture(string path)
             {
                 Texture2DParser parser = new Texture2DParser();
@@ -71,8 +63,6 @@ namespace Kopernicus
             /// <summary>
             /// Updates the Atmosphere-Ramp in ScaledSpace for a body
             /// </summary>
-            /// <param name="name">The name of the Body</param>
-            /// <param name="texture">The new Atmosphere-Ramp</param>
             public static void UpdateAtmosphereRamp(string name, Texture2D texture)
             {
                 GameObject scaledVersion = FindScaled(name);
@@ -83,8 +73,6 @@ namespace Kopernicus
             /// <summary>
             /// [HACK] Spawn a new body from the PSystem-Prefab
             /// </summary>
-            /// <param name="template">The Template-Body</param>
-            /// <param name="name">The new name of the body</param>
             public static void Instantiate(PSystemBody template, string name)
             {
                 // Fix Templates
@@ -178,8 +166,6 @@ namespace Kopernicus
             /// <summary>
             /// Returns a field-name based on a Kopernicus-ParserTarget
             /// </summary>
-            /// <param name="input">The Kopernicus Parser-Target</param>
-            /// <returns></returns>
             public static string GetField(string input)
             {
                 if (kopernicusFields.ContainsKey(input))
@@ -188,7 +174,9 @@ namespace Kopernicus
                     return input;
             }
 
-            // Generate the scaled space mesh using PQS (all results use scale of 1)
+            /// <summary>
+            /// Generate the scaled space Textures using PQS
+            /// </summary> 
             public static void GeneratePQSMaps(CelestialBody body)
             {
                 // Get the PQS and the ScaledSpace
@@ -219,6 +207,9 @@ namespace Kopernicus
                 scaledVersion.GetComponent<MeshRenderer>().material.SetTexture("_BumpMap", textures[2]);
             }
 
+            /// <summary>
+            /// Searches for a node in a Kopernicus-Body definition
+            /// </summary>
             public static ConfigNode SearchNode(string name, string planet, ConfigNode node = null)
             {
                 // Get the Body-Node
@@ -248,6 +239,11 @@ namespace Kopernicus
 
                 // Return null, if we didn't find sth.
                 return null;
+            }
+
+            public static Texture2D defaultRing
+            {
+                get { return LoadTexture("KittopiaTech/Textures/ring.png", false, false, false); }
             }
         }
     }

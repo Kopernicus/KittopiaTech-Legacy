@@ -23,6 +23,7 @@ namespace Kopernicus
             public bool isFileBrowser = false;
             public bool isBiome = false;
             public bool isMaterial = false;
+            public bool isPQSBrowser = false;
 
             // Instance memeber
             public static UIController Instance { get; private set; }
@@ -37,6 +38,7 @@ namespace Kopernicus
             Rect fileBrowserWindow = new Rect(500, 20, 530, 380);
             Rect biomeWindow = new Rect(420, 400, 420, 250);
             Rect materialWindow = new Rect(500, 20, 420, 450);
+            Rect pqsBrowserWindow = new Rect(420, 100, 220, 350);
 
             // OnGUI() => Render the planetary UI
             public void OnGUI()
@@ -67,6 +69,9 @@ namespace Kopernicus
 
                 if (isMaterial)
                     materialWindow = MaterialEditor.Render(materialWindow, "Material Modifier");
+
+                if (isPQSBrowser)
+                    pqsBrowserWindow = PQSBrowser.Render(pqsBrowserWindow, "PQS Explorer");
             }
 
             // Awake() => set our Instance member

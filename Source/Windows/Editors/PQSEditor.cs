@@ -260,23 +260,15 @@ namespace Kopernicus
                             }
                             offset += 25;
                         }
+                        else if (key.FieldType == typeof(PQS))
+                        {
+                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                            if (GUI.Button(new Rect(200, offset, 170, 20), "Edit Sphere"))
+                                PQSBrowser.SetEditedObject(key.GetValue(obj) as PQS, key, obj);
+                            offset += 25;
+                        }
                     }
                     catch { }
-                }
-                offset += 25;
-
-                // PQS Variable Selector.
-                GUI.Label(new Rect(20, offset, 178, 20), "ParentSphere");
-                pqsModSphereName = GUI.TextField(new Rect(200, offset, 170, 20), pqsModSphereName);
-                offset += 25;
-
-                // Apply the PQS-Changes
-                if (GUI.Button(new Rect(200, offset, 80, 20), "Apply"))
-                {
-                    // Get the new PQS and reparent the Mod
-                    PQS pqs = Utils.FindLocal(pqsModSphereName.Replace("Ocean", "")).GetComponentsInChildren<PQS>(true).FirstOrDefault(s => s.name == pqsModSphereName);
-                    currentPQSMod.sphere = pqs;
-                    currentPQSMod.transform.parent = pqs.transform;
                 }
                 offset += 25;
 
@@ -380,22 +372,15 @@ namespace Kopernicus
                                 MaterialEditor.SetEditedObject(key.GetValue(obj) as Material, key, obj);
                             offset += 25;
                         }
+                        else if (key.FieldType == typeof(PQS))
+                        {
+                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                            if (GUI.Button(new Rect(200, offset, 170, 20), "Edit Sphere"))
+                                PQSBrowser.SetEditedObject(key.GetValue(obj) as PQS, key, obj);
+                            offset += 25;
+                        }
                     }
                     catch { }
-                }
-
-                // PQS Variable Selector.
-                GUI.Label(new Rect(20, offset, 178, 20), "ParentSphere");
-                pqsModSphereName = GUI.TextField(new Rect(200, offset, 170, 20), pqsModSphereName);
-                offset += 25;
-
-                // Apply the PQS-Changes
-                if (GUI.Button(new Rect(200, offset, 80, 20), "Apply"))
-                {
-                    // Get the new PQS and reparent the Mod
-                    PQS pqs = Utils.FindLocal(pqsModSphereName.Replace("Ocean", "")).GetComponentsInChildren<PQS>(true).FirstOrDefault(s => s.name == pqsModSphereName);
-                    currentPQS.parentSphere = pqs;
-                    currentPQS.transform.parent = pqs.transform;
                 }
                 offset += 25;
 
