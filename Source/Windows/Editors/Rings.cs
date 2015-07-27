@@ -43,7 +43,8 @@ namespace Kopernicus
                     foreach (Transform t in PlanetUI.currentBody.scaledBody.transform)
                         if (t.name == "PlanetaryRingObject")
                             rings.Add(t.gameObject);
-                    RebuildRing();
+                    if (rings.Count > 0)
+                        RebuildRing();
                 }
 
                 // Render the Window
@@ -81,65 +82,68 @@ namespace Kopernicus
                 }
                 offset += 35;
 
-                GUI.Label(new Rect(20, offset, 178, 20), "Inner Radius");
-                ring.innerRadius = Double.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + ring.innerRadius));
-                offset += 25;
-
-                GUI.Label(new Rect(20, offset, 178, 20), "Outer Radius");
-                ring.outerRadius = Double.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + ring.outerRadius));
-                offset += 25;
-
-                GUI.Label(new Rect(20, offset, 178, 20), "Inclination");
-                ring.angle = Single.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + ring.angle));
-                offset += 25;
-
-                GUI.Label(new Rect(20, offset, 178, 20), "Steps");
-                ring.steps = Int32.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + ring.steps));
-                offset += 25;
-
-                GUI.Label(new Rect(20, offset, 178, 20), "Color");
-                if (GUI.Button(new Rect(200, offset, 50, 20), "Edit"))
+                if (rings.Count > 0)
                 {
-                    PropertyInfo property = ring.GetType().GetProperty("color");
-                    ColorPicker.SetEditedObject(property, ring.color, ring);
-                }
-                offset += 25;
+                    GUI.Label(new Rect(20, offset, 178, 20), "Inner Radius");
+                    ring.innerRadius = Double.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + ring.innerRadius));
+                    offset += 25;
 
-                GUI.Label(new Rect(20, offset, 178, 20), "Texture");
-                if (GUI.Button(new Rect(200, offset, 80, 20), "Load"))
-                {
-                    UIController.Instance.isFileBrowser = !UIController.Instance.isFileBrowser;
-                    FileBrowser.location = "";
-                }
-                // Apply the new Texture
-                if (GUI.Button(new Rect(290, offset, 80, 20), "Apply"))
-                {
-                    string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
-                    Texture2D texture = Utility.LoadTexture(path, false, false, false);
-                    texture.name = path.Replace("\\", "/");
-                    ring.texture = texture;
-                }
-                offset += 25;
+                    GUI.Label(new Rect(20, offset, 178, 20), "Outer Radius");
+                    ring.outerRadius = Double.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + ring.outerRadius));
+                    offset += 25;
 
-                GUI.Label(new Rect(20, offset, 178, 20), "Lock Rotation");
-                ring.lockRotation = GUI.Toggle(new Rect(200, offset, 170, 20), ring.lockRotation, "Bool");
-                offset += 25;
+                    GUI.Label(new Rect(20, offset, 178, 20), "Inclination");
+                    ring.angle = Single.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + ring.angle));
+                    offset += 25;
 
-                GUI.Label(new Rect(20, offset, 178, 20), "Unlit");
-                ring.unlit = GUI.Toggle(new Rect(200, offset, 170, 20), ring.unlit, "Bool");
-                offset += 45;
+                    GUI.Label(new Rect(20, offset, 178, 20), "Steps");
+                    ring.steps = Int32.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + ring.steps));
+                    offset += 25;
 
-                if (GUI.Button(new Rect(20, offset, 200, 20), "Rebuild Rings"))
-                    RebuildRingObject();
-                offset += 25;
+                    GUI.Label(new Rect(20, offset, 178, 20), "Color");
+                    if (GUI.Button(new Rect(200, offset, 50, 20), "Edit"))
+                    {
+                        PropertyInfo property = ring.GetType().GetProperty("color");
+                        ColorPicker.SetEditedObject(property, ring.color, ring);
+                    }
+                    offset += 25;
 
-                if (GUI.Button(new Rect(20, offset, 200, 20), "Delete rings on: " + PlanetUI.currentName))
-                {
-                    MonoBehaviour.Destroy(rings[index]);
+                    GUI.Label(new Rect(20, offset, 178, 20), "Texture");
+                    if (GUI.Button(new Rect(200, offset, 80, 20), "Load"))
+                    {
+                        UIController.Instance.isFileBrowser = !UIController.Instance.isFileBrowser;
+                        FileBrowser.location = "";
+                    }
+                    // Apply the new Texture
+                    if (GUI.Button(new Rect(290, offset, 80, 20), "Apply"))
+                    {
+                        string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
+                        Texture2D texture = Utility.LoadTexture(path, false, false, false);
+                        texture.name = path.Replace("\\", "/");
+                        ring.texture = texture;
+                    }
+                    offset += 25;
 
-                    // Refresh the Ring-List
-                    rings = null;
-                    index = 0;
+                    GUI.Label(new Rect(20, offset, 178, 20), "Lock Rotation");
+                    ring.lockRotation = GUI.Toggle(new Rect(200, offset, 170, 20), ring.lockRotation, "Bool");
+                    offset += 25;
+
+                    GUI.Label(new Rect(20, offset, 178, 20), "Unlit");
+                    ring.unlit = GUI.Toggle(new Rect(200, offset, 170, 20), ring.unlit, "Bool");
+                    offset += 45;
+
+                    if (GUI.Button(new Rect(20, offset, 200, 20), "Rebuild Rings"))
+                        RebuildRingObject();
+                    offset += 25;
+
+                    if (GUI.Button(new Rect(20, offset, 200, 20), "Delete rings on: " + PlanetUI.currentName))
+                    {
+                        MonoBehaviour.Destroy(rings[index]);
+
+                        // Refresh the Ring-List
+                        rings = null;
+                        index = 0;
+                    }
                 }
 
                 GUI.EndScrollView();
@@ -159,12 +163,12 @@ namespace Kopernicus
                     var eVert = Quaternion.Euler(0, i, 0) * StartVec;
 
                     //Inner Radius
-                    vertices.Add(eVert * (float)ring.innerRadius);
+                    vertices.Add(eVert * ((float)ring.innerRadius * (1f / rings[index].transform.localScale.x)));
                     Normals.Add(-Vector3.right);
                     Uvs.Add(new Vector2(0, 0));
 
                     //Outer Radius
-                    vertices.Add(eVert * (float)ring.outerRadius);
+                    vertices.Add(eVert * ((float)ring.outerRadius * (1f / rings[index].transform.localScale.x)));
                     Normals.Add(-Vector3.right);
                     Uvs.Add(new Vector2(1, 1));
                 }
@@ -174,12 +178,12 @@ namespace Kopernicus
                     var eVert = Quaternion.Euler(0, i, 0) * StartVec;
 
                     //Inner Radius
-                    vertices.Add(eVert * (float)ring.innerRadius);
+                    vertices.Add(eVert * ((float)ring.innerRadius * (1f / rings[index].transform.localScale.x)));
                     Normals.Add(-Vector3.right);
                     Uvs.Add(new Vector2(0, 0));
 
                     //Outer Radius
-                    vertices.Add(eVert * (float)ring.outerRadius);
+                    vertices.Add(eVert * ((float)ring.outerRadius * (1f / rings[index].transform.localScale.x)));
                     Normals.Add(-Vector3.right);
                     Uvs.Add(new Vector2(1, 1));
                 }
