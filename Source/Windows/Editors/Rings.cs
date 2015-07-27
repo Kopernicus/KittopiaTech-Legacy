@@ -21,7 +21,6 @@ namespace Kopernicus
 
             // Ring
             public static Ring ring = new Ring();
-            private static Highlighter highlighter;
             private static List<GameObject> rings = null;
             private static int index = 0;
 

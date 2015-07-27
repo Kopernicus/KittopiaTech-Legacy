@@ -102,7 +102,7 @@ namespace Kopernicus
                         int scrollSize = landControlClasses.Count() * 25;
 
                         // Render the Scrollbar
-                        scrollPosition = GUI.BeginScrollView(new Rect(10, 30, 400, 200), scrollPosition, new Rect(0, 38, 380, scrollSize + 50));
+                        scrollPosition = GUI.BeginScrollView(new Rect(10, 30, 400, 200), scrollPosition, new Rect(0, 38, 380, scrollSize + 70));
 
                         // Render the LandClasses
                         foreach (PQSLandControl.LandClass landClass in landControlClasses)
@@ -123,7 +123,7 @@ namespace Kopernicus
                         int scrollSize = vertexPlanetClasses.Count() * 25;
 
                         // Render the Scrollbar
-                        scrollPosition = GUI.BeginScrollView(new Rect(10, 30, 400, 200), scrollPosition, new Rect(0, 28, 380, scrollSize + 50));
+                        scrollPosition = GUI.BeginScrollView(new Rect(10, 30, 400, 200), scrollPosition, new Rect(0, 28, 380, scrollSize + 70));
 
                         // Render the LandClasses
                         foreach (PQSMod_VertexPlanet.LandClass landClass in vertexPlanetClasses)
@@ -144,7 +144,7 @@ namespace Kopernicus
                         int scrollSize = heightColorClasses.Count() * 25;
 
                         // Render the Scrollbar
-                        scrollPosition = GUI.BeginScrollView(new Rect(10, 30, 400, 200), scrollPosition, new Rect(0, 28, 380, scrollSize + 50));
+                        scrollPosition = GUI.BeginScrollView(new Rect(10, 30, 400, 200), scrollPosition, new Rect(0, 28, 380, scrollSize + 70));
 
                         // Render the LandClasses
                         foreach (PQSMod_HeightColorMap.LandClass landClass in heightColorClasses)
