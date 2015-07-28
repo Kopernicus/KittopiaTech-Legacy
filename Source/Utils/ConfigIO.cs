@@ -83,12 +83,12 @@ namespace Kopernicus
                         IEnumerable<PropertyInfo> properties = body.orbit.GetType().GetProperties().Where(p => p.Name == Utils.GetField(target.fieldName));
 
                         // Get the current and the previous value
-                        if (fields.Count() == 1) 
+                        if (fields.Count() == 1)
                         {
                             value = Format(fields.First().GetValue(body.orbit));
                             preset = Format(fields.First().GetValue(pBody.orbitDriver.orbit));
                         }
-                        else if (properties.Count() == 1) 
+                        else if (properties.Count() == 1)
                         {
                             value = Format(properties.First().GetValue(body.orbit, null));
                             preset = Format(properties.First().GetValue(pBody.orbitDriver.orbit, null));
@@ -98,7 +98,7 @@ namespace Kopernicus
                             value = Format(body.orbitDriver.orbitColor);
                             preset = Format(pBody.orbitRenderer.orbitColor);
                         }
-                        else 
+                        else
                         {
                             continue;
                         }
@@ -178,58 +178,60 @@ namespace Kopernicus
                 //Start getting the PQS stuff
                 ConfigNode oldPQS = Utils.SearchNode("PQS", body.transform.name);
                 ConfigNode pqs = (oldPQS == null) ? new ConfigNode("PQS") : new ConfigNode("@PQS");
-  
-                // Store the values
-                string[] values = new string[7];
-                string[] presets = new string[7];
-                string[] parsed = new string[7];
-
-                // minLevel
-                values[0] = Format(body.pqsController.minLevel);
-                presets[0] = Format(pBody.pqsVersion.minLevel);
-                parsed[0] = "minLevel";
-                
-                // maxLevel
-                values[1] = Format(body.pqsController.maxLevel);
-                presets[1] = Format(pBody.pqsVersion.maxLevel);
-                parsed[1] = "maxLevel";
-
-                // minDetailDistance
-                values[2] = Format(body.pqsController.minDetailDistance);
-                presets[2] = Format(pBody.pqsVersion.minDetailDistance);
-                parsed[2] = "minDetailDistance";
-
-                // maxQuadLenghtsPerFrame
-                values[3] = Format(body.pqsController.maxQuadLenghtsPerFrame);
-                presets[3] = Format(pBody.pqsVersion.maxQuadLenghtsPerFrame);
-                parsed[3] = "maxQuadLenghtsPerFrame";
-
-                // pqsFadeStart
-                values[4] = Format(body.pqsController.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)[0].planetFade.fadeStart);
-                presets[4] = Format(pBody.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)[0].planetFade.fadeStart);
-                parsed[4] = "pqsFadeStart";
-
-                // pqsFadeStart
-                values[5] = Format(body.pqsController.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)[0].planetFade.fadeEnd);
-                presets[5] = Format(pBody.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)[0].planetFade.fadeEnd);
-                parsed[5] = "pqsFadeEnd";
-
-                // pqsFadeStart
-                values[6] = Format(body.pqsController.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)[0].deactivateAltitude);
-                presets[6] = Format(pBody.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)[0].deactivateAltitude);
-                parsed[6] = "deactivateAltitude";
-
-                // Create the config
-                for (int i = 0; i < values.Count(); i++)
+                if (body.pqsController != null)
                 {
-                    if (values[i] != presets[i])
+                    // Store the values
+                    string[] values = new string[7];
+                    string[] presets = new string[7];
+                    string[] parsed = new string[7];
+
+                    // minLevel
+                    values[0] = Format(body.pqsController.minLevel);
+                    presets[0] = Format(pBody.pqsVersion.minLevel);
+                    parsed[0] = "minLevel";
+
+                    // maxLevel
+                    values[1] = Format(body.pqsController.maxLevel);
+                    presets[1] = Format(pBody.pqsVersion.maxLevel);
+                    parsed[1] = "maxLevel";
+
+                    // minDetailDistance
+                    values[2] = Format(body.pqsController.minDetailDistance);
+                    presets[2] = Format(pBody.pqsVersion.minDetailDistance);
+                    parsed[2] = "minDetailDistance";
+
+                    // maxQuadLenghtsPerFrame
+                    values[3] = Format(body.pqsController.maxQuadLenghtsPerFrame);
+                    presets[3] = Format(pBody.pqsVersion.maxQuadLenghtsPerFrame);
+                    parsed[3] = "maxQuadLenghtsPerFrame";
+
+                    // pqsFadeStart
+                    values[4] = Format(body.pqsController.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)[0].planetFade.fadeStart);
+                    presets[4] = Format(pBody.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)[0].planetFade.fadeStart);
+                    parsed[4] = "pqsFadeStart";
+
+                    // pqsFadeStart
+                    values[5] = Format(body.pqsController.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)[0].planetFade.fadeEnd);
+                    presets[5] = Format(pBody.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)[0].planetFade.fadeEnd);
+                    parsed[5] = "pqsFadeEnd";
+
+                    // pqsFadeStart
+                    values[6] = Format(body.pqsController.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)[0].deactivateAltitude);
+                    presets[6] = Format(pBody.pqsVersion.GetComponentsInChildren<PQSMod_CelestialBodyTransform>(true)[0].deactivateAltitude);
+                    parsed[6] = "deactivateAltitude";
+
+                    // Create the config
+                    for (int i = 0; i < values.Count(); i++)
                     {
-                        if (oldPQS == null)
-                            pqs.AddValue(parsed[i], values[i]);
-                        else if (oldPQS != null && oldPQS.HasValue(parsed[i]))
-                            pqs.AddValue("@" + parsed[i], values[i]);
-                        else
-                            pqs.AddValue(parsed[i], values[i]);
+                        if (values[i] != presets[i])
+                        {
+                            if (oldPQS == null)
+                                pqs.AddValue(parsed[i], values[i]);
+                            else if (oldPQS != null && oldPQS.HasValue(parsed[i]))
+                                pqs.AddValue("@" + parsed[i], values[i]);
+                            else
+                                pqs.AddValue(parsed[i], values[i]);
+                        }
                     }
                 }
                 #endregion
@@ -237,77 +239,79 @@ namespace Kopernicus
                 #region Material
                 // Materials
                 ConfigNode oldMat = null;
-                ConfigNode mat = null;
-
-                if (oldPQS == null)
-                    mat = new ConfigNode("Material");
-                else if (oldPQS != null && oldPQS.HasNode("Material"))
-                    mat = new ConfigNode("@Material");
-                else
-                    mat = new ConfigNode("Material");
-
-                if (mat.name.StartsWith("@"))
-                    oldMat = Utils.SearchNode("Material", body.transform.name, oldPQS);
-
-                // Get the Parser-Type of the Material
-                object obj = null;
-                object pObj = null;
-                if (body.pqsController.surfaceMaterial != null)
+                ConfigNode mat = new ConfigNode();
+                if (body.pqsController != null)
                 {
-                    IEnumerable<Type> types = Assembly.GetAssembly(typeof(Injector)).GetTypes();
-                    IEnumerable<Type> materials = types.Where(t => t.BaseType == typeof(Material));
-                    foreach (Type t in materials)
-                    {
-                        // Big Reflection, because of internal class
-                        Type singleton = types.First(t2 => t2.FullName == t.FullName + "+Properties");
-                        string shaderName = (singleton.GetProperty("shader", BindingFlags.Static | BindingFlags.Public).GetValue(null, null) as Shader).name;
+                    if (oldPQS == null)
+                        mat = new ConfigNode("Material");
+                    else if (oldPQS != null && oldPQS.HasNode("Material"))
+                        mat = new ConfigNode("@Material");
+                    else
+                        mat = new ConfigNode("Material");
 
-                        // Compare things and break
-                        if (shaderName == body.pqsController.surfaceMaterial.shader.name)
+                    if (mat.name.StartsWith("@"))
+                        oldMat = Utils.SearchNode("Material", body.transform.name, oldPQS);
+
+                    // Get the Parser-Type of the Material
+                    object obj = null;
+                    object pObj = null;
+                    if (body.pqsController.surfaceMaterial != null)
+                    {
+                        IEnumerable<Type> types = Assembly.GetAssembly(typeof(Injector)).GetTypes();
+                        IEnumerable<Type> materials = types.Where(t => t.BaseType == typeof(Material));
+                        foreach (Type t in materials)
                         {
-                            Type loader = types.First(l => l.Name == t.Name + "Loader");
-                            obj = Activator.CreateInstance(loader, new object[] { body.pqsController.surfaceMaterial });
-                            pObj = Activator.CreateInstance(loader, new object[] { pBody.pqsVersion.surfaceMaterial });
-                            break;
+                            // Big Reflection, because of internal class
+                            Type singleton = types.First(t2 => t2.FullName == t.FullName + "+Properties");
+                            string shaderName = (singleton.GetProperty("shader", BindingFlags.Static | BindingFlags.Public).GetValue(null, null) as Shader).name;
+
+                            // Compare things and break
+                            if (shaderName == body.pqsController.surfaceMaterial.shader.name)
+                            {
+                                Type loader = types.First(l => l.Name == t.Name + "Loader");
+                                obj = Activator.CreateInstance(loader, new object[] { body.pqsController.surfaceMaterial });
+                                pObj = Activator.CreateInstance(loader, new object[] { pBody.pqsVersion.surfaceMaterial });
+                                break;
+                            }
                         }
                     }
-                }
 
-                // Discover members tagged with parser attributes
-                foreach (MemberInfo member in obj.GetType().GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
-                {
-                    // Is this member a parser target?
-                    ParserTarget[] attributes = member.GetCustomAttributes((typeof(ParserTarget)), true) as ParserTarget[];
-                    if (attributes.Length > 0)
+                    // Discover members tagged with parser attributes
+                    foreach (MemberInfo member in obj.GetType().GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
                     {
-                        // Get the Parser Target
-                        ParserTarget target = attributes.First();
-                        string value = "";
-                        string preset = "";
-
-                        // Get matching Fields / Properties
-                        IEnumerable<PropertyInfo> properties = obj.GetType().GetProperties().Where(p => p.Name == target.fieldName);
-
-                        // Get the current and the previous value
-                        if (properties.Count() == 1)
+                        // Is this member a parser target?
+                        ParserTarget[] attributes = member.GetCustomAttributes((typeof(ParserTarget)), true) as ParserTarget[];
+                        if (attributes.Length > 0)
                         {
-                            value = Format(properties.First().GetValue(obj, null));
-                            preset = Format(properties.First().GetValue(pObj, null));
-                        }
-                        else
-                        {
-                            continue;
-                        }
+                            // Get the Parser Target
+                            ParserTarget target = attributes.First();
+                            string value = "";
+                            string preset = "";
 
-                        // Check if the value has changed and how to flag it
-                        if (value != preset)
-                        {
-                            if (oldMat == null)
-                                mat.AddValue(target.fieldName, value);
-                            else if (oldMat != null && oldMat.HasValue(target.fieldName))
-                                mat.AddValue("@" + target.fieldName, value);
+                            // Get matching Fields / Properties
+                            IEnumerable<PropertyInfo> properties = obj.GetType().GetProperties().Where(p => p.Name == target.fieldName);
+
+                            // Get the current and the previous value
+                            if (properties.Count() == 1)
+                            {
+                                value = Format(properties.First().GetValue(obj, null));
+                                preset = Format(properties.First().GetValue(pObj, null));
+                            }
                             else
-                                mat.AddValue(target.fieldName, value);
+                            {
+                                continue;
+                            }
+
+                            // Check if the value has changed and how to flag it
+                            if (value != preset)
+                            {
+                                if (oldMat == null)
+                                    mat.AddValue(target.fieldName, value);
+                                else if (oldMat != null && oldMat.HasValue(target.fieldName))
+                                    mat.AddValue("@" + target.fieldName, value);
+                                else
+                                    mat.AddValue(target.fieldName, value);
+                            }
                         }
                     }
                 }
@@ -346,7 +350,7 @@ namespace Kopernicus
                             biomeNode.AddValue("value", biome.value);
                             biomeNode.AddValue("color", Format(biome.mapColor));
                             biomes.AddNode(biomeNode);
-                        } 
+                        }
                         else if (oldBiomes != null && oldBiomes.GetNodes().Where(p).Count() > 0)
                         {
                             // Stuff
@@ -374,6 +378,37 @@ namespace Kopernicus
                 }
                 #endregion
 
+                #region Rings
+                // Parse the rings
+                ConfigNode oldRings = Utils.SearchNode("Rings", body.transform.name); Debug.Log(body.transform.name);
+                ConfigNode rings = oldRings == null ? new ConfigNode("Rings") : new ConfigNode("@Rings"); Debug.Log(body.transform.name);
+
+                // Nuke the rings
+                if (oldRings != null)
+                    rings.AddNode("!Ring, *");
+
+                // Add the Biomes
+                foreach (Transform t in body.scaledBody.transform)
+                {
+                    if (t.name == "PlanetaryRingObject")
+                    {
+                        Ring ring = Rings.RebuildRing(t.gameObject, true);
+
+                        // Save stuff
+                        ConfigNode node = new ConfigNode("Ring");
+                        node.AddValue("angle", ring.angle);
+                        node.AddValue("outerRadius", ring.outerRadius);
+                        node.AddValue("innerRadius", ring.innerRadius);
+                        node.AddValue("steps", ring.steps);
+                        node.AddValue("texture", ring.texture.name);
+                        node.AddValue("color", Format(ring.color));
+                        node.AddValue("lockRotation", ring.lockRotation);
+                        node.AddValue("unlit", ring.unlit);
+                        rings.AddNode(node);
+                    }
+                }
+                #endregion
+
                 // If the node has values, add it to the root
                 if (orbit.values.Count > 0)
                     bodyNode.AddNode(orbit);
@@ -385,10 +420,12 @@ namespace Kopernicus
                     pqs.AddNode(mat);
                 if (pqs.values.Count > 0)
                     bodyNode.AddNode(pqs);
-
+                if (rings.nodes.Count > 0)
+                    bodyNode.AddNode(rings);
+                Debug.Log(body);
                 // Glue the nodes together
                 root.AddNode(bodyNode);
-
+                Debug.Log(body);
                 // Save the node
                 Directory.CreateDirectory(KSPUtil.ApplicationRootPath + "/GameData/KittopiaTech/Config/");
                 ConfigNode save = new ConfigNode();

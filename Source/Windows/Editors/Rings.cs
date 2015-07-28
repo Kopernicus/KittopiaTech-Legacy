@@ -44,7 +44,7 @@ namespace Kopernicus
                         if (t.name == "PlanetaryRingObject")
                             rings.Add(t.gameObject);
                     if (rings.Count > 0)
-                        RebuildRing();
+                        ring = RebuildRing(rings[index]);
                 }
 
                 // Render the Window
@@ -58,7 +58,7 @@ namespace Kopernicus
                         // Rebuild the Ring
                         rings[index].GetComponent<MeshRenderer>().materials = new Material[] { rings[index].GetComponent<MeshRenderer>().materials[0] };
                         index--;
-                        RebuildRing();
+                        ring = RebuildRing(rings[index]);
                     }
                 }
                 if (GUI.Button(new Rect(60, offset, 250, 20), "Add new Ring"))
@@ -77,7 +77,7 @@ namespace Kopernicus
                         // Rebuild the Ring
                         rings[index].GetComponent<MeshRenderer>().materials = new Material[] { rings[index].GetComponent<MeshRenderer>().materials[0] };
                         index++;
-                        RebuildRing();
+                        ring = RebuildRing(rings[index]);
                     }
                 }
                 offset += 35;
@@ -250,22 +250,28 @@ namespace Kopernicus
 
             }
 
-            private static void RebuildRing()
+            public static Ring RebuildRing(GameObject ringObj, bool save = false)
             {
-                ring.angle = rings[index].transform.localRotation.eulerAngles.x;
-                ring.texture = rings[index].GetComponent<MeshRenderer>().material.mainTexture as Texture2D;
-                ring.color = rings[index].GetComponent<MeshRenderer>().material.color;
-                ring.unlit = rings[index].GetComponent<MeshRenderer>().material.shader.name == "Unlit/Transparent";
-                ring.lockRotation = rings[index].GetComponents<AngleLocker>().Length == 1;
-                Mesh ringMesh = rings[index].GetComponent<MeshFilter>().mesh;
+                Ring ring = new Ring();
+                ring.angle = ringObj.transform.localRotation.eulerAngles.x;
+                ring.texture = ringObj.GetComponent<MeshRenderer>().material.mainTexture as Texture2D;
+                ring.color = ringObj.GetComponent<MeshRenderer>().material.color;
+                ring.unlit = ringObj.GetComponent<MeshRenderer>().material.shader.name == "Unlit/Transparent";
+                ring.lockRotation = ringObj.GetComponents<AngleLocker>().Length == 1;
+                Mesh ringMesh = ringObj.GetComponent<MeshFilter>().mesh;
                 ring.innerRadius = ringMesh.vertices[0].x;
                 ring.outerRadius = ringMesh.vertices[1].x;
                 ring.steps = ringMesh.triangles.Length / 12;
 
-                MeshRenderer renderer = rings[index].GetComponent<MeshRenderer>();
-                Material outline = new Material(Kopernicus.UI.Shaders.Outline);
-                outline.SetColor("_OutlineColor", Color.red);
-                renderer.materials = new Material[] { renderer.material, outline };
+                if (!save)
+                {
+                    MeshRenderer renderer = rings[index].GetComponent<MeshRenderer>();
+                    Material outline = new Material(Kopernicus.UI.Shaders.Outline);
+                    outline.SetColor("_OutlineColor", Color.red);
+                    renderer.materials = new Material[] { renderer.material, outline };
+                }
+
+                return ring;
             }
         }
     }

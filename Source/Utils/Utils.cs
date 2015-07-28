@@ -243,7 +243,7 @@ namespace Kopernicus
 
             public static Texture2D defaultRing
             {
-                get { return LoadTexture("KittopiaTech/Textures/ring.png", false, false, false); }
+                get { return LoadTexture("KittopiaTech/Textures/ring"); }
             }
         }
     }
