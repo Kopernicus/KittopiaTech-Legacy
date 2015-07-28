@@ -10,11 +10,11 @@ namespace Kopernicus
 {
     namespace UI
     {
-        // Class that renders a Material Editor
-        public class PQSBrowser
+        // Class that renders a Celestial Body Browser
+        public class CBBrowser
         {
             // The edited Material
-            public static PQS pqs;
+            public static CelestialBody body;
             public static FieldInfo field;
             public static object parent;
 
@@ -29,7 +29,7 @@ namespace Kopernicus
             {
                 parent = parentObj;
                 field = fieldInfo;
-                UIController.Instance.isPQSBrowser = true;
+                UIController.Instance.isCBBrowser = true;
             }
 
             // GUI stuff
@@ -41,30 +41,30 @@ namespace Kopernicus
                 int offset = 40;
 
                 // Get the available PQS-Spheres
-                IEnumerable<PQS> spheres = PSystemManager.Instance.localBodies.SelectMany(b => b.GetComponentsInChildren<PQS>(true));
+                IEnumerable<CelestialBody> spheres = PSystemManager.Instance.localBodies;
 
                 // Render the Scrollbar
                 scrollPosition = GUI.BeginScrollView(new Rect(10, 30, 200, 300), scrollPosition, new Rect(0, 38, 180, (spheres.Count() * 25) + 80));
 
                 // Render the Properties of the Shader
-                foreach (PQS sphere in spheres)
+                foreach (CelestialBody sphere in spheres)
                 {
                     if (GUI.Button(new Rect(20, offset, 150, 20), "" + sphere.name))
-                        pqs = sphere;
+                        body = sphere;
                     offset += 25;
                 }
                 offset += 20;
 
                 if (GUI.Button(new Rect(20, offset, 150, 20), "Apply"))
                 {
-                    field.SetValue(parent, pqs);
+                    field.SetValue(parent, body.transform.name);
                 }
                 offset += 25;
 
                 if (GUI.Button(new Rect(20, offset, 150, 20), "Exit"))
                 {
-                    UIController.Instance.isPQSBrowser = false;
-                    pqs = null;
+                    UIController.Instance.isCBBrowser = false;
+                    body = null;
                 }
 
                 // Exit

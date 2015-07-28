@@ -380,8 +380,8 @@ namespace Kopernicus
 
                 #region Rings
                 // Parse the rings
-                ConfigNode oldRings = Utils.SearchNode("Rings", body.transform.name); Debug.Log(body.transform.name);
-                ConfigNode rings = oldRings == null ? new ConfigNode("Rings") : new ConfigNode("@Rings"); Debug.Log(body.transform.name);
+                ConfigNode oldRings = Utils.SearchNode("Rings", body.transform.name);
+                ConfigNode rings = oldRings == null ? new ConfigNode("Rings") : new ConfigNode("@Rings");
 
                 // Nuke the rings
                 if (oldRings != null)
@@ -409,6 +409,81 @@ namespace Kopernicus
                 }
                 #endregion
 
+                #region Particles
+                // Parse the rings
+                ConfigNode oldParticles = Utils.SearchNode("Particle", body.transform.name);
+                ConfigNode particles = oldParticles == null ? new ConfigNode("Particle") : new ConfigNode("@Particle");
+
+                // Add the Particles
+                if (body.scaledBody.GetComponents<ParticleLoader.PlanetaryParticle>().Length == 1)
+                {
+                    ParticleLoader.PlanetaryParticle particle = body.scaledBody.GetComponent<ParticleLoader.PlanetaryParticle>();
+
+                    if (oldParticles != null)
+                    {
+                        if (oldParticles.GetValue("target") != particle.target)
+                            particles.AddValue("@target", particle.target);
+
+                        if (oldParticles.GetValue("texture") != particle.Renderer.material.mainTexture.name)
+                            particles.AddValue("@texture", particle.Renderer.material.mainTexture.name);
+
+                        if (oldParticles.GetValue("minEmission") != particle.minEmission.ToString())
+                            particles.AddValue("@minEmission", particle.minEmission);
+
+                        if (oldParticles.GetValue("maxEmission") != particle.maxEmission.ToString())
+                            particles.AddValue("@maxEmission", particle.maxEmission);
+
+                        if (oldParticles.GetValue("lifespanMin") != particle.minEnergy.ToString())
+                            particles.AddValue("@lifespanMin", particle.minEnergy);
+
+                        if (oldParticles.GetValue("lifespanMax") != particle.maxEnergy.ToString())
+                            particles.AddValue("@lifespanMax", particle.maxEnergy);
+
+                        if (oldParticles.GetValue("sizeMin") != particle.emitter.minSize.ToString())
+                            particles.AddValue("@sizeMin", particle.emitter.minSize);
+
+                        if (oldParticles.GetValue("sizeMax") != particle.emitter.maxSize.ToString())
+                            particles.AddValue("@sizeMax", particle.emitter.maxSize);
+
+                        if (oldParticles.GetValue("speedScale") != particle.speedScale.ToString())
+                            particles.AddValue("@speedScale", particle.speedScale);
+
+                        if (oldParticles.GetValue("rate") != particle.animator.sizeGrow.ToString())
+                            particles.AddValue("@rate", particle.animator.sizeGrow);
+
+                        if (oldParticles.GetValue("randVelocity") != Format(particle.randomVelocity))
+                            particles.AddValue("@randVelocity", Format(particle.randomVelocity));
+
+                        ConfigNode colors = new ConfigNode("@Colors");
+                        for (int i = 1; i < 6; i++)
+                        {
+                            if (oldParticles.GetNode("Colors").GetValue("color" + i) != Format(particle.animator.colorAnimation[i - 1]))
+                                colors.AddValue("@color" + i, Format(particle.animator.colorAnimation[i - 1]));
+                        }
+                        if (colors.values.Count > 0)
+                            particles.AddNode(colors);
+                    }
+                    else
+                    {
+                        particles.AddValue("target", particle.target);
+                        particles.AddValue("texture", particle.Renderer.material.mainTexture.name);
+                        particles.AddValue("minEmission", particle.minEmission);
+                        particles.AddValue("maxEmission", particle.maxEmission);
+                        particles.AddValue("lifespanMin", particle.minEnergy);
+                        particles.AddValue("lifespanMax", particle.maxEnergy);
+                        particles.AddValue("sizeMin", particle.emitter.minSize);
+                        particles.AddValue("sizeMax", particle.emitter.maxSize);
+                        particles.AddValue("speedScale", particle.speedScale);
+                        particles.AddValue("rate", particle.animator.sizeGrow);
+                        particles.AddValue("randVelocity", Format(particle.randomVelocity));
+                        ConfigNode colors = new ConfigNode("Colors");
+                        for (int i = 1; i < 6; i++)
+                            colors.AddValue("color" + i, Format(particle.animator.colorAnimation[i - 1]));
+                        particles.AddNode(colors);
+                    }
+                }
+                #endregion
+
                 // If the node has values, add it to the root
                 if (orbit.values.Count > 0)
                     bodyNode.AddNode(orbit);
@@ -422,10 +497,12 @@ namespace Kopernicus
                     bodyNode.AddNode(pqs);
                 if (rings.nodes.Count > 0)
                     bodyNode.AddNode(rings);
-                Debug.Log(body);
+                if (particles.values.Count > 0 || particles.nodes.Count > 0)
+                    bodyNode.AddNode(particles);
+
                 // Glue the nodes together
                 root.AddNode(bodyNode);
-                Debug.Log(body);
+
                 // Save the node
                 Directory.CreateDirectory(KSPUtil.ApplicationRootPath + "/GameData/KittopiaTech/Config/");
                 ConfigNode save = new ConfigNode();
@@ -436,10 +513,14 @@ namespace Kopernicus
             // Formats the Output of the object.ToString() function (=> removes the Type-Definition and some other things)
             private static string Format(object input)
             {
+                if (input == null)
+                    return null;
                 if (input.GetType() == typeof(CelestialBody))
                     return (input as CelestialBody).transform.name;
                 if (input.GetType() == typeof(Color))
                     return input.ToString().Replace("RGBA(", "").Replace(")", "");
+                if (input.GetType() == typeof(Vector3))
+                    return input.ToString().Replace("(", "").Replace(")", "");
 
                 return input.ToString().Replace("(" + input.GetType().FullName + ")", "").Trim();
             }

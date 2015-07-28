@@ -24,7 +24,7 @@ namespace Kopernicus
                 Ocean,
                 StarFix,
                 Rings,
-                Particles,
+                ParticlesEditor,
                 GroundScatter,
                 None
             }
@@ -113,7 +113,7 @@ namespace Kopernicus
                     Utils.Instantiate(Utils.FindBody(PSystemManager.Instance.systemPrefab.rootBody, currentName), "Test" + new System.Random().Next(1000));
 
                 if (GUI.Button(new Rect(20, 370, 200, 20), "Planetary Particles"))
-                    mode = Modes.Particles;
+                    mode = Modes.ParticlesEditor;
 
                 if (GUI.Button(new Rect(20, 400, 200, 20), "Ground Scatter Editor"))
                     mode = Modes.GroundScatter;

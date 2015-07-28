@@ -264,7 +264,7 @@ namespace Kopernicus
                         {
                             GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
                             if (GUI.Button(new Rect(200, offset, 170, 20), "Edit Sphere"))
-                                PQSBrowser.SetEditedObject(key.GetValue(obj) as PQS, key, obj);
+                                PQSBrowser.SetEditedObject(key, obj);
                             offset += 25;
                         }
                     }
@@ -376,7 +376,7 @@ namespace Kopernicus
                         {
                             GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
                             if (GUI.Button(new Rect(200, offset, 170, 20), "Edit Sphere"))
-                                PQSBrowser.SetEditedObject(key.GetValue(obj) as PQS, key, obj);
+                                PQSBrowser.SetEditedObject(key, obj);
                             offset += 25;
                         }
                     }

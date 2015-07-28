@@ -76,6 +76,7 @@
     <Compile Include="Windows\Editors\OrbitEditor.cs" />
     <Compile Include="Windows\Editors\PlanetSelector.cs" />
     <Compile Include="Windows\Editors\PQSEditor.cs" />
+    <Compile Include="Windows\Editors\ParticlesEditor.cs" />
     <Compile Include="Windows\Editors\Rings.cs" />
     <Compile Include="Windows\FileBrowser.cs" />
     <Compile Include="Windows\LandClassModifier.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Windows\MaterialEditor.cs" />
     <Compile Include="Windows\NoiseModWrapper.cs" />
     <Compile Include="Windows\PlanetUI.cs" />
+    <Compile Include="Windows\CBBrowser.cs" />
     <Compile Include="Windows\PQSBrowser.cs" />
     <Compile Include="Windows\SimplexWrapper.cs" />
   </ItemGroup>
