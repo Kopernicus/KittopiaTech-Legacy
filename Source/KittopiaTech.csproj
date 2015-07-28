@@ -73,6 +73,7 @@
     <Compile Include="Windows\ColorPicker.cs" />
     <Compile Include="Windows\Editors\AtmosphereSFX.cs" />
     <Compile Include="Windows\Editors\CelestialBodyEditor.cs" />
+    <Compile Include="Windows\Editors\StarFix.cs" />
     <Compile Include="Windows\Editors\OrbitEditor.cs" />
     <Compile Include="Windows\Editors\PlanetSelector.cs" />
     <Compile Include="Windows\Editors\PQSEditor.cs" />

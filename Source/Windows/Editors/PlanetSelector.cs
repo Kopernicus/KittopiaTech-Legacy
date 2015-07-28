@@ -33,6 +33,7 @@ namespace Kopernicus
                             PlanetUI.currentName = body.name;
                             PlanetUI.currentBody = body;
                             OrbitEditor.reference = "";
+                            StarFix.lsc = null;
                         }
                         offset += 30;
                     }
