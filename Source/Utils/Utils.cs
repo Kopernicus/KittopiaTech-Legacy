@@ -6,12 +6,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Reflection;
 using UnityEngine;
 using System.IO;
 using Kopernicus.Configuration;
-using System.Runtime.InteropServices;
 
 
 namespace Kopernicus
@@ -279,6 +277,7 @@ namespace Kopernicus
                         typeof(Texture2D), 
                         typeof(Texture),
                         typeof(Material),
+                        typeof(CelestialBody)
                     };
                 }
             }
