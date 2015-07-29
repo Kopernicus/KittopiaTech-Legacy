@@ -34,23 +34,14 @@ namespace Kopernicus
                 int offset = 40;
 
                 // Loop through all the Fields
-                foreach (FieldInfo key in lRange.GetType().GetFields())
-                {
-                    System.Object obj = (System.Object)lRange;
-                    if (key.FieldType == typeof(double))
-                    {
-                        GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
-                        key.SetValue(obj, Double.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + key.GetValue(obj))));
-                        offset += 25;
-                    }
-                }
+                object[] objects = Utils.GetInfos<FieldInfo>(lRange);
+                object obj = lRange as System.Object;
+                Utils.RenderSelection<FieldInfo>(objects, ref obj, ref offset);
                 offset += 20;
 
                 // Exit
                 if (GUI.Button(new Rect(20, offset, 200, 20), "Exit"))
-                {
                     UIController.Instance.isLerpRange = false;
-                }
 
                 // Finish
                 GUI.DragWindow();

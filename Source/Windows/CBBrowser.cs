@@ -16,7 +16,9 @@ namespace Kopernicus
             // The edited Material
             public static CelestialBody body;
             public static FieldInfo field;
+            public static PropertyInfo prop;
             public static object parent;
+            public static bool setName;
 
             // Return an OnGUI()-Window.
             public static Rect Render(Rect rect, string title)
@@ -25,10 +27,22 @@ namespace Kopernicus
             }
 
             // Set edited object
-            public static void SetEditedObject(FieldInfo fieldInfo, object parentObj)
+            public static void SetEditedObject(FieldInfo fieldInfo, object parentObj, bool name = true)
             {
                 parent = parentObj;
                 field = fieldInfo;
+                prop = null;
+                setName = name;
+                UIController.Instance.isCBBrowser = true;
+            }
+
+            // Set edited object
+            public static void SetEditedObject(PropertyInfo propInfo, object parentObj, bool name = true)
+            {
+                parent = parentObj;
+                field = null;
+                prop = propInfo;
+                setName = name;
                 UIController.Instance.isCBBrowser = true;
             }
 
@@ -57,7 +71,16 @@ namespace Kopernicus
 
                 if (GUI.Button(new Rect(20, offset, 150, 20), "Apply"))
                 {
-                    field.SetValue(parent, body.transform.name);
+                    if (field != null)
+                        if (setName)
+                            field.SetValue(parent, body.transform.name);
+                        else
+                            field.SetValue(parent, body);
+                    else
+                        if (setName)
+                            prop.SetValue(parent, body.transform.name, null);
+                        else
+                            prop.SetValue(parent, body, null);
                 }
                 offset += 25;
 

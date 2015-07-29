@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using UnityEngine;
 
 namespace Kopernicus
@@ -126,17 +125,17 @@ namespace Kopernicus
                 // Use the current mode to render the editor
                 if (mode != Modes.None)
                 {
-                    try
-                    {
+                    //try
+                    //{
                         Type modeType = Assembly.GetAssembly(typeof(PlanetUI)).GetTypes().Where(t => t.Name == mode.ToString().Replace("Modes.", "")).FirstOrDefault();
                         MethodInfo method = modeType.GetMethod("Render", BindingFlags.Public | BindingFlags.Static);
                         method.Invoke(null, null);
-                    }
-                    catch
-                    {
-                        Debug.LogWarning("[KittopiaTech]: RenderClass \"" + mode.ToString().Replace("Modes.", "") + "\" not available!");
-                        mode = Modes.None;
-                    }
+                    //}
+                    //catch
+                    //{
+                    //    Debug.LogWarning("[KittopiaTech]: RenderClass \"" + mode.ToString().Replace("Modes.", "") + "\" not available!");
+                    //    mode = Modes.None;
+                    //}
                 }
 
                 // Finish the GUI-Drawing

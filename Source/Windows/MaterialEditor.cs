@@ -16,6 +16,7 @@ namespace Kopernicus
             // The edited Material
             public static Material material;
             public static FieldInfo field;
+            public static PropertyInfo prop;
             public static object parent;
 
             // Return an OnGUI()-Window.
@@ -29,9 +30,21 @@ namespace Kopernicus
             {
                 material = mat;
                 parent = parentObj;
+                prop = null;
                 field = fieldInfo;
                 UIController.Instance.isMaterial = true;
                 
+            }
+
+            // Set edited object
+            public static void SetEditedObject(Material mat, PropertyInfo property, object parentObj)
+            {
+                material = mat;
+                parent = parentObj;
+                field = null;
+                prop = property;
+                UIController.Instance.isMaterial = true;
+
             }
 
             // GUI stuff
@@ -67,103 +80,25 @@ namespace Kopernicus
                     }
                 }
 
-                // Get the size of the Scrollbar
-                Type[] supportedTypes = new Type[] { typeof(string), typeof(bool), typeof(int), typeof(float), typeof(double), typeof(Color), typeof(Vector3), typeof(Texture2D) };
-                Func<PropertyInfo, bool> predicate = p => supportedTypes.Contains(p.PropertyType) && p.CanRead && p.CanWrite;
-                int scrollSize = obj.GetType().GetProperties().Where(predicate).Count() * 25;
+                // Get the height of the scroll list
+                object[] objects = Utils.GetInfos<PropertyInfo>(obj);
+                int scrollSize = Utils.GetScrollSize(objects);
 
                 // Render the Scrollbar
                 scrollPosition = GUI.BeginScrollView(new Rect(10, 30, 400, 400), scrollPosition, new Rect(0, 38, 380, scrollSize + 75));
 
-                // Render the Properties of the Shader
-                foreach (PropertyInfo key in obj.GetType().GetProperties().Where(predicate))
-                {
-                    try
-                    {
-                        if (key.PropertyType == typeof(string))
-                        {
-                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
-                            key.GetSetMethod().Invoke(obj, new object[] { GUI.TextField(new Rect(200, offset, 170, 20), "" + key.GetValue(obj, null)) });
-                            offset += 25;
-                        }
-                        else if (key.PropertyType == typeof(bool))
-                        {
-                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
-                            key.SetValue(obj, GUI.Toggle(new Rect(200, offset, 170, 20), (bool)key.GetValue(obj, null), "Bool"), null);
-                            offset += 25;
-                        }
-                        else if (key.PropertyType == typeof(int))
-                        {
-                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
-                            key.SetValue(obj, Int32.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + key.GetValue(obj, null))), null);
-                            offset += 25;
-                        }
-                        else if (key.PropertyType == typeof(float))
-                        {
-                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
-                            key.SetValue(obj, Single.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + key.GetValue(obj, null))), null);
-                            offset += 25;
-                        }
-                        else if (key.PropertyType == typeof(double))
-                        {
-                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
-                            key.SetValue(obj, Double.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + key.GetValue(obj, null))), null);
-                            offset += 25;
-                        }
-                        else if (key.PropertyType == typeof(Color))
-                        {
-                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
-                            if (GUI.Button(new Rect(200, offset, 50, 20), "Edit"))
-                                ColorPicker.SetEditedObject(key, (Color)key.GetValue(obj, null), obj);
-
-                            offset += 25;
-                        }
-                        else if (key.PropertyType == typeof(Vector3))
-                        {
-                            GUI.Label(new Rect(20, offset, 200, 20), "" + key.Name);
-
-                            Vector3 value = (Vector3)key.GetValue(obj, null);
-
-                            value.x = Single.Parse(GUI.TextField(new Rect(200, offset, 50, 20), "" + value.x));
-                            value.y = Single.Parse(GUI.TextField(new Rect(260, offset, 50, 20), "" + value.y));
-                            value.z = Single.Parse(GUI.TextField(new Rect(320, offset, 50, 20), "" + value.z));
-
-                            key.SetValue(obj, value, null);
-
-                            offset += 25;
-                        }
-                        else if (key.PropertyType == typeof(Texture2D))
-                        {
-                            // Load the Texture
-                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name + ":");
-                            if (GUI.Button(new Rect(200, offset, 80, 20), "Load"))
-                            {
-                                UIController.Instance.isFileBrowser = !UIController.Instance.isFileBrowser;
-                                FileBrowser.location = "";
-                            }
-
-                            // Apply the new Texture
-                            if (GUI.Button(new Rect(290, offset, 80, 20), "Apply"))
-                            {
-                                string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
-                                Texture2D texture = Utility.LoadTexture(path, false, false, false);
-                                texture.name = path.Replace("\\", "/");
-                                key.SetValue(obj, texture, null);
-                            }
-                            offset += 25;
-                        }
-                    }
-                    catch { }
-                }
+                // Render the Selection
+                Utils.RenderSelection<PropertyInfo>(objects, ref obj, ref offset);
                 offset += 20;
 
                 if (GUI.Button(new Rect(20, offset, 200, 20), "Apply"))
                 {
-                    field.SetValue(parent, obj);
+                    if (field != null)
+                        field.SetValue(parent, obj);
+                    else
+                        prop.SetValue(parent, obj, null);
                     if (parent.GetType() == typeof(PQS))
-                    {
                         (parent as PQS).RebuildSphere(); // Why?!?!
-                    }
                 }
                 offset += 25;
 

@@ -96,41 +96,15 @@ namespace Kopernicus
                     // Reset Offset, just to be sure
                     offset = 35;
 
-                    // Modify the Scroll-Size
-                    Type[] supportedTypes = new Type[] { typeof(string), typeof(float), typeof(Color) };
-                    int scrollSize = obj.GetType().GetFields().Where(f => supportedTypes.Contains(f.FieldType)).Count() * 25;
+                    // Create the height of the Scroll-List
+                    object[] objects = Utils.GetInfos<FieldInfo>(obj);
+                    int scrollSize = Utils.GetScrollSize(objects);
 
                     // Render the Scrollbar
                     scrollPosition = GUI.BeginScrollView(new Rect(10, 30, 400, 200), scrollPosition, new Rect(0, 28, 380, scrollSize + 50));
 
-                    // Render the Fields
-                    foreach (FieldInfo key in obj.GetType().GetFields())
-                    {
-                        try
-                        {
-                            if (key.FieldType == typeof(string))
-                            {
-                                GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
-                                key.SetValue(obj, GUI.TextField(new Rect(200, offset, 170, 20), "" + key.GetValue(obj)));
-                                offset += 25;
-                            }
-                            else if (key.FieldType == typeof(float))
-                            {
-                                GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
-                                key.SetValue(obj, Single.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + key.GetValue(obj))));
-                                offset += 25;
-                            }
-                            else if (key.FieldType == typeof(Color))
-                            {
-                                GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
-                                if (GUI.Button(new Rect(200, offset, 50, 20), "Edit"))
-                                    ColorPicker.SetEditedObject(key, (Color)key.GetValue(obj), obj);
-
-                                offset += 25;
-                            }
-                        }
-                        catch { }
-                    }
+                    // Render the Selection
+                    Utils.RenderSelection<FieldInfo>(objects, ref obj, ref offset);
                     offset += 20;
 
                     // Remove a Biome

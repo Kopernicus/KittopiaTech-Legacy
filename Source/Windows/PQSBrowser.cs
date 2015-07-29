@@ -1,21 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using UnityEngine;
 
 namespace Kopernicus
 {
     namespace UI
     {
-        // Class that renders a Material Editor
+        // Class that renders a PQS-Browser
         public class PQSBrowser
         {
             // The edited Material
             public static PQS pqs;
             public static FieldInfo field;
+            public static PropertyInfo prop;
             public static object parent;
 
             // Return an OnGUI()-Window.
@@ -29,12 +27,23 @@ namespace Kopernicus
             {
                 parent = parentObj;
                 field = fieldInfo;
+                prop = null;
+                UIController.Instance.isPQSBrowser = true;
+            }
+
+            // Set edited object
+            public static void SetEditedObject(PropertyInfo propertyInfo, object parentObj)
+            {
+                parent = parentObj;
+                prop = propertyInfo;
+                field = null;
                 UIController.Instance.isPQSBrowser = true;
             }
 
             // GUI stuff
             private static Vector2 scrollPosition;
 
+            // Fill the returned window
             public static void RenderWindow(int windowID)
             {
                 // Render Stuff
@@ -55,19 +64,24 @@ namespace Kopernicus
                 }
                 offset += 20;
 
+                // Apply the selected Sphere
                 if (GUI.Button(new Rect(20, offset, 150, 20), "Apply"))
                 {
-                    field.SetValue(parent, pqs);
+                    if (field != null)
+                        field.SetValue(parent, pqs);
+                    else
+                        prop.SetValue(parent, pqs, null);
                 }
                 offset += 25;
 
+                // Close the window
                 if (GUI.Button(new Rect(20, offset, 150, 20), "Exit"))
                 {
                     UIController.Instance.isPQSBrowser = false;
                     pqs = null;
                 }
 
-                // Exit
+                // Finish
                 GUI.EndScrollView();
                 GUI.DragWindow();
             }
