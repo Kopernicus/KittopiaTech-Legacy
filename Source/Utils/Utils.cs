@@ -269,6 +269,7 @@ namespace Kopernicus
                         typeof(Vector2d),
                         typeof(PQSLandControl.LandClass[]), 
                         typeof(PQSMod_VertexPlanet.LandClass[]), 
+                        typeof(PQSMod_HeightColorMap.LandClass[]), 
                         typeof(PQS), 
                         typeof(PQSMod_VertexPlanet.SimplexWrapper), 
                         typeof(PQSMod_VertexPlanet.NoiseModWrapper), 
