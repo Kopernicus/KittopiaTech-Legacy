@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>DevelopmentBuild\KittopiaTech\Plugins\</OutputPath>
+    <OutputPath>..\Distribution\DevelopmentBuild\KittopiaTech\Plugins\</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -35,6 +35,7 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\..\..\Programme\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Kopernicus">
       <HintPath>..\References\Kopernicus.dll</HintPath>

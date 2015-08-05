@@ -183,7 +183,7 @@ namespace Kopernicus
                 GameObject scaledVersion = FindScaled(body.name);
 
                 // Get the Textures from the PQS
-                List<Texture2D> textures = pqs.CreateMaps(2048, pqs.mapMaxHeight, pqs.mapOcean, pqs.mapOceanHeight, pqs.mapOceanColor).ToList();
+                List<Texture2D> textures = pqs.CreateMaps(pqs.mapFilesize, pqs.mapMaxHeight, pqs.mapOcean, pqs.mapOceanHeight, pqs.mapOceanColor).ToList();
                 textures.Add(BumpToNormalMap(textures[1], 9));
 
                 // Remove Alpha
