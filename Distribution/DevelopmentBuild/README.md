@@ -1,7 +1,7 @@
 KittopiaTech - a Kopernicus Visual Editor
 =========================
 Plugin for Kerbal Space Program to support the alternation of planets ingame.
-This uses the Kopernicus API in Version v0.2.3
+This uses the Kopernicus API in a modified version, the changes will be included in the next Kopernicus version
 
 **Credits**
 - Kragrathea (Utility code)
@@ -9,11 +9,12 @@ This uses the Kopernicus API in Version v0.2.3
 - joedavis (Linux-fix)
 - Gravitasi (ScaledSpace fixes and much more)
 - BorisBee (PQSMod-fixes and more)
-- Thomas P. (Update for KSP 1.0, portation to Kopernicus as a base API, modular UI-Code)
+- Thomas P. (Update for KSP 1.0, portation to Kopernicus as a base API, modular UI-Code, multiple improvements)
 
 **How to install**
-If you want to test the current Development-Version, you have to put the Folder Source/DevelopmentBuild/KittopiaTech into your GameData folder. In-Game, the UI is opened with Ctrl + P.
+If you want to test the current Development-Version, you have to put the Folder Distribution/DevelopmentBuild/KittopiaTech into your GameData folder. In-Game, the UI is opened with Ctrl + P.
 WARNING: This tool can break saves, if you don't use it correctly. You are advised to use this in a special SaveGame.
+WARNING: You need to use the Kopernicus.dll from References/, since it was modified!
 
 **License**
 The Plugin .dll and all related code, with the exception of utility code developed by forum user "Kragrathea" (which is under GPL) in which all necessary permissions have been given, is free for anyone to use and learn from.
