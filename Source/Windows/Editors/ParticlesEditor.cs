@@ -125,7 +125,7 @@ namespace Kopernicus
                         buttonOffset += 65;
                     }
                     offset += 45;
-                 
+
                     if (GUI.Button(new Rect(20, offset, 200, 20), "Delete Particles"))
                     {
                         MonoBehaviour.Destroy(particles.Renderer);

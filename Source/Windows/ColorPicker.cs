@@ -22,7 +22,7 @@ namespace Kopernicus
             }
 
             // Set edited object
-            public static void SetEditedObject (FieldInfo fieldInfo, Color colorObject, object obj)
+            public static void SetEditedObject(FieldInfo fieldInfo, Color colorObject, object obj)
             {
                 field = fieldInfo;
                 property = null;

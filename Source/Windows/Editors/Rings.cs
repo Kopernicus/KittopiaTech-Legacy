@@ -17,6 +17,7 @@ namespace Kopernicus
 
             // Ring
             public static Ring ring = new Ring();
+
             private static List<GameObject> rings = null;
             private static int index = 0;
 
@@ -243,7 +244,6 @@ namespace Kopernicus
                 {
                     MonoBehaviour.Destroy(rings[index].GetComponent<AngleLocker>());
                 }
-
             }
 
             public static Ring RebuildRing(GameObject ringObj, bool save = false)

@@ -21,6 +21,7 @@ namespace Kopernicus
 
             // FieldInfo to apply additions / removals
             private static FieldInfo fieldInfo;
+
             private static PropertyInfo propertyInfo;
             private static object modObj;
 
@@ -41,6 +42,7 @@ namespace Kopernicus
 
             // Store them
             private static Mode mode;
+
             private static State state;
 
             // Return an OnGUI()-Window.
@@ -50,6 +52,7 @@ namespace Kopernicus
             }
 
             #region SetEditedObject
+
             // Set edited object
             public static void SetEditedObject(PQSMod_VertexPlanet.LandClass[] landClassArray, FieldInfo field, object modObject)
             {
@@ -60,7 +63,6 @@ namespace Kopernicus
                 propertyInfo = null;
                 modObj = modObject;
                 UIController.Instance.isLandClass = true;
-                
             }
 
             // Set edited object
@@ -97,7 +99,6 @@ namespace Kopernicus
                 propertyInfo = prop;
                 modObj = modObject;
                 UIController.Instance.isLandClass = true;
-
             }
 
             // Set edited object
@@ -123,7 +124,8 @@ namespace Kopernicus
                 modObj = modObject;
                 UIController.Instance.isLandClass = true;
             }
-            #endregion
+
+            #endregion SetEditedObject
 
             // GUI stuff
             private static Vector2 scrollPosition;

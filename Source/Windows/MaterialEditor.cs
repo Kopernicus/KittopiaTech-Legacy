@@ -13,6 +13,7 @@ namespace Kopernicus
         {
             // The edited Material
             public static Material material;
+
             public static FieldInfo field;
             public static PropertyInfo prop;
             public static object parent;
@@ -31,7 +32,6 @@ namespace Kopernicus
                 prop = null;
                 field = fieldInfo;
                 UIController.Instance.isMaterial = true;
-                
             }
 
             // Set edited object
@@ -42,7 +42,6 @@ namespace Kopernicus
                 field = null;
                 prop = property;
                 UIController.Instance.isMaterial = true;
-
             }
 
             // GUI stuff

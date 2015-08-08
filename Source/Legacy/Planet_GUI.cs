@@ -93,7 +93,6 @@ namespace Kopernicus
                 if (GUI.Button(new Rect(20, 210, 200, 20), "UI Options (INCOMPLETE)"))
                 {
                     //Todo: Options menu, export/import settings, for example.
-
                 }
 
                 //Export options
@@ -238,7 +237,6 @@ namespace Kopernicus
                             }
                             catch
                             {
-
                             }
 
                             NewPlanetBody.CBUpdate();
@@ -418,7 +416,7 @@ namespace Kopernicus
             PQS pqstoMod;
 
             //PQS Modder PT1
-            //GUI for showing list of all PQS mods applied to a body (the initial PQS Editor window). 
+            //GUI for showing list of all PQS mods applied to a body (the initial PQS Editor window).
             private void PQSModderPT1()
             {
                 //Todo: swap with switch?
@@ -489,7 +487,6 @@ namespace Kopernicus
                 {
                     pqsModderStage = 3;
                 } if (GUI.Button(new Rect(420, yoffset, 20, 20), "?")) { (NewWindows["HelpWindow"] as HelpWindow).CustomToggle("PQSAdder"); }
-
 
                 GUI.EndScrollView();
             }
@@ -803,7 +800,7 @@ namespace Kopernicus
                 int yoffset = 280;
                 ScrollPosition2 = GUI.BeginScrollView(new Rect(20, 280, 380, 250), ScrollPosition2, new Rect(20, 280, 380, scrollbaroffsetter));
 
-                //Still hacky, Im not proud.			
+                //Still hacky, Im not proud.
                 foreach (Type type in types)
                 {
                     if (type.IsSubclassOf(typeof(PQSMod)))
@@ -1032,7 +1029,7 @@ namespace Kopernicus
                     float joolScaledRad = 1000f;
                     scale = (float)bodyPQS.radius / joolScaledRad;
                 }
-				
+
                 bodyPQS.isBuildingMaps = true;
                 var newVerts = new Vector3[meshfilter_input.mesh.vertices.Count()];
                 for (int i = 0; i < meshfilter_input.mesh.vertices.Count(); i++)
@@ -1046,9 +1043,9 @@ namespace Kopernicus
                     newVerts[i] = vertex * (radius / rootrad);
                 }
                 bodyPQS.isBuildingMaps = false;
-			
+
                 meshfilter_input.mesh.vertices = newVerts;
-			
+
                 meshfilter_input.mesh.RecalculateNormals();
                 Utils.RecalculateTangents(meshfilter_input.mesh);
 
@@ -1066,12 +1063,15 @@ namespace Kopernicus
                     case 1:
                         OceanToolsUI_AddOcean();
                         return;
+
                     case 2:
                         OceanToolsUI_HazardOcean();
                         return;
+
                     case 3:
                         //OceanToolsUI_ExportOcean();
                         return;
+
                     default:
                         break;
                 }
@@ -1094,7 +1094,6 @@ namespace Kopernicus
                     OceanToolsUiSelector = 2;
                 }
                 yoffset += 30;
-
             }
 
             private void OceanToolsUI_AddOcean()
@@ -1214,7 +1213,6 @@ namespace Kopernicus
 
                                 pqs.surfaceMaterial.mainTexture = Utils.LoadTexture("GameData/KittopiaSpace/Textures/" + TemplateName + "/Ocean/Ocean_Def.png");
                                 //pqs.fallbackMaterial.mainTexture = Utils.LoadTexture( "GameData/KittopiaSpace/Textures/"+TemplateName+"/Ocean/Ocean_Def.png" );
-
                             }
                         }
                     }
@@ -1615,7 +1613,6 @@ namespace Kopernicus
                         LightColour = PlanetarySettings[TemplateName].Star.MYLight.color;
                     }
                 }
-
             }
 
             private void ScatterEditorUI()

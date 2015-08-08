@@ -20,7 +20,7 @@ namespace Kopernicus
             }
 
             // Activate the Window
-            public static void SetEditedObject (PQSMod_VertexPlanet.SimplexWrapper swrap)
+            public static void SetEditedObject(PQSMod_VertexPlanet.SimplexWrapper swrap)
             {
                 sWrapper = swrap;
                 UIController.Instance.isNoiseModWrapper = false;

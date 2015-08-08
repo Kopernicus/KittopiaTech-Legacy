@@ -1,7 +1,5 @@
 ﻿using Kopernicus.Configuration;
 using Kopernicus.MaterialWrapper;
-using System;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -18,6 +16,7 @@ namespace Kopernicus
 
             // Light
             public static LightShifterComponent lsc = null;
+
             public static EmissiveMultiRampSunspots material = null;
 
             // Return an OnGUI()-Window.

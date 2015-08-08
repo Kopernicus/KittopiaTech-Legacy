@@ -54,7 +54,6 @@ namespace Kopernicus
                 GUI.EndScrollView();
                 GUI.DragWindow();
             }
-
         }
     }
 }

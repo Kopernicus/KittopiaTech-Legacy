@@ -33,6 +33,7 @@ namespace Kopernicus
 
             // Curently edited body
             public static CelestialBody currentBody;
+
             public static string currentName = "";
 
             // Return an OnGUI()-Window.
@@ -46,6 +47,7 @@ namespace Kopernicus
 
             // ScaledMesh Export
             private static bool exportScaled;
+
             private static bool exportMaps;
 
             // Planet-Creation Stuff
@@ -93,7 +95,7 @@ namespace Kopernicus
                     if (exportScaled)
                         Utils.SerializeMesh(Utils.FindScaled(currentName).GetComponentInChildren<MeshFilter>().sharedMesh, KSPUtil.ApplicationRootPath + Body.ScaledSpaceCacheDirectory + "/" + currentName + ".bin");
                     if (exportMaps)
-                        Utils.GeneratePQSMaps(currentBody);
+                        UIController.Instance.StartCoroutine(Utils.GeneratePQSMaps(currentBody));
                 }
 
                 if (GUI.Button(new Rect(20, 220, 200, 20), "Save Body"))
@@ -127,9 +129,9 @@ namespace Kopernicus
                 {
                     //try
                     //{
-                        Type modeType = Assembly.GetAssembly(typeof(PlanetUI)).GetTypes().Where(t => t.Name == mode.ToString().Replace("Modes.", "")).FirstOrDefault();
-                        MethodInfo method = modeType.GetMethod("Render", BindingFlags.Public | BindingFlags.Static);
-                        method.Invoke(null, null);
+                    Type modeType = Assembly.GetAssembly(typeof(PlanetUI)).GetTypes().Where(t => t.Name == mode.ToString().Replace("Modes.", "")).FirstOrDefault();
+                    MethodInfo method = modeType.GetMethod("Render", BindingFlags.Public | BindingFlags.Static);
+                    method.Invoke(null, null);
                     //}
                     //catch
                     //{

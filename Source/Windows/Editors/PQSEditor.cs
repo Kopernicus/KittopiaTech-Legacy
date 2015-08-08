@@ -22,14 +22,17 @@ namespace Kopernicus
                 PQSMod,
                 AddMod
             }
+
             public static Modes mode = Modes.List;
 
             // Current PQS Components
             public static PQS currentPQS;
+
             public static PQSMod currentPQSMod;
 
             // PQSMod Stuff
             private static string pqsModSphereName = "";
+
             private static int currentMapDepth = 5;
 
             // Return an OnGUI()-Window.
@@ -104,7 +107,7 @@ namespace Kopernicus
                     {
                         // Select the PQSMod
                         currentPQSMod = pqsMod;
-                        
+
                         // Set the current Sphere-Name
                         if (pqsModSphereName == "" && currentPQSMod.sphere != null)
                             pqsModSphereName = currentPQSMod.sphere.name;
@@ -113,7 +116,7 @@ namespace Kopernicus
 
                         // Set the Mode
                         mode = Modes.PQSMod;
-                    } 
+                    }
                     offset += 25;
                 }
                 offset += 10;
@@ -155,7 +158,7 @@ namespace Kopernicus
                     currentPQSMod.sphere = null;
                     MonoBehaviour.Destroy(currentPQSMod);
                     currentPQSMod = null;
-                    
+
                     // Hack
                     PlanetUI.currentBody.pqsController.SetupExternalRender();
                     PlanetUI.currentBody.pqsController.CloseExternalRender();
@@ -209,7 +212,7 @@ namespace Kopernicus
                 // Render the Scrollbar
                 scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollOffset));
 
-                // Go through all Types and display them		
+                // Go through all Types and display them
                 foreach (Type type in types)
                 {
                     if (GUI.Button(new Rect(20, offset, 350, 20), "" + type.Name))

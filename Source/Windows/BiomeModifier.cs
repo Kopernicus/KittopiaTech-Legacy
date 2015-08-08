@@ -15,6 +15,7 @@ namespace Kopernicus
 
             // FieldInfo to apply additions / removals
             private static FieldInfo fieldInfo;
+
             private static object modObj;
 
             // State
@@ -87,7 +88,6 @@ namespace Kopernicus
                     }
                     offset += 25;
                 }
-
 
                 if (state == State.Modify)
                 {

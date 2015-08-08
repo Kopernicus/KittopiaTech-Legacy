@@ -1,6 +1,6 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
 using System.IO;
+using UnityEngine;
 
 namespace Kopernicus
 {
@@ -22,7 +22,6 @@ namespace Kopernicus
                 FileInfo fileSelection;
                 int contentWidth;
 
-
                 // Our return state - altered by the "Select" button
                 complete = false;
 
@@ -37,7 +36,6 @@ namespace Kopernicus
                     directoryInfo = fileSelection.Directory;
                 }
 
-
                 if (!location.EndsWith("GameData") && GUI.Button(new Rect(10, 20, 510, 20), "Up one level"))
                 {
                     directoryInfo = directoryInfo.Parent;
@@ -47,7 +45,6 @@ namespace Kopernicus
                 {
                     GUI.Label(new Rect(10, 20, 510, 20), "Up one level", GUI.skin.button); // Design-Hack, hehe :D
                 }
-
 
                 // Handle the directories list
                 GUILayout.BeginArea(new Rect(10, 45, 250, 300));
@@ -64,7 +61,6 @@ namespace Kopernicus
                     location = directorySelection.FullName;
                 }
 
-
                 // Handle the files list
                 GUILayout.BeginArea(new Rect(270, 45, 250, 300));
                 GUILayout.Label("Files:");
@@ -79,7 +75,6 @@ namespace Kopernicus
                     location = fileSelection.FullName;
                 }
 
-
                 // The manual location box and the select button
                 GUILayout.BeginArea(new Rect(10, 350, 510, 20));
                 GUILayout.BeginHorizontal();
@@ -92,7 +87,6 @@ namespace Kopernicus
                 }
                 GUILayout.EndHorizontal();
                 GUILayout.EndArea();
-
 
                 return complete;
             }

@@ -42,8 +42,6 @@ namespace Kopernicus
                 // Finish
                 GUI.DragWindow();
             }
-
-
         }
     }
 }

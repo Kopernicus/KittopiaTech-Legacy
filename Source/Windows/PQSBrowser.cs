@@ -12,6 +12,7 @@ namespace Kopernicus
         {
             // The edited Material
             public static PQS pqs;
+
             public static FieldInfo field;
             public static PropertyInfo prop;
             public static object parent;

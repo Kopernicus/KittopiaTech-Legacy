@@ -23,6 +23,7 @@ namespace Kopernicus
                 ConfigNode bodyNode = null;
 
                 #region Body
+
                 // Are we instanced?
                 bool isCopy = false;
 
@@ -46,9 +47,9 @@ namespace Kopernicus
                         bodyNode.AddValue("name", body.bodyName);
                     else
                         if (pBody.name == "Kerbin")
-                            bodyNode.AddValue("cbNameLater", body.bodyName);
-                        else
-                            bodyNode.AddValue("@name", body.bodyName);
+                        bodyNode.AddValue("cbNameLater", body.bodyName);
+                    else
+                        bodyNode.AddValue("@name", body.bodyName);
                 }
 
                 // If we're instanced, we need a Template definition
@@ -58,9 +59,11 @@ namespace Kopernicus
                     template.AddValue("name", pBody.name);
                     bodyNode.AddNode(template);
                 }
-                #endregion
+
+                #endregion Body
 
                 #region Orbit
+
                 // Orbit
                 ConfigNode oldOrbit = Utils.SearchNode("Orbit", body.transform.name);
                 ConfigNode orbit = (oldOrbit == null) ? new ConfigNode("Orbit") : new ConfigNode("@Orbit");
@@ -114,9 +117,11 @@ namespace Kopernicus
                         }
                     }
                 }
-                #endregion
+
+                #endregion Orbit
 
                 #region Properties
+
                 //Parse the Properties from CelestialBody
                 ConfigNode oldProp = Utils.SearchNode("Properties", body.transform.name);
                 ConfigNode prop = (oldProp == null) ? new ConfigNode("Properties") : new ConfigNode("@Properties");
@@ -170,10 +175,13 @@ namespace Kopernicus
                         }
                     }
                 }
-                #endregion
+
+                #endregion Properties
 
                 #region PQS
+
                 #region Start
+
                 //Start getting the PQS stuff
                 ConfigNode oldPQS = Utils.SearchNode("PQS", body.transform.name);
                 ConfigNode pqs = (oldPQS == null) ? new ConfigNode("PQS") : new ConfigNode("@PQS");
@@ -233,9 +241,11 @@ namespace Kopernicus
                         }
                     }
                 }
-                #endregion
+
+                #endregion Start
 
                 #region Material
+
                 // Materials
                 ConfigNode oldMat = null;
                 ConfigNode mat = new ConfigNode();
@@ -314,10 +324,13 @@ namespace Kopernicus
                         }
                     }
                 }
-                #endregion
-                #endregion
+
+                #endregion Material
+
+                #endregion PQS
 
                 #region Biomes
+
                 // Parse the biomes, do that manually, reflection would be a bit silly for three values :P
                 ConfigNode oldBiomes = Utils.SearchNode("Biomes", body.transform.name);
                 ConfigNode biomes = oldBiomes == null ? new ConfigNode("Biomes") : new ConfigNode("@Biomes");
@@ -364,7 +377,6 @@ namespace Kopernicus
 
                             // If nothing changed, do nothing
 
-
                             biomes.AddNode(biomeNode);
                         }
                     }
@@ -375,9 +387,11 @@ namespace Kopernicus
                             if (!body.BiomeMap.Attributes.Select(b => b.name).Contains(n.GetValue("name")))
                                 biomes.AddNode("!Biome[" + n.GetValue("name") + "]");
                 }
-                #endregion
+
+                #endregion Biomes
 
                 #region Rings
+
                 // Parse the rings
                 ConfigNode oldRings = Utils.SearchNode("Rings", body.transform.name);
                 ConfigNode rings = oldRings == null ? new ConfigNode("Rings") : new ConfigNode("@Rings");
@@ -406,9 +420,11 @@ namespace Kopernicus
                         rings.AddNode(node);
                     }
                 }
-                #endregion
+
+                #endregion Rings
 
                 #region Particles
+
                 // Parse the rings
                 ConfigNode oldParticles = Utils.SearchNode("Particle", body.transform.name);
                 ConfigNode particles = oldParticles == null ? new ConfigNode("Particle") : new ConfigNode("@Particle");
@@ -481,7 +497,8 @@ namespace Kopernicus
                         particles.AddNode(colors);
                     }
                 }
-                #endregion
+
+                #endregion Particles
 
                 // If the node has values, add it to the root
                 if (orbit.values.Count > 0)

@@ -12,6 +12,7 @@ namespace Kopernicus
         {
             // The edited Material
             public static CelestialBody body;
+
             public static FieldInfo field;
             public static PropertyInfo prop;
             public static object parent;
@@ -75,9 +76,9 @@ namespace Kopernicus
                             field.SetValue(parent, body);
                     else
                         if (setName)
-                            prop.SetValue(parent, body.transform.name, null);
-                        else
-                            prop.SetValue(parent, body, null);
+                        prop.SetValue(parent, body.transform.name, null);
+                    else
+                        prop.SetValue(parent, body, null);
                 }
                 offset += 25;
 

@@ -81,7 +81,6 @@ namespace Kopernicus
 
                 return mesh;
             }
-
         }
     }
 }

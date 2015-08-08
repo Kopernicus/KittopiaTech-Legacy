@@ -2,15 +2,14 @@
  * This code is partitially by Kragrathea (GPL) and by the Kopernicus-Team (LGPL). Used with permission. *
 \*=======================================================================================================*/
 
+using Kopernicus.Configuration;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using System.IO;
-using Kopernicus.Configuration;
-
 
 namespace Kopernicus
 {
@@ -115,6 +114,10 @@ namespace Kopernicus
                 // Clear it's childs
                 body.children = new List<PSystemBody>();
 
+                // Add it to the System-Prefab
+                body.transform.parent = PSystemManager.Instance.systemPrefab.transform;
+                PSystemManager.Instance.systemPrefab.rootBody.children.Add(body);
+
                 // Hack^6 - Hack the PSystemManager to spawn this thing
                 MethodInfo spawnBody = typeof(PSystemManager).GetMethod("SpawnBody", BindingFlags.NonPublic | BindingFlags.Instance);
                 spawnBody.Invoke(PSystemManager.Instance, new object[] { PSystemManager.Instance.localBodies.First(), body });
@@ -125,7 +128,7 @@ namespace Kopernicus
 
                 // Start the CelestialBody
                 typeof(CelestialBody).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(cBody, null);
-                
+
                 // Start the OrbitDriver
                 if (cBody.orbitDriver != null)
                     typeof(OrbitDriver).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(cBody.orbitDriver, null);
@@ -153,7 +156,7 @@ namespace Kopernicus
                 PlanetUI.templates.Add(cBody.transform.name, template.name);
             }
 
-            private static Dictionary<string, string> kopernicusFields = new Dictionary<string,string>() 
+            private static Dictionary<string, string> kopernicusFields = new Dictionary<string, string>()
             {
                 {"longitudeOfAscendingNode", "LAN"},
                 {"description", "bodyDescription"},
@@ -174,36 +177,101 @@ namespace Kopernicus
             }
 
             /// <summary>
-            /// Generate the scaled space Textures using PQS
-            /// </summary> 
-            public static void GeneratePQSMaps(CelestialBody body)
+            /// Generate the scaled space Textures using PQS in a Coroutine
+            /// </summary>
+            public static IEnumerator GeneratePQSMaps(CelestialBody body)
             {
+                // Get time
+                DateTime now = DateTime.Now;
+
                 // Get the PQS and the ScaledSpace
                 PQS pqs = FindLocal(body.name).GetComponentsInChildren<PQS>(true).First();
                 GameObject scaledVersion = FindScaled(body.name);
 
-                // Get the Textures from the PQS
-                List<Texture2D> textures = pqs.CreateMaps(pqs.mapFilesize, pqs.mapMaxHeight, pqs.mapOcean, pqs.mapOceanHeight, pqs.mapOceanColor).ToList();
-                textures.Add(BumpToNormalMap(textures[1], 9));
+                // Create the Textures
+                Texture2D colorMap = new Texture2D(pqs.mapFilesize, pqs.mapFilesize / 2, TextureFormat.ARGB32, true);
+                Texture2D heightMap = new Texture2D(pqs.mapFilesize, pqs.mapFilesize / 2, TextureFormat.RGB24, true);
 
-                // Remove Alpha
-                Color32[] pixels = textures[0].GetPixels32();
-                for (int i = 0; i < pixels.Count(); i++)
-                    if (pixels[i] != pqs.mapOceanColor)
-                        pixels[i].a = 255;
-                textures[0].SetPixels32(pixels);
-                textures[0].Apply();
+                // Get the active mods
+                IEnumerable<PQSMod> mods = pqs.GetComponentsInChildren<PQSMod>(true).Where(m => m.modEnabled);
+
+                // Open the external Renderer
+                pqs.SetupExternalRender();
+                
+                // Get the Mod-Building Methods, because I'm lazy :P
+                MethodInfo modOnVertexBuildHeight = pqs.GetType().GetMethod("Mod_OnVertexBuildHeight", BindingFlags.Instance | BindingFlags.NonPublic);
+                MethodInfo modOnVertexBuild = pqs.GetType().GetMethod("Mod_OnVertexBuild", BindingFlags.Instance | BindingFlags.NonPublic);
+                
+                // Stuff
+                ScreenMessage message = ScreenMessages.PostScreenMessage("Generating Planet-Maps", 1f, ScreenMessageStyle.UPPER_CENTER);
+
+                // Loop through the pixels
+                for (int y = 0; y < (pqs.mapFilesize / 2); y++)
+                {
+                    for (int x = 0; x < pqs.mapFilesize; x++)
+                    {
+                        // Update Message
+                        ScreenMessages.RemoveMessage(message);
+                        double percent = ((double)((y * pqs.mapFilesize) + x) / ((pqs.mapFilesize / 2) * pqs.mapFilesize)) * 100;
+                        message = ScreenMessages.PostScreenMessage("Generating Planet-Maps: " + percent.ToString("0.00") + "%", Time.deltaTime * 0.5f, ScreenMessageStyle.UPPER_CENTER);
+
+                        // Create a VertexBuildData
+                        PQS.VertexBuildData data = new PQS.VertexBuildData();
+
+                        // Configure the VertexBuildData
+                        data.directionFromCenter = (QuaternionD.AngleAxis((360d / pqs.mapFilesize) * x, Vector3d.up) * QuaternionD.AngleAxis(90d - (180d / (pqs.mapFilesize / 2)) * y, Vector3d.right)) * Vector3d.forward;
+                        data.vertHeight = pqs.radius;
+
+                        // Build from the Mods
+                        modOnVertexBuildHeight.Invoke(pqs, new[] { data });
+                        modOnVertexBuild.Invoke(pqs, new[] { data });
+
+                        // Adjust the height
+                        double height = (data.vertHeight - pqs.radius) * (1d / pqs.mapMaxHeight);
+                        if (height < 0)
+                            height = 0;
+                        else if (height > 1)
+                            height = 1;
+
+                        // Adjust the Color
+                        Color color = data.vertColor;
+                        color.a = 1f;
+                        if (pqs.mapOcean && height <= pqs.mapOceanHeight)
+                            color = pqs.mapOceanColor;
+                            
+                        // Set the Pixels
+                        colorMap.SetPixel(x, y, color);
+                        heightMap.SetPixel(x, y, new Color((float)height, (float)height, (float)height));
+
+                        // yield return
+                        if (((y * pqs.mapFilesize) + x) % 5000d == 0)
+                            yield return null;
+                    }
+                }
+
+                // Apply the maps
+                colorMap.Apply();
+                heightMap.Apply();
+
+                // Close the Renderer
+                pqs.CloseExternalRender();
+
+                // Bump to Normal Map
+                Texture2D normalMap = BumpToNormalMap(heightMap, 9);
 
                 // Serialize them to disk
                 string path = KSPUtil.ApplicationRootPath + "/GameData/KittopiaTech/Textures/" + body.name + "/";
                 Directory.CreateDirectory(path);
-                File.WriteAllBytes(path + body.name + "_Color.png", textures[0].EncodeToPNG());
-                File.WriteAllBytes(path + body.name + "_Height.png", textures[1].EncodeToPNG());
-                File.WriteAllBytes(path + body.name + "_Normal.png", textures[2].EncodeToPNG());
+                File.WriteAllBytes(path + body.name + "_Color.png", colorMap.EncodeToPNG());
+                File.WriteAllBytes(path + body.name + "_Height.png", heightMap.EncodeToPNG());
+                File.WriteAllBytes(path + body.name + "_Normal.png", normalMap.EncodeToPNG());
 
                 // Apply them to the ScaledVersion
-                scaledVersion.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", textures[0]);
-                scaledVersion.GetComponent<MeshRenderer>().material.SetTexture("_BumpMap", textures[2]);
+                scaledVersion.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", colorMap);
+                scaledVersion.GetComponent<MeshRenderer>().material.SetTexture("_BumpMap", normalMap);
+
+                // Declare that we're done
+                ScreenMessages.PostScreenMessage("Operation completed in: " + (DateTime.Now - now).TotalMilliseconds + " ms", 2f, ScreenMessageStyle.UPPER_CENTER);
             }
 
             /// <summary>
@@ -255,27 +323,27 @@ namespace Kopernicus
             {
                 get
                 {
-                    return new Type[] 
+                    return new Type[]
                     {
-                        typeof(string), 
-                        typeof(bool), 
-                        typeof(int), 
-                        typeof(float), 
-                        typeof(double), 
-                        typeof(Color), 
-                        typeof(Vector3), 
+                        typeof(string),
+                        typeof(bool),
+                        typeof(int),
+                        typeof(float),
+                        typeof(double),
+                        typeof(Color),
+                        typeof(Vector3),
                         typeof(Vector3d),
                         typeof(Vector2),
                         typeof(Vector2d),
-                        typeof(PQSLandControl.LandClass[]), 
-                        typeof(PQSMod_VertexPlanet.LandClass[]), 
-                        typeof(PQSMod_HeightColorMap.LandClass[]), 
-                        typeof(PQS), 
-                        typeof(PQSMod_VertexPlanet.SimplexWrapper), 
-                        typeof(PQSMod_VertexPlanet.NoiseModWrapper), 
-                        typeof(MapSO), 
+                        typeof(PQSLandControl.LandClass[]),
+                        typeof(PQSMod_VertexPlanet.LandClass[]),
+                        typeof(PQSMod_HeightColorMap.LandClass[]),
+                        typeof(PQS),
+                        typeof(PQSMod_VertexPlanet.SimplexWrapper),
+                        typeof(PQSMod_VertexPlanet.NoiseModWrapper),
+                        typeof(MapSO),
                         typeof(CBAttributeMapSO),
-                        typeof(Texture2D), 
+                        typeof(Texture2D),
                         typeof(Texture),
                         typeof(Material),
                         typeof(CelestialBody)
