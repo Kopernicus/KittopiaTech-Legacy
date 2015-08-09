@@ -197,11 +197,11 @@ namespace Kopernicus
 
                 // Open the external Renderer
                 pqs.SetupExternalRender();
-                
+
                 // Get the Mod-Building Methods, because I'm lazy :P
                 MethodInfo modOnVertexBuildHeight = pqs.GetType().GetMethod("Mod_OnVertexBuildHeight", BindingFlags.Instance | BindingFlags.NonPublic);
                 MethodInfo modOnVertexBuild = pqs.GetType().GetMethod("Mod_OnVertexBuild", BindingFlags.Instance | BindingFlags.NonPublic);
-                
+
                 // Stuff
                 ScreenMessage message = ScreenMessages.PostScreenMessage("Generating Planet-Maps", 1f, ScreenMessageStyle.UPPER_CENTER);
 
@@ -238,7 +238,7 @@ namespace Kopernicus
                         color.a = 1f;
                         if (pqs.mapOcean && height <= pqs.mapOceanHeight)
                             color = pqs.mapOceanColor;
-                            
+
                         // Set the Pixels
                         colorMap.SetPixel(x, y, color);
                         heightMap.SetPixel(x, y, new Color((float)height, (float)height, (float)height));
@@ -346,7 +346,9 @@ namespace Kopernicus
                         typeof(Texture2D),
                         typeof(Texture),
                         typeof(Material),
-                        typeof(CelestialBody)
+                        typeof(CelestialBody),
+                        typeof(FloatCurve),
+                        typeof(AnimationCurve)
                     };
                 }
             }
@@ -629,6 +631,20 @@ namespace Kopernicus
                                 MaterialEditor.SetEditedObject(key.GetValue(obj) as Material, key, obj);
                             offset += 25;
                         }
+                        else if (key.FieldType == typeof(FloatCurve))
+                        {
+                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                            if (GUI.Button(new Rect(200, offset, 170, 20), "Edit Curve"))
+                                CurveWindow.SetEditedObject(key.GetValue(obj) as FloatCurve, key, obj, false);
+                            offset += 25;
+                        }
+                        else if (key.FieldType == typeof(AnimationCurve))
+                        {
+                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                            if (GUI.Button(new Rect(200, offset, 170, 20), "Edit Curve"))
+                                CurveWindow.SetEditedObject(new FloatCurve((key.GetValue(obj) as AnimationCurve).keys), key, obj, true);
+                            offset += 25;
+                        }
                     }
                 }
                 else if (typeof(T) == typeof(PropertyInfo))
@@ -847,6 +863,20 @@ namespace Kopernicus
                             {
                                 CBBrowser.SetEditedObject(key, obj, false);
                             }
+                            offset += 25;
+                        }
+                        else if (key.PropertyType == typeof(FloatCurve))
+                        {
+                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                            if (GUI.Button(new Rect(200, offset, 170, 20), "Edit Curve"))
+                                CurveWindow.SetEditedObject(key.GetValue(obj, null) as FloatCurve, key, obj, false);
+                            offset += 25;
+                        }
+                        else if (key.PropertyType == typeof(AnimationCurve))
+                        {
+                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                            if (GUI.Button(new Rect(200, offset, 170, 20), "Edit Curve"))
+                                CurveWindow.SetEditedObject(new FloatCurve((key.GetValue(obj, null) as AnimationCurve).keys), key, obj, true);
                             offset += 25;
                         }
                     }

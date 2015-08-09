@@ -81,6 +81,7 @@
     <Compile Include="Windows\Editors\ParticlesEditor.cs" />
     <Compile Include="Windows\Editors\Rings.cs" />
     <Compile Include="Windows\FileBrowser.cs" />
+    <Compile Include="Windows\CurveWindow.cs" />
     <Compile Include="Windows\LandClassModifier.cs" />
     <Compile Include="Windows\LerpRange.cs" />
     <Compile Include="Windows\MaterialEditor.cs" />
