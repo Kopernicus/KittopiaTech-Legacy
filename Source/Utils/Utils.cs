@@ -336,6 +336,7 @@ namespace Kopernicus
                         typeof(Vector2),
                         typeof(Vector2d),
                         typeof(PQSLandControl.LandClass[]),
+                        typeof(PQSLandControl.LerpRange),
                         typeof(PQSMod_VertexPlanet.LandClass[]),
                         typeof(PQSMod_HeightColorMap.LandClass[]),
                         typeof(PQS),
@@ -574,6 +575,12 @@ namespace Kopernicus
                                 LandClassModifier.SetEditedObject((PQSMod_HeightColorMap.LandClass[])key.GetValue(obj), key, obj);
                             offset += 25;
                         }
+                        else if (key.FieldType == typeof(PQSLandControl.LerpRange))
+                        {
+                            if (GUI.Button(new Rect(20, offset, 178, 20), "" + key.Name))
+                                LerpRange.SetEditedObject((PQSLandControl.LerpRange)key.GetValue(obj));
+                            offset += 25;
+                        }
                         else if (key.FieldType == typeof(PQSMod_VertexPlanet.SimplexWrapper))
                         {
                             GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
@@ -797,6 +804,12 @@ namespace Kopernicus
                         {
                             if (GUI.Button(new Rect(20, offset, 178, 20), "Mod Land Classes"))
                                 LandClassModifier.SetEditedObject((PQSMod_HeightColorMap.LandClass[])key.GetValue(obj, null), key, obj);
+                            offset += 25;
+                        }
+                        else if (key.PropertyType == typeof(PQSLandControl.LerpRange))
+                        {
+                            if (GUI.Button(new Rect(20, offset, 178, 20), "" + key.Name))
+                                LerpRange.SetEditedObject((PQSLandControl.LerpRange)key.GetValue(obj, null));
                             offset += 25;
                         }
                         else if (key.PropertyType == typeof(PQSMod_VertexPlanet.SimplexWrapper))
