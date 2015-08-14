@@ -233,6 +233,15 @@ namespace Kopernicus
                             nc.craterCurve = craters.craterCurve;
                             nc.jitterCurve = craters.jitterCurve;
                         }
+                        else if (type.Name == "PQSMod_VertexPlanet")
+                        {
+                            PQSMod_VertexPlanet vp = mod as PQSMod_VertexPlanet;
+                            vp.continental = new PQSMod_VertexPlanet.SimplexWrapper(0, 0, 0, 0);
+                            vp.continentalRuggedness = new PQSMod_VertexPlanet.SimplexWrapper(0, 0, 0, 0);
+                            vp.continentalSharpness = new PQSMod_VertexPlanet.NoiseModWrapper(0, 0, 0, 0);
+                            vp.continentalSharpnessMap = new PQSMod_VertexPlanet.SimplexWrapper(0, 0, 0, 0);
+                            vp.terrainType = new PQSMod_VertexPlanet.SimplexWrapper(0, 0, 0, 0);
+                        }
 
                         // Revert to the List
                         mode = Modes.List;

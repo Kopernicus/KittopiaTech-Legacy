@@ -211,6 +211,7 @@ namespace Kopernicus
                         if (mode == Mode.VertexPlanet)
                         {
                             PQSMod_VertexPlanet.LandClass landClass = new PQSMod_VertexPlanet.LandClass("LandClass", 0, 0, new Color(), new Color(), 0);
+                            landClass.colorNoiseMap = new PQSMod_VertexPlanet.SimplexWrapper(0, 0, 0, 0);
                             List<PQSMod_VertexPlanet.LandClass> classes = new List<PQSMod_VertexPlanet.LandClass>(vertexPlanetClasses);
                             classes.Add(landClass);
                             vertexPlanetClasses = classes.ToArray();
