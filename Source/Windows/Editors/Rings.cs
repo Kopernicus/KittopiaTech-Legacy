@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
+using CompiledResources = Kopernicus.Configuration.Shaders.Shaders;
 
 namespace Kopernicus
 {
@@ -226,9 +227,9 @@ namespace Kopernicus
                 // Ring-Material
                 MeshRenderer renderer = rings[index].GetComponent<MeshRenderer>();
                 if (ring.unlit)
-                    renderer.material = new Material(Kopernicus.Configuration.Resources.Shaders.UnlitNew);
+                    renderer.material = new Material(CompiledResources.UnlitNew);
                 else
-                    renderer.material = new Material(Kopernicus.Configuration.Resources.Shaders.DiffuseNew);
+                    renderer.material = new Material(CompiledResources.DiffuseNew);
                 renderer.material.mainTexture = ring.texture == null ? Utils.defaultRing : ring.texture;
                 renderer.material.color = ring.color;
 
