@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
+using Kopernicus.Components;
 
 namespace Kopernicus
 {
@@ -15,7 +16,7 @@ namespace Kopernicus
             private static Vector2 scrollPosition;
 
             // Ring
-            public static ParticleLoader.PlanetaryParticle particles;
+            public static PlanetParticleEmitter particles;
 
             // Return an OnGUI()-Window.
             public static void Render()
@@ -34,16 +35,16 @@ namespace Kopernicus
                 scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, 330));
 
                 // Ring-Selector
-                if (PlanetUI.currentBody.scaledBody.GetComponents<ParticleLoader.PlanetaryParticle>().Length == 0)
+                if (PlanetUI.currentBody.scaledBody.GetComponents<PlanetParticleEmitter>().Length == 0)
                 {
                     if (GUI.Button(new Rect(60, offset, 250, 20), "Add Particle-System"))
                     {
-                        particles = ParticleLoader.PlanetaryParticle.CreateInstance(PlanetUI.currentBody.scaledBody);
+                        particles = PlanetUI.currentBody.scaledBody.AddComponent<PlanetParticleEmitter>();
                     }
                 }
                 else
                 {
-                    particles = PlanetUI.currentBody.scaledBody.GetComponent<ParticleLoader.PlanetaryParticle>();
+                    particles = PlanetUI.currentBody.scaledBody.GetComponent<PlanetParticleEmitter>();
 
                     GUI.Label(new Rect(20, offset, 178, 20), "Target");
                     if (GUI.Button(new Rect(200, offset, 170, 20), "Edit Target"))
@@ -106,7 +107,7 @@ namespace Kopernicus
                         string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
                         Texture2D texture = Utility.LoadTexture(path, false, false, false);
                         texture.name = path.Replace("\\", "/");
-                        particles.Renderer.material.mainTexture = texture;
+                        particles.renderer.material.mainTexture = texture;
                     }
                     offset += 25;
 
@@ -128,7 +129,7 @@ namespace Kopernicus
 
                     if (GUI.Button(new Rect(20, offset, 200, 20), "Delete Particles"))
                     {
-                        MonoBehaviour.Destroy(particles.Renderer);
+                        MonoBehaviour.Destroy(particles.renderer);
                         MonoBehaviour.Destroy(particles.animator);
                         MonoBehaviour.Destroy(particles.emitter);
                         MonoBehaviour.Destroy(particles);

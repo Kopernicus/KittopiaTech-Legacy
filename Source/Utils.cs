@@ -244,7 +244,7 @@ namespace Kopernicus
                         heightMap.SetPixel(x, y, new Color((float)height, (float)height, (float)height));
 
                         // yield return
-                        if (((y * pqs.mapFilesize) + x) % 5000d == 0)
+                        if (((y * pqs.mapFilesize) + x) % UIController.pixelPerFrame == 0)
                             yield return null;
                     }
                 }
@@ -257,7 +257,7 @@ namespace Kopernicus
                 pqs.CloseExternalRender();
 
                 // Bump to Normal Map
-                Texture2D normalMap = BumpToNormalMap(heightMap, 9);
+                Texture2D normalMap = BumpToNormalMap(heightMap, UIController.normalStrength);
 
                 // Serialize them to disk
                 string path = KSPUtil.ApplicationRootPath + "/GameData/KittopiaTech/Textures/" + body.name + "/";
@@ -524,6 +524,7 @@ namespace Kopernicus
                                 mapSO.nonExactThreshold = 0.05f;
                                 mapSO.CreateMap(MapSO.MapDepth.RGB, texture);
                                 mapSO.Attributes = (key.GetValue(obj) as CBAttributeMapSO).Attributes;
+                                mapSO.name = path.Replace("\\", "/");
                                 key.SetValue(obj, mapSO);
                             }
                             offset += 25;
@@ -618,6 +619,7 @@ namespace Kopernicus
                                 Texture2D texture = Utility.LoadTexture(path, false, false, false);
                                 MapSO mapSO = ScriptableObject.CreateInstance<MapSO>();
                                 mapSO.CreateMap((MapSO.MapDepth)mapDepth, texture);
+                                mapSO.name = path.Replace("\\", "/");
                                 key.SetValue(obj, mapSO);
                             }
                             offset += 25;

@@ -41,10 +41,10 @@ namespace Kopernicus
                         MeshRenderer renderer = scaledAtmosphere.AddComponent<MeshRenderer>();
                         renderer.material = new Kopernicus.MaterialWrapper.AtmosphereFromGround();
                         MeshFilter meshFilter = scaledAtmosphere.AddComponent<MeshFilter>();
-                        meshFilter.sharedMesh = Utility.ReferenceGeosphere();
+                        meshFilter.sharedMesh = Templates.ReferenceGeosphere;
 
                         // Create the AFGParser, because I'm lazy
-                        AtmosphereFromGroundParser parser = new AtmosphereFromGroundParser(scaledAtmosphere.AddComponent<AtmosphereFromGround>(), PlanetUI.currentBody);
+                        AtmosphereFromGroundLoader parser = new AtmosphereFromGroundLoader(PlanetUI.currentBody);
                         (parser as IParserEventSubscriber).Apply(new ConfigNode());
                     }
                     return;
@@ -64,7 +64,7 @@ namespace Kopernicus
 
                 if (GUI.Button(new Rect(20, offset, 200, 20), "Update"))
                 {
-                    AtmosphereFromGroundParser parser = new AtmosphereFromGroundParser(afgs[0], PlanetUI.currentBody);
+                    AtmosphereFromGroundLoader parser = new AtmosphereFromGroundLoader(PlanetUI.currentBody);
                     (parser as IParserEventSubscriber).PostApply(new ConfigNode());
                 }
 

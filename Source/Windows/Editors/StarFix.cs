@@ -3,6 +3,7 @@ using Kopernicus.MaterialWrapper;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using Kopernicus.Components;
 
 namespace Kopernicus
 {
@@ -15,7 +16,7 @@ namespace Kopernicus
             private static Vector2 scrollPosition;
 
             // Light
-            public static LightShifterComponent lsc = null;
+            public static LightShifter lsc = null;
 
             public static EmissiveMultiRampSunspots material = null;
 
@@ -42,7 +43,7 @@ namespace Kopernicus
                 if (lsc == null)
                 {
                     material = new EmissiveMultiRampSunspots(PlanetUI.currentBody.scaledBody.renderer.sharedMaterial);
-                    lsc = PlanetUI.currentBody.GetComponentsInChildren<LightShifterComponent>(true).First();
+                    lsc = PlanetUI.currentBody.GetComponentsInChildren<LightShifter>(true).First();
                 }
 
                 // Create the height of the Scroll-List
