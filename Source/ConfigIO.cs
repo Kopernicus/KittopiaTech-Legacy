@@ -90,10 +90,10 @@ namespace Kopernicus
                 }
 
                 // Rings
-                if (planet.scaledBody.GetComponentsInChildren<Ring>().Length != 0)
+                if (planet.scaledBody.GetComponentsInChildren<Ring>(true).Length != 0)
                 {
                     ConfigNode rings = body.AddNode("Rings");
-                    foreach (Ring ring in planet.scaledBody.GetComponentsInChildren<Ring>())
+                    foreach (Ring ring in planet.scaledBody.GetComponentsInChildren<Ring>(true))
                         WriteObjectToConfigNode("Ring", ref rings, new RingLoader(ring));
                 }
 

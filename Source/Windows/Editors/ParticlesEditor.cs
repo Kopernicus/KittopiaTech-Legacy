@@ -40,6 +40,7 @@ namespace Kopernicus
                     if (GUI.Button(new Rect(60, offset, 250, 20), "Add Particle-System"))
                     {
                         particles = PlanetUI.currentBody.scaledBody.AddComponent<PlanetParticleEmitter>();
+                        typeof(PlanetParticleEmitter).GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(particles, null);
                     }
                 }
                 else

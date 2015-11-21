@@ -10,7 +10,7 @@ namespace Kopernicus
     namespace UI
     {
         // Class that renders a Orbit-Editor
-        public class StarFix
+        public class StarlightEditor
         {
             // GUI stuff
             private static Vector2 scrollPosition;

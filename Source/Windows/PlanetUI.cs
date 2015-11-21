@@ -15,14 +15,14 @@ namespace Kopernicus
             // Window-Modes
             public enum Modes : int
             {
-                AtmosphereSFX,
+                AtmosphereEditor,
                 CelestialBodyEditor,
                 PQSEditor,
                 PlanetSelector,
                 OrbitEditor,
                 Ocean,
-                StarFix,
-                Rings,
+                StarlightEditor,
+                RingEditor,
                 ParticlesEditor,
                 GroundScatter,
                 None
@@ -56,11 +56,11 @@ namespace Kopernicus
             // Create the GUI-Elements
             public static void RenderWindow(int windowID)
             {
-                scrollPositionTop = GUI.BeginScrollView(new Rect(10, 30, 400, 240), scrollPositionTop, new Rect(0, 0, 380, 430), false, true);
+                scrollPositionTop = GUI.BeginScrollView(new Rect(10, 30, 400, 240), scrollPositionTop, new Rect(0, 0, 380, 370), false, true);
 
                 // Render the Navigation-Menu
-                if (GUI.Button(new Rect(20, 10, 200, 20), "Atmosphere SFX tools"))
-                    mode = Modes.AtmosphereSFX;
+                if (GUI.Button(new Rect(20, 10, 200, 20), "Atmosphere Editor"))
+                    mode = Modes.AtmosphereEditor;
 
                 if (GUI.Button(new Rect(20, 40, 200, 20), "CB Editor"))
                     mode = Modes.CelestialBodyEditor;
@@ -101,23 +101,23 @@ namespace Kopernicus
                 if (GUI.Button(new Rect(20, 220, 200, 20), "Save Body"))
                     ConfigIO.SaveCelestial(currentBody);
 
-                if (GUI.Button(new Rect(20, 250, 200, 20), "Ocean Tools"))
-                    mode = Modes.Ocean;
+                //if (GUI.Button(new Rect(20, 250, 200, 20), "Ocean Tools"))
+                //    mode = Modes.Ocean;
 
-                if (GUI.Button(new Rect(20, 280, 200, 20), "Modify Starlight data"))
-                    mode = Modes.StarFix;
+                if (GUI.Button(new Rect(20, 250, 200, 20), "Starlight Editor"))
+                    mode = Modes.StarlightEditor;
 
-                if (GUI.Button(new Rect(20, 310, 200, 20), "Ring tools"))
-                    mode = Modes.Rings;
+                if (GUI.Button(new Rect(20, 280, 200, 20), "Ring Editor"))
+                    mode = Modes.RingEditor;
 
-                if (GUI.Button(new Rect(20, 340, 200, 20), "HACK: Instantiate " + currentName))
+                if (GUI.Button(new Rect(20, 310, 200, 20), "HACK: Instantiate " + currentName))
                     Utils.Instantiate(Utils.FindBody(PSystemManager.Instance.systemPrefab.rootBody, currentName), "Test" + new System.Random().Next(1000));
 
-                if (GUI.Button(new Rect(20, 370, 200, 20), "Planetary Particles"))
+                if (GUI.Button(new Rect(20, 340, 200, 20), "Particles Editor"))
                     mode = Modes.ParticlesEditor;
 
-                if (GUI.Button(new Rect(20, 400, 200, 20), "Ground Scatter Editor"))
-                    mode = Modes.GroundScatter;
+                //if (GUI.Button(new Rect(20, 400, 200, 20), "Ground Scatter Editor"))
+                //    mode = Modes.GroundScatter;
 
                 GUI.EndScrollView();
 

@@ -7,7 +7,7 @@ namespace Kopernicus
     namespace UI
     {
         // Class that renders a AFG-Editor
-        public class AtmosphereSFX
+        public class AtmosphereEditor
         {
             // GUI stuff
             private static Vector2 scrollPosition;
