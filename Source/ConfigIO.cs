@@ -309,7 +309,7 @@ namespace Kopernicus
                         {
                             string s = "";
                             foreach (object o in targetValue as IEnumerable)
-                                s += o.ToString() + ",";
+                                s += o.ToString() + (targetType == typeof(StringCollectionParser) ? "," : " ");
                             targetValue = s.Remove(s.Length - 1);
                         }
                     }
