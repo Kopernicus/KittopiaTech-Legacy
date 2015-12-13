@@ -82,11 +82,11 @@ namespace Kopernicus
                     WriteObjectToConfigNode("Material", ref scaled, new ScaledPlanetSimpleLoader(planet.scaledBody.renderer.sharedMaterial));
 
                 // Particles
-                if (planet.scaledBody.GetComponent<PlanetParticleEmitter>())
+                ConfigNode particles = body.AddNode("Particles");
+                foreach (PlanetParticleEmitter e in planet.scaledBody.GetComponentsInChildren<PlanetParticleEmitter>(true))
                 {
-                    ParticleLoader loader = new ParticleLoader(planet);
-                    typeof(ParticleLoader).GetField("particle", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(loader, planet.scaledBody.GetComponent<PlanetParticleEmitter>()); // Haha
-                    WriteObjectToConfigNode("Particle", ref body, loader);
+                    ParticleLoader loader = new ParticleLoader(planet, e.gameObject);
+                    WriteObjectToConfigNode("Particle", ref particles, loader);
                 }
 
                 // Rings
