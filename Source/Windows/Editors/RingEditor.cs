@@ -35,16 +35,17 @@ namespace Kopernicus
                     return;
                 }
 
+                // Get the list
                 if (rings == null)
                 {
                     rings = new List<GameObject>();
                     foreach (Transform t in PlanetUI.currentBody.scaledBody.transform)
-                        if (t.name.EndsWith("Ring"))
-                            rings.Add(t.gameObject);
+                        if (t.name.EndsWith("Ring")) rings.Add(t.gameObject);
                 }
+                ring = rings[index].GetComponent<Ring>();
 
                 // Render the Window
-                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, 330));
+                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, 300));
 
                 // Ring-Selector
                 if (index > 0)
@@ -63,8 +64,8 @@ namespace Kopernicus
                     // Get all rings
                     rings = new List<GameObject>();
                     foreach (Transform t in PlanetUI.currentBody.scaledBody.transform)
-                        if (t.name.EndsWith("Ring"))
-                            rings.Add(t.gameObject);
+                        if (t.name.EndsWith("Ring")) rings.Add(t.gameObject);
+                    index = rings.Count - 1;
                 }
                 if (index < rings.Count - 1)
                 {
@@ -75,53 +76,11 @@ namespace Kopernicus
 
                 if (rings.Count > 0)
                 {
-                    GUI.Label(new Rect(20, offset, 178, 20), "Inner Radius");
-                    ring.innerRadius = Single.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + ring.innerRadius));
-                    offset += 25;
-
-                    GUI.Label(new Rect(20, offset, 178, 20), "Outer Radius");
-                    ring.outerRadius = Single.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + ring.outerRadius));
-                    offset += 25;
-
-                    GUI.Label(new Rect(20, offset, 178, 20), "Inclination");
-                    ring.rotation = Quaternion.Euler(Single.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + ring.rotation.x)), 0, 0);
-                    offset += 25;
-
-                    GUI.Label(new Rect(20, offset, 178, 20), "Steps");
-                    ring.steps = Int32.Parse(GUI.TextField(new Rect(200, offset, 170, 20), "" + ring.steps));
-                    offset += 25;
-
-                    GUI.Label(new Rect(20, offset, 178, 20), "Color");
-                    if (GUI.Button(new Rect(200, offset, 50, 20), "Edit"))
-                    {
-                        FieldInfo field = ring.GetType().GetField("color");
-                        ColorPicker.SetEditedObject(field, ring.color, ring);
-                    }
-                    offset += 25;
-
-                    GUI.Label(new Rect(20, offset, 178, 20), "Texture");
-                    if (GUI.Button(new Rect(200, offset, 80, 20), "Load"))
-                    {
-                        UIController.Instance.isFileBrowser = !UIController.Instance.isFileBrowser;
-                        FileBrowser.location = "";
-                    }
-                    // Apply the new Texture
-                    if (GUI.Button(new Rect(290, offset, 80, 20), "Apply"))
-                    {
-                        string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
-                        Texture2D texture = Utility.LoadTexture(path, false, false, false);
-                        texture.name = path.Replace("\\", "/");
-                        ring.texture = texture;
-                    }
-                    offset += 25;
-
-                    GUI.Label(new Rect(20, offset, 178, 20), "Lock Rotation");
-                    ring.lockRotation = GUI.Toggle(new Rect(200, offset, 170, 20), ring.lockRotation, "Bool");
-                    offset += 25;
-
-                    GUI.Label(new Rect(20, offset, 178, 20), "Unlit");
-                    ring.unlit = GUI.Toggle(new Rect(200, offset, 170, 20), ring.unlit, "Bool");
-                    offset += 45;
+                    // Loop through all the Fields
+                    object[] objects = Utils.GetInfos<FieldInfo>(ring);
+                    object obj = ring as System.Object;
+                    Utils.RenderSelection<FieldInfo>(objects, ref obj, ref offset);
+                    offset += 20;
 
                     if (GUI.Button(new Rect(20, offset, 200, 20), "Rebuild Rings"))
                     {
