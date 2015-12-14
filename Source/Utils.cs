@@ -262,9 +262,13 @@ namespace Kopernicus
                 // Serialize them to disk
                 string path = KSPUtil.ApplicationRootPath + "/GameData/KittopiaTech/Textures/" + body.name + "/";
                 Directory.CreateDirectory(path);
+                yield return null;
                 File.WriteAllBytes(path + body.name + "_Color.png", colorMap.EncodeToPNG());
+                yield return null;
                 File.WriteAllBytes(path + body.name + "_Height.png", heightMap.EncodeToPNG());
+                yield return null;
                 File.WriteAllBytes(path + body.name + "_Normal.png", normalMap.EncodeToPNG());
+                yield return null;
 
                 // Apply them to the ScaledVersion
                 scaledVersion.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", colorMap);
@@ -654,6 +658,27 @@ namespace Kopernicus
                                 CurveWindow.SetEditedObject(new FloatCurve((key.GetValue(obj) as AnimationCurve).keys), key, obj, true);
                             offset += 25;
                         }
+                        else if (key.FieldType == typeof(Mesh))
+                        {
+                            // Load the Texture
+                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                            if (GUI.Button(new Rect(200, offset, 80, 20), "Load"))
+                            {
+                                UIController.Instance.isFileBrowser = !UIController.Instance.isFileBrowser;
+                                FileBrowser.location = "";
+                            }
+
+                            // Apply the new Texture
+                            if (GUI.Button(new Rect(290, offset, 80, 20), "Apply"))
+                            {
+                                string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
+                                MeshParser parser = new MeshParser(key.GetValue(obj) as Mesh);
+                                parser.SetFromString(path);
+                                parser.value.name = path.Replace("\\", "/");
+                                key.SetValue(obj, parser.value);
+                            }
+                            offset += 25;
+                        }
                     }
                 }
                 else if (typeof(T) == typeof(PropertyInfo))
@@ -892,6 +917,27 @@ namespace Kopernicus
                             GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
                             if (GUI.Button(new Rect(200, offset, 170, 20), "Edit Curve"))
                                 CurveWindow.SetEditedObject(new FloatCurve((key.GetValue(obj, null) as AnimationCurve).keys), key, obj, true);
+                            offset += 25;
+                        }
+                        else if (key.PropertyType == typeof(Mesh))
+                        {
+                            // Load the Texture
+                            GUI.Label(new Rect(20, offset, 178, 20), "" + key.Name);
+                            if (GUI.Button(new Rect(200, offset, 80, 20), "Load"))
+                            {
+                                UIController.Instance.isFileBrowser = !UIController.Instance.isFileBrowser;
+                                FileBrowser.location = "";
+                            }
+
+                            // Apply the new Texture
+                            if (GUI.Button(new Rect(290, offset, 80, 20), "Apply"))
+                            {
+                                string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
+                                MeshParser parser = new MeshParser(key.GetValue(obj, null) as Mesh);
+                                parser.SetFromString(path);
+                                parser.value.name = path.Replace("\\", "/");
+                                key.SetValue(obj, parser.value, null);
+                            }
                             offset += 25;
                         }
                     }
