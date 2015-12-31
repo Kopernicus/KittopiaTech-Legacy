@@ -59,7 +59,7 @@ namespace Kopernicus
                 Type type = null;
                 if (obj == null)
                 {
-                    IEnumerable<Type> types = Assembly.GetAssembly(typeof(Injector)).GetTypes();
+                    IEnumerable<Type> types = AssemblyLoader.loadedAssemblies.SelectMany(a => a.assembly.GetTypes());
                     IEnumerable<Type> materials = types.Where(t => t.BaseType == typeof(Material));
                     foreach (Type t in materials)
                     {
@@ -71,7 +71,7 @@ namespace Kopernicus
                         if (shaderName == material.shader.name)
                         {
                             type = t;
-                            obj = Activator.CreateInstance(t, new object[] { material });
+                            obj = Activator.CreateInstance(t, material);
                             break;
                         }
                     }
