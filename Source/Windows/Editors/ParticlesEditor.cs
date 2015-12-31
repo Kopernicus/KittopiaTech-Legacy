@@ -42,10 +42,9 @@ namespace Kopernicus
                     foreach (Transform t in PlanetUI.currentBody.scaledBody.transform)
                         if (t.name.Contains("Particles")) particles.Add(t.gameObject);
                 }
-                particle = particles[index].GetComponent<PlanetParticleEmitter>();
 
                 // Render the Window
-                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, 390));
+                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, 480));
 
                 // Particle-Selector
                 if (index > 0)
@@ -72,6 +71,9 @@ namespace Kopernicus
                 offset += 35;
                 if (particles.Count > 0)
                 {
+                    // Assign
+                    particle = particles[index].GetComponent<PlanetParticleEmitter>();
+
                     // Loop through all the Fields
                     object[] objects = Utils.GetInfos<FieldInfo>(particle);
                     object obj = particle as System.Object;
@@ -81,6 +83,7 @@ namespace Kopernicus
                     if (GUI.Button(new Rect(20, offset, 200, 20), "Rebuild Particles"))
                     {
                         typeof(PlanetParticleEmitter).GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(particle, null);
+                        particle.targetTransform = null;
                     }
                     offset += 25;
                     if (GUI.Button(new Rect(20, offset, 200, 20), "Delete particles on: " + PlanetUI.currentName))

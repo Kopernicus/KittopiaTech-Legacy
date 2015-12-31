@@ -42,7 +42,6 @@ namespace Kopernicus
                     foreach (Transform t in PlanetUI.currentBody.scaledBody.transform)
                         if (t.name.EndsWith("Ring")) rings.Add(t.gameObject);
                 }
-                ring = rings[index].GetComponent<Ring>();
 
                 // Render the Window
                 scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, 300));
@@ -76,6 +75,9 @@ namespace Kopernicus
 
                 if (rings.Count > 0)
                 {
+                    // Assign
+                    ring = rings[index].GetComponent<Ring>();
+
                     // Loop through all the Fields
                     object[] objects = Utils.GetInfos<FieldInfo>(ring);
                     object obj = ring as System.Object;
