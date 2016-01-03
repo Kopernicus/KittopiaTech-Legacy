@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using Kopernicus.Configuration.ModLoader;
+using Kopernicus.MaterialWrapper;
 
 namespace Kopernicus
 {
@@ -114,9 +115,22 @@ namespace Kopernicus
                     if (mods.Count() != 0)
                     {
                         ConfigNode modsNode = pqs.AddNode("Mods");
-                        foreach (PQSMod mod in mods)
+                        foreach (PQSMod Mod in mods)
                         {
-                            Type loaderType = types.FirstOrDefault(t => t.Name == mod.GetType().Name.Replace("PQSMod_", "").Replace("PQS", ""));
+                            /// Fix PQSMods
+                            PQSMod mod = Mod;
+                            if (mod is PQSMod_VertexHeightOblate)
+                            {
+                                PQSMod_VertexHeightOblate temp = mod as PQSMod_VertexHeightOblate;
+                                mod = new PQSMod_FixedOblate { height = temp.height, pow = temp.pow };
+                            }
+                            if (mod is PQSMod_VertexHeightOffset)
+                            {
+                                PQSMod_VertexHeightOffset temp = mod as PQSMod_VertexHeightOffset;
+                                mod = new PQSMod_FixedOffset { offset = temp.offset };
+                            }
+
+                            Type loaderType = types.FirstOrDefault(t => t.Name == Mod.GetType().Name.Replace("PQSMod_", "").Replace("PQS", ""));
 
                             // No loader
                             if (loaderType == null)
@@ -198,22 +212,20 @@ namespace Kopernicus
                                     foreach (PQSLandControl.LandClassScatter scatter in lc.scatters)
                                     {
                                         LandControl.LandClassScatterLoader classLoader = new LandControl.LandClassScatterLoader(scatter);
-                                        ((IParserEventSubscriber)classLoader).Apply(null);
+                                        if (scatter.material.shader == new NormalDiffuse().shader)
+                                            classLoader.customMaterial = new NormalDiffuseLoader(scatter.material);
+                                        else if (scatter.material.shader == new NormalBumped().shader)
+                                            classLoader.customMaterial = new NormalBumpedLoader(scatter.material);
+                                        else if (scatter.material.shader == new NormalDiffuseDetail().shader)
+                                            classLoader.customMaterial = new NormalDiffuseDetailLoader(scatter.material);
+                                        else if (scatter.material.shader == new DiffuseWrapLoader().shader)
+                                            classLoader.customMaterial = new DiffuseWrapLoader(scatter.material);
+                                        else if (scatter.material.shader == new AlphaTestDiffuse().shader)
+                                            classLoader.customMaterial = new AlphaTestDiffuseLoader(scatter.material);
+                                        else if (scatter.material.shader == new AerialTransCutout().shader)
+                                            classLoader.customMaterial = new AerialTransCutoutLoader(scatter.material);
                                         ConfigNode scatterNode = WriteObjectToConfigNode("Scatter", ref scatters, classLoader);
-                                        Material material = null; ;
-                                        if (classLoader.materialType == LandControl.LandClassScatterLoader.ScatterMaterialType.AerialCutout)
-                                            material = new AerialTransCutoutLoader(scatter.material);
-                                        else if (classLoader.materialType == LandControl.LandClassScatterLoader.ScatterMaterialType.BumpedDiffuse)
-                                            material = new NormalBumpedLoader(scatter.material);
-                                        else if (classLoader.materialType == LandControl.LandClassScatterLoader.ScatterMaterialType.CutoutDiffuse)
-                                            material = new AlphaTestDiffuseLoader(scatter.material);
-                                        else if (classLoader.materialType == LandControl.LandClassScatterLoader.ScatterMaterialType.Diffuse)
-                                            material = new NormalDiffuseLoader(scatter.material);
-                                        else if (classLoader.materialType == LandControl.LandClassScatterLoader.ScatterMaterialType.DiffuseDetail)
-                                            material = new NormalDiffuseDetailLoader(scatter.material);
-                                        else
-                                            material = new DiffuseWrapLoader(scatter.material);
-                                        WriteObjectToConfigNode("Material", ref scatterNode, material);
+                                        WriteObjectToConfigNode("Material", ref scatterNode, classLoader.customMaterial);
                                         scatterNode.AddNode("Experiment");
                                     }
                                 }
@@ -239,7 +251,7 @@ namespace Kopernicus
                         }
                     }
                 }
-                
+
                 // Save the node
                 Directory.CreateDirectory(KSPUtil.ApplicationRootPath + "/GameData/KittopiaTech/Config/");
                 ConfigNode save = new ConfigNode();
