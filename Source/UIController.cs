@@ -32,7 +32,7 @@ namespace Kopernicus
             private Rect simplexWrapperWindow = new Rect(420, 20, 420, 190);
             private Rect noiseModWrapperWindow = new Rect(420, 20, 420, 170);
             private Rect lerpRangeWindow = new Rect(420, 20, 420, 260);
-            private Rect fileBrowserWindow = new Rect(500, 20, 530, 380);
+            private Rect fileBrowserWindow = new Rect(500, 20, 530, 410);
             private Rect biomeWindow = new Rect(420, 400, 420, 250);
             private Rect materialWindow = new Rect(500, 20, 420, 450);
             private Rect pqsBrowserWindow = new Rect(420, 100, 220, 350);

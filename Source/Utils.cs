@@ -514,22 +514,30 @@ namespace Kopernicus
                             if (GUI.Button(new Rect(200, offset, 80, 20), "Load"))
                             {
                                 UIController.Instance.isFileBrowser = !UIController.Instance.isFileBrowser;
+                                FileBrowser.type = key.FieldType;
                                 FileBrowser.location = "";
                             }
 
                             // Apply the new MapSO
                             if (GUI.Button(new Rect(290, offset, 80, 20), "Apply"))
                             {
-                                string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
-                                Texture2D texture = Utility.LoadTexture(path, false, false, false);
-                                texture.name = path.Replace("\\", "/");
-                                CBAttributeMapSO mapSO = ScriptableObject.CreateInstance<CBAttributeMapSO>();
-                                mapSO.exactSearch = false;
-                                mapSO.nonExactThreshold = 0.05f;
-                                mapSO.CreateMap(MapSO.MapDepth.RGB, texture);
-                                mapSO.Attributes = (key.GetValue(obj) as CBAttributeMapSO).Attributes;
-                                mapSO.name = path.Replace("\\", "/");
-                                key.SetValue(obj, mapSO);
+                                if (!FileBrowser.builtin)
+                                {
+                                    string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
+                                    Texture2D texture = Utility.LoadTexture(path, false, false, false);
+                                    texture.name = path.Replace("\\", "/");
+                                    CBAttributeMapSO mapSO = ScriptableObject.CreateInstance<CBAttributeMapSO>();
+                                    mapSO.exactSearch = false;
+                                    mapSO.nonExactThreshold = 0.05f;
+                                    mapSO.CreateMap(MapSO.MapDepth.RGB, texture);
+                                    mapSO.Attributes = (key.GetValue(obj) as CBAttributeMapSO).Attributes;
+                                    mapSO.name = path.Replace("\\", "/");
+                                    key.SetValue(obj, mapSO);
+                                }
+                                else
+                                {
+                                    key.SetValue(obj, FileBrowser.value);
+                                }
                             }
                             offset += 25;
 
@@ -549,16 +557,24 @@ namespace Kopernicus
                             if (GUI.Button(new Rect(200, offset, 80, 20), "Load"))
                             {
                                 UIController.Instance.isFileBrowser = !UIController.Instance.isFileBrowser;
+                                FileBrowser.type = key.FieldType;
                                 FileBrowser.location = "";
                             }
 
                             // Apply the new Texture
                             if (GUI.Button(new Rect(290, offset, 80, 20), "Apply"))
                             {
-                                string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
-                                Texture2D texture = Utility.LoadTexture(path, false, false, false);
-                                texture.name = path.Replace("\\", "/");
-                                key.SetValue(obj, texture);
+                                if (!FileBrowser.builtin)
+                                {
+                                    string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
+                                    Texture2D texture = Utility.LoadTexture(path, false, false, false);
+                                    texture.name = path.Replace("\\", "/");
+                                    key.SetValue(obj, texture);
+                                }
+                                else
+                                {
+                                    key.SetValue(obj, FileBrowser.value);
+                                }
                             }
                             offset += 25;
                         }
@@ -613,18 +629,26 @@ namespace Kopernicus
                             if (GUI.Button(new Rect(200, offset, 80, 20), "Load"))
                             {
                                 UIController.Instance.isFileBrowser = !UIController.Instance.isFileBrowser;
+                                FileBrowser.type = key.FieldType;
                                 FileBrowser.location = "";
                             }
 
                             // Apply the new MapSO
                             if (GUI.Button(new Rect(290, offset, 80, 20), "Apply"))
                             {
-                                string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
-                                Texture2D texture = Utility.LoadTexture(path, false, false, false);
-                                MapSO mapSO = ScriptableObject.CreateInstance<MapSO>();
-                                mapSO.CreateMap((MapSO.MapDepth)mapDepth, texture);
-                                mapSO.name = path.Replace("\\", "/");
-                                key.SetValue(obj, mapSO);
+                                if (!FileBrowser.builtin)
+                                {
+                                    string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
+                                    Texture2D texture = Utility.LoadTexture(path, false, false, false);
+                                    MapSO mapSO = ScriptableObject.CreateInstance<MapSO>();
+                                    mapSO.CreateMap((MapSO.MapDepth)mapDepth, texture);
+                                    mapSO.name = path.Replace("\\", "/");
+                                    key.SetValue(obj, mapSO);
+                                }
+                                else
+                                {
+                                    key.SetValue(obj, FileBrowser.value);
+                                }
                             }
                             offset += 25;
                             mapDepth = GUI.SelectionGrid(new Rect(20, offset, 350, 20), mapDepth, new string[] { "Greyscale", "HeightAlpha", "RGB", "RGBA" }, 4);
@@ -665,17 +689,25 @@ namespace Kopernicus
                             if (GUI.Button(new Rect(200, offset, 80, 20), "Load"))
                             {
                                 UIController.Instance.isFileBrowser = !UIController.Instance.isFileBrowser;
+                                FileBrowser.type = key.FieldType;
                                 FileBrowser.location = "";
                             }
 
                             // Apply the new Texture
                             if (GUI.Button(new Rect(290, offset, 80, 20), "Apply"))
                             {
-                                string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
-                                MeshParser parser = new MeshParser(key.GetValue(obj) as Mesh);
-                                parser.SetFromString(path);
-                                parser.value.name = path.Replace("\\", "/");
-                                key.SetValue(obj, parser.value);
+                                if (!FileBrowser.builtin)
+                                {
+                                    string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
+                                    MeshParser parser = new MeshParser(key.GetValue(obj) as Mesh);
+                                    parser.SetFromString(path);
+                                    parser.value.name = path.Replace("\\", "/");
+                                    key.SetValue(obj, parser.value);
+                                }
+                                else
+                                {
+                                    key.SetValue(obj, FileBrowser.value);
+                                }
                             }
                             offset += 25;
                         }
@@ -768,21 +800,29 @@ namespace Kopernicus
                             if (GUI.Button(new Rect(200, offset, 80, 20), "Load"))
                             {
                                 UIController.Instance.isFileBrowser = !UIController.Instance.isFileBrowser;
+                                FileBrowser.type = key.PropertyType;
                                 FileBrowser.location = "";
                             }
 
                             // Apply the new MapSO
                             if (GUI.Button(new Rect(290, offset, 80, 20), "Apply"))
                             {
-                                string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
-                                Texture2D texture = Utility.LoadTexture(path, false, false, false);
-                                texture.name = path.Replace("\\", "/");
-                                CBAttributeMapSO mapSO = ScriptableObject.CreateInstance<CBAttributeMapSO>();
-                                mapSO.exactSearch = false;
-                                mapSO.nonExactThreshold = 0.05f;
-                                mapSO.CreateMap(MapSO.MapDepth.RGB, texture);
-                                mapSO.Attributes = (key.GetValue(obj, null) as CBAttributeMapSO).Attributes;
-                                key.SetValue(obj, mapSO, null);
+                                if (!FileBrowser.builtin)
+                                {
+                                    string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
+                                    Texture2D texture = Utility.LoadTexture(path, false, false, false);
+                                    texture.name = path.Replace("\\", "/");
+                                    CBAttributeMapSO mapSO = ScriptableObject.CreateInstance<CBAttributeMapSO>();
+                                    mapSO.exactSearch = false;
+                                    mapSO.nonExactThreshold = 0.05f;
+                                    mapSO.CreateMap(MapSO.MapDepth.RGB, texture);
+                                    mapSO.Attributes = (key.GetValue(obj, null) as CBAttributeMapSO).Attributes;
+                                    key.SetValue(obj, mapSO, null);
+                                }
+                                else
+                                {
+                                    key.SetValue(obj, FileBrowser.value, null);
+                                }
                             }
                             offset += 25;
 
@@ -802,16 +842,24 @@ namespace Kopernicus
                             if (GUI.Button(new Rect(200, offset, 80, 20), "Load"))
                             {
                                 UIController.Instance.isFileBrowser = !UIController.Instance.isFileBrowser;
+                                FileBrowser.type = key.PropertyType;
                                 FileBrowser.location = "";
                             }
 
                             // Apply the new Texture
                             if (GUI.Button(new Rect(290, offset, 80, 20), "Apply"))
                             {
-                                string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
-                                Texture2D texture = Utility.LoadTexture(path, false, false, false);
-                                texture.name = path.Replace("\\", "/");
-                                key.SetValue(obj, texture, null);
+                                if (!FileBrowser.builtin)
+                                {
+                                    string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
+                                    Texture2D texture = Utility.LoadTexture(path, false, false, false);
+                                    texture.name = path.Replace("\\", "/");
+                                    key.SetValue(obj, texture, null);
+                                }
+                                else
+                                {
+                                    key.SetValue(obj, FileBrowser.value, null);
+                                }
                             }
                             offset += 25;
                         }
@@ -866,17 +914,25 @@ namespace Kopernicus
                             if (GUI.Button(new Rect(200, offset, 80, 20), "Load"))
                             {
                                 UIController.Instance.isFileBrowser = !UIController.Instance.isFileBrowser;
+                                FileBrowser.type = key.PropertyType;
                                 FileBrowser.location = "";
                             }
 
                             // Apply the new MapSO
                             if (GUI.Button(new Rect(290, offset, 80, 20), "Apply"))
                             {
-                                string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
-                                Texture2D texture = Utility.LoadTexture(path, false, false, false);
-                                MapSO mapSO = ScriptableObject.CreateInstance<MapSO>();
-                                mapSO.CreateMap((MapSO.MapDepth)mapDepth, texture);
-                                key.SetValue(obj, mapSO, null);
+                                if (!FileBrowser.builtin)
+                                {
+                                    string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
+                                    Texture2D texture = Utility.LoadTexture(path, false, false, false);
+                                    MapSO mapSO = ScriptableObject.CreateInstance<MapSO>();
+                                    mapSO.CreateMap((MapSO.MapDepth)mapDepth, texture);
+                                    key.SetValue(obj, mapSO, null);
+                                }
+                                else
+                                {
+                                    key.SetValue(obj, FileBrowser.value, null);
+                                }
                             }
                             offset += 25;
                             mapDepth = GUI.SelectionGrid(new Rect(20, offset, 350, 20), mapDepth, new string[] { "Greyscale", "HeightAlpha", "RGB", "RGBA" }, 4);
@@ -926,17 +982,25 @@ namespace Kopernicus
                             if (GUI.Button(new Rect(200, offset, 80, 20), "Load"))
                             {
                                 UIController.Instance.isFileBrowser = !UIController.Instance.isFileBrowser;
+                                FileBrowser.type = key.PropertyType;
                                 FileBrowser.location = "";
                             }
 
                             // Apply the new Texture
                             if (GUI.Button(new Rect(290, offset, 80, 20), "Apply"))
                             {
-                                string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
-                                MeshParser parser = new MeshParser(key.GetValue(obj, null) as Mesh);
-                                parser.SetFromString(path);
-                                parser.value.name = path.Replace("\\", "/");
-                                key.SetValue(obj, parser.value, null);
+                                if (!FileBrowser.builtin)
+                                {
+                                    string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
+                                    MeshParser parser = new MeshParser(key.GetValue(obj, null) as Mesh);
+                                    parser.SetFromString(path);
+                                    parser.value.name = path.Replace("\\", "/");
+                                    key.SetValue(obj, parser.value, null);
+                                }
+                                else
+                                {
+                                    key.SetValue(obj, FileBrowser.value, null);
+                                }
                             }
                             offset += 25;
                         }
