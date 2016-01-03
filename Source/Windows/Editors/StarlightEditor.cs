@@ -43,7 +43,7 @@ namespace Kopernicus
                 if (lsc == null)
                 {
                     material = new EmissiveMultiRampSunspots(PlanetUI.currentBody.scaledBody.renderer.sharedMaterial);
-                    lsc = PlanetUI.currentBody.GetComponentsInChildren<LightShifter>(true).First();
+                    lsc = PlanetUI.currentBody.scaledBody.GetComponentsInChildren<LightShifter>(true).First();
                 }
 
                 // Create the height of the Scroll-List
