@@ -62,6 +62,11 @@ namespace Kopernicus
                 fieldInfo = field;
                 propertyInfo = null;
                 modObj = modObject;
+                if (landClassArray == null)
+                {
+                    vertexPlanetClasses = new PQSMod_VertexPlanet.LandClass[0];
+                    fieldInfo.SetValue(modObj, heightColorClasses);
+                }
                 UIController.Instance.isLandClass = true;
             }
 
@@ -74,6 +79,11 @@ namespace Kopernicus
                 fieldInfo = field;
                 propertyInfo = null;
                 modObj = modObject;
+                if (landClassArray == null)
+                {
+                    landControlClasses = new PQSLandControl.LandClass[0];
+                    fieldInfo.SetValue(modObj, heightColorClasses);
+                }
                 UIController.Instance.isLandClass = true;
             }
 
@@ -86,6 +96,11 @@ namespace Kopernicus
                 fieldInfo = field;
                 propertyInfo = null;
                 modObj = modObject;
+                if (landClassArray == null)
+                {
+                    heightColorClasses = new PQSMod_HeightColorMap.LandClass[0];
+                    fieldInfo.SetValue(modObj, heightColorClasses);
+                }
                 UIController.Instance.isLandClass = true;
             }
 
@@ -98,6 +113,11 @@ namespace Kopernicus
                 fieldInfo = null;
                 propertyInfo = prop;
                 modObj = modObject;
+                if (landClassArray == null)
+                {
+                    vertexPlanetClasses = new PQSMod_VertexPlanet.LandClass[0];
+                    propertyInfo.SetValue(modObj, heightColorClasses, null);
+                }
                 UIController.Instance.isLandClass = true;
             }
 
@@ -110,6 +130,11 @@ namespace Kopernicus
                 fieldInfo = null;
                 propertyInfo = prop;
                 modObj = modObject;
+                if (landClassArray == null)
+                {
+                    landControlClasses = new PQSLandControl.LandClass[0];
+                    propertyInfo.SetValue(modObj, heightColorClasses, null);
+                }
                 UIController.Instance.isLandClass = true;
             }
 
@@ -122,6 +147,11 @@ namespace Kopernicus
                 fieldInfo = null;
                 propertyInfo = prop;
                 modObj = modObject;
+                if (landClassArray == null)
+                {
+                    heightColorClasses = new PQSMod_HeightColorMap.LandClass[0];
+                    propertyInfo.SetValue(modObj, heightColorClasses, null);
+                }
                 UIController.Instance.isLandClass = true;
             }
 
