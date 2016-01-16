@@ -353,7 +353,8 @@ namespace Kopernicus
                         typeof(Material),
                         typeof(CelestialBody),
                         typeof(FloatCurve),
-                        typeof(AnimationCurve)
+                        typeof(AnimationCurve),
+                        typeof(Mesh)
                     };
                 }
             }
