@@ -65,7 +65,7 @@ namespace Kopernicus
                 if (landClassArray == null)
                 {
                     vertexPlanetClasses = new PQSMod_VertexPlanet.LandClass[0];
-                    fieldInfo.SetValue(modObj, heightColorClasses);
+                    fieldInfo.SetValue(modObj, vertexPlanetClasses);
                 }
                 UIController.Instance.isLandClass = true;
             }
@@ -82,7 +82,7 @@ namespace Kopernicus
                 if (landClassArray == null)
                 {
                     landControlClasses = new PQSLandControl.LandClass[0];
-                    fieldInfo.SetValue(modObj, heightColorClasses);
+                    fieldInfo.SetValue(modObj, landControlClasses);
                 }
                 UIController.Instance.isLandClass = true;
             }
@@ -116,7 +116,7 @@ namespace Kopernicus
                 if (landClassArray == null)
                 {
                     vertexPlanetClasses = new PQSMod_VertexPlanet.LandClass[0];
-                    propertyInfo.SetValue(modObj, heightColorClasses, null);
+                    propertyInfo.SetValue(modObj, vertexPlanetClasses, null);
                 }
                 UIController.Instance.isLandClass = true;
             }
@@ -133,7 +133,7 @@ namespace Kopernicus
                 if (landClassArray == null)
                 {
                     landControlClasses = new PQSLandControl.LandClass[0];
-                    propertyInfo.SetValue(modObj, heightColorClasses, null);
+                    propertyInfo.SetValue(modObj, landControlClasses, null);
                 }
                 UIController.Instance.isLandClass = true;
             }

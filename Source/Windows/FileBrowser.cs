@@ -139,16 +139,19 @@ namespace Kopernicus
                 {
                     if (builtin)
                     {
-                        if (GUILayout.Button((item as UnityEngine.Object).name, (selected == item) ? selectedStyle : defaultStyle))
+                        if (item != null && !String.IsNullOrEmpty((item as UnityEngine.Object).name))
                         {
-                            if (selected == item)
-                            // Clicked an already selected item. Deselect.
+                            if (GUILayout.Button((item as UnityEngine.Object).name, (selected == item) ? selectedStyle : defaultStyle))
                             {
-                                selected = null;
-                            }
-                            else
-                            {
-                                selected = item;
+                                if (selected == item)
+                                // Clicked an already selected item. Deselect.
+                                {
+                                    selected = null;
+                                }
+                                else
+                                {
+                                    selected = item;
+                                }
                             }
                         }
                     }
