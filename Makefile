@@ -30,7 +30,7 @@ plugin: kittopia copy_plugin_files
 	
 ### LIBRARIES ###
 $(PLUGIN): generate_dirs
-	$(CS) /debug+ /debug:portable /out:$(CORE) /nostdlib+ /target:library /platform:anycpu /recurse:$(CODE)/*.cs /reference:$(REFS)
+	$(CS) /debug+ /debug:portable /out:$(PLUGIN) /nostdlib+ /target:library /platform:anycpu /recurse:$(CODE)/*.cs /reference:$(REFS)
 
 ### UTILS ###
 generate_dirs:
