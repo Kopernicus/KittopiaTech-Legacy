@@ -25,7 +25,7 @@ ZIP_NAME := KittopiaTech-$(shell git describe --tags)-$(shell date "+%Y-%m-%d").
 ### BUILD TARGETS ###
 all: plugin
 kittopia: $(PLUGIN)
-plugin: core copy_plugin_files
+plugin: kittopia copy_plugin_files
 	cd $(RELEASE_DIR); zip -r $(ZIP_NAME) .
 	
 ### LIBRARIES ###
