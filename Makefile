@@ -9,7 +9,7 @@ MONO_ASSEMBLIES := /usr/lib/mono/2.0
 CURRENT_DIR := $(shell pwd)
 PLUGIN_DIR := $(CURRENT_DIR)/Distribution/Development/KittopiaTech/Plugins
 RELEASE_DIR := $(CURRENT_DIR)/Distribution/Release
-BUILD_DIR := $(RELEASE_DIR)/GameData/KittopiaTech/Plugins
+BUILD_DIR := $(RELEASE_DIR)/KittopiaTech/Plugins
 PLUGIN := $(PLUGIN_DIR)/KittopiaTech.dll
 
 # Code paths
