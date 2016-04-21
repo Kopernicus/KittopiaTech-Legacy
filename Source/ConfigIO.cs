@@ -68,7 +68,7 @@ namespace Kopernicus
                 ConfigNode scaled = WriteObjectToConfigNode("ScaledVersion", ref body, scaledLoader);
                 if (scaledLoader.type == BodyType.Star)
                 {
-                    WriteObjectToConfigNode("Material", ref scaled, new EmissiveMultiRampSunspotsLoader(planet.scaledBody.renderer.sharedMaterial));
+                    WriteObjectToConfigNode("Material", ref scaled, new EmissiveMultiRampSunspotsLoader(planet.scaledBody.GetComponent<Renderer>().sharedMaterial));   
                     WriteObjectToConfigNode("Light", ref scaled, new LightShifterLoader() { lsc = planet.scaledBody.GetComponentsInChildren<LightShifter>(true)[0] });
                     if (planet.scaledBody.GetComponentsInChildren<SunCoronas>().Length != 0)
                     {
@@ -78,9 +78,9 @@ namespace Kopernicus
                     }
                 }
                 else if (scaledLoader.type == BodyType.Atmospheric)
-                    WriteObjectToConfigNode("Material", ref scaled, new ScaledPlanetRimAerialLoader(planet.scaledBody.renderer.sharedMaterial));
+                    WriteObjectToConfigNode("Material", ref scaled, new ScaledPlanetRimAerialLoader(planet.scaledBody.GetComponent<Renderer>().sharedMaterial));
                 else
-                    WriteObjectToConfigNode("Material", ref scaled, new ScaledPlanetSimpleLoader(planet.scaledBody.renderer.sharedMaterial));
+                    WriteObjectToConfigNode("Material", ref scaled, new ScaledPlanetSimpleLoader(planet.scaledBody.GetComponent<Renderer>().sharedMaterial));
 
                 // Particles
                 ConfigNode particles = body.AddNode("Particles");
@@ -121,13 +121,13 @@ namespace Kopernicus
                             PQSMod mod = Mod;
                             if (mod is PQSMod_VertexHeightOblate)
                             {
-                                PQSMod_VertexHeightOblate temp = mod as PQSMod_VertexHeightOblate;
-                                mod = new PQSMod_FixedOblate { height = temp.height, pow = temp.pow };
+                                //PQSMod_VertexHeightOblate temp = mod as PQSMod_VertexHeightOblate;
+                                //mod = new PQSMod_FixedOblate { height = temp.height, pow = temp.pow };
                             }
                             if (mod is PQSMod_VertexHeightOffset)
                             {
-                                PQSMod_VertexHeightOffset temp = mod as PQSMod_VertexHeightOffset;
-                                mod = new PQSMod_FixedOffset { offset = temp.offset };
+                                //PQSMod_VertexHeightOffset temp = mod as PQSMod_VertexHeightOffset;
+                                //mod = new PQSMod_FixedOffset { offset = temp.offset };
                             }
 
                             Type loaderType = types.FirstOrDefault(t => t.Name == Mod.GetType().Name.Replace("PQSMod_", "").Replace("PQS", ""));

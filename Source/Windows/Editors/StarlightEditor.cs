@@ -42,7 +42,7 @@ namespace Kopernicus
 
                 if (lsc == null)
                 {
-                    material = new EmissiveMultiRampSunspots(PlanetUI.currentBody.scaledBody.renderer.sharedMaterial);
+                    material = new EmissiveMultiRampSunspots(PlanetUI.currentBody.scaledBody.GetComponent<Renderer>().sharedMaterial);
                     lsc = PlanetUI.currentBody.scaledBody.GetComponentsInChildren<LightShifter>(true).First();
                 }
 
@@ -64,7 +64,7 @@ namespace Kopernicus
 
                 if (GUI.Button(new Rect(20, offset, 200, 20), "Apply"))
                 {
-                    PlanetUI.currentBody.scaledBody.renderer.sharedMaterial = material;
+                    PlanetUI.currentBody.scaledBody.GetComponent<Renderer>().sharedMaterial = material;
                     PlanetUI.currentBody.scaledBody.GetComponentsInChildren<StarComponent>().First().SetAsActive();
                 }
 

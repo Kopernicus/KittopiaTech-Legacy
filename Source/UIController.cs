@@ -99,7 +99,11 @@ namespace Kopernicus
             public void Update()
             {
                 if (Input.GetKeyDown(KeyCode.P) && Input.GetKey(KeyCode.LeftControl))
+                {
+
+                    Debug.Log("test");
                     isGUI = !isGUI;
+                }
             }
         }
     }
