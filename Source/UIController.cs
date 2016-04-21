@@ -101,7 +101,6 @@ namespace Kopernicus
                 if (Input.GetKeyDown(KeyCode.P) && Input.GetKey(KeyCode.LeftControl))
                 {
 
-                    Debug.Log("test");
                     isGUI = !isGUI;
                 }
             }

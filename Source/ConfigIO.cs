@@ -119,16 +119,7 @@ namespace Kopernicus
                         {
                             /// Fix PQSMods
                             PQSMod mod = Mod;
-                            if (mod is PQSMod_VertexHeightOblate)
-                            {
-                                //PQSMod_VertexHeightOblate temp = mod as PQSMod_VertexHeightOblate;
-                                //mod = new PQSMod_FixedOblate { height = temp.height, pow = temp.pow };
-                            }
-                            if (mod is PQSMod_VertexHeightOffset)
-                            {
-                                //PQSMod_VertexHeightOffset temp = mod as PQSMod_VertexHeightOffset;
-                                //mod = new PQSMod_FixedOffset { offset = temp.offset };
-                            }
+                            
 
                             Type loaderType = types.FirstOrDefault(t => t.Name == Mod.GetType().Name.Replace("PQSMod_", "").Replace("PQS", ""));
 
