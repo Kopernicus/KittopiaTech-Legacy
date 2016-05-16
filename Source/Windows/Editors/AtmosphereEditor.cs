@@ -26,7 +26,7 @@ namespace Kopernicus
                 }
 
                 // Get the AtmosphereFromGround
-                AtmosphereFromGround[] afgs = Utils.FindScaled(PlanetUI.currentBody.transform.name).GetComponentsInChildren<AtmosphereFromGround>(true);
+                AtmosphereFromGround[] afgs = PlanetUI.currentBody.scaledBody.GetComponentsInChildren<AtmosphereFromGround>(true);
 
                 // If afg == null
                 if (afgs.Length == 0)
