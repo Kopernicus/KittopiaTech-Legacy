@@ -5,6 +5,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Object = System.Object;
 
@@ -43,6 +44,11 @@ namespace Kopernicus
             protected Boolean isError { get; set; }
 
             /// <summary>
+            /// Caches the values in the parser fields
+            /// </summary>
+            protected Dictionary<Int32, String> parseCache { get; set; } 
+
+            /// <summary>
             /// The position of the window
             /// </summary>
             protected Rect position
@@ -54,7 +60,7 @@ namespace Kopernicus
             /// <summary>
             /// The value that is currently edited
             /// </summary>
-            public T Current { get; set; }
+            public T Current;
 
             /// <summary>
             /// Renders the Window
@@ -62,6 +68,8 @@ namespace Kopernicus
             void IWindow.Render(Int32 id)
             {
                 index = 0;
+                if (parseCache == null)
+                    parseCache = new Dictionary<Int32, String>();
                 Render(id);
                 GUI.DragWindow();
             }
