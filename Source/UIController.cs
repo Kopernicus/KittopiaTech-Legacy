@@ -59,6 +59,7 @@ namespace Kopernicus
 
                 // Register Windows
                 RegisterWindow<PlanetWindow>(KittopiaWindows.Planet);
+                RegisterWindow<ColorWindow>(KittopiaWindows.Color);
             }
 
             /// <summary>
