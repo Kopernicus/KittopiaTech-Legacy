@@ -1,11 +1,11 @@
-﻿using Kopernicus.Configuration;
+﻿/** 
+ * KittopiaTech - A Kopernicus Visual Editor
+ * Copyright (c) Thomas P., BorisBee, KCreator, Gravitasi
+ * Licensed under the Terms of a custom License, see LICENSE file
+ */
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
 using Kopernicus.UI.Enumerations;
-using UnityEngine;
 
 namespace Kopernicus
 {
@@ -21,11 +21,6 @@ namespace Kopernicus
             /// The conttoller for the Editors inside of this window
             /// </summary>
             protected Controller<KittopiaEditors> EditorController { get; set; }
-
-            /// <summary>
-            /// The currently edited body
-            /// </summary>
-            public CelestialBody body { get; set; }
 
             public PlanetWindow()
             {
@@ -50,7 +45,7 @@ namespace Kopernicus
                 BeginScrollView(240, 370);
 
                 // Current Body
-                DependencyButton("Current body: " + body.name, "No body selected!", () => { UIController.Instance.SetEditedObject(KittopiaWindows.Array, body, b => body = b); UIController.Instance.EnableWindow(KittopiaWindows.Array); }, () => body != null);
+                DependencyButton("Current body: " + Current.name, "No body selected!", () => { UIController.Instance.SetEditedObject(KittopiaWindows.Array, Current, b => Current = b); UIController.Instance.EnableWindow(KittopiaWindows.Array); }, () => Current != null);
 
                 // Editors
                 Button("Atmosphere Editor", () => EditorController.EnableWindow(KittopiaEditors.Atmosphere));
@@ -66,8 +61,8 @@ namespace Kopernicus
                 index++;
 
                 // Special Stuff
-                Button("Save Body", () => ConfigIO.SaveCelestial(body));
-                Button("[HACK] Instantiate Body", () => Utils.Instantiate(Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, body.transform.name), "Body" + new System.Random().Next(1000)));
+                Button("Save Body", () => ConfigIO.SaveCelestial(Current));
+                Button("[HACK] Instantiate Body", () => Utils.Instantiate(Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, Current.transform.name), "Body" + new Random().Next(1000)));
 
                 // Scroll
                 EndScrollView();
