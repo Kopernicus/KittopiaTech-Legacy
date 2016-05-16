@@ -78,6 +78,7 @@
     <Compile Include="Enumerations\KittopiaWindows.cs" />
     <Compile Include="Extensions\MemberInfoExtensions.cs" />
     <Compile Include="Interface\Controller.cs" />
+    <Compile Include="Interface\Window.UI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UIController.cs" />
     <Compile Include="Utility\ConfigIO.cs" />
@@ -86,7 +87,7 @@
     <Compile Include="Utility\Utils.cs" />
     <Compile Include="Interface\Window.cs" />
     <Compile Include="Windows\BiomeModifier.cs" />
-    <Compile Include="Windows\ColorPicker.cs" />
+    <Compile Include="Windows\ColorWindow.cs" />
     <Compile Include="Windows\Editors\AtmosphereEditor.cs" />
     <Compile Include="Windows\Editors\CelestialBodyEditor.cs" />
     <Compile Include="Windows\Editors\StarlightEditor.cs" />
