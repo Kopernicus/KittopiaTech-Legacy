@@ -1,46 +1,67 @@
-﻿using System;
+﻿/** 
+ * KittopiaTech - A Kopernicus Visual Editor
+ * Copyright (c) Thomas P., BorisBee, KCreator, Gravitasi
+ * Licensed under the Terms of a custom License, see LICENSE file
+ */
+
+using System;
 using System.Collections;
 using System.IO;
+using System.Reflection;
+using Kopernicus.UI.Enumerations;
 using UnityEngine;
+using Object = System.Object;
 
 namespace Kopernicus
 {
     namespace UI
     {
-        public class FileBrowser : MonoBehaviour
+        /// <summary>
+        /// This class renders a window to edit colors
+        /// </summary>
+        [Position(500, 20, 530, 410)]
+        public class FileWindow : Window<String>
         {
-            public static string location = "";
+            /// <summary>
+            /// Returns the Title of the window
+            /// </summary>
+            protected override String Title()
+            {
+                return "KittopiaTech - File Browser";
+            }
+            
+            /// <summary>
+            /// Renders the Window
+            /// </summary>
+            protected override void Render(Int32 id)
+            {
+                if (Current == "")
+                    Current = Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar;
+                if (!Show()) return;
+                Callback(Current);
+                UIController.Instance.DisableWindow(KittopiaWindows.Files);
+            }
+
+            // Variables for the browser
+            public static String location = "";
             public static Vector2 directoryScroll;
             public static Vector2 fileScroll;
-            public static bool builtin = false;
-            public static object value;
+            public static Boolean builtin = false;
+            public static Object value;
             public static Type type;
 
-            static int mode = 0;
+            static Int32 mode = 0;
 
             // Class that renders a file-browser for Texture-Loading
             // Code from the Unify-Wiki, adapted by Thomas P.
-            private static bool Show()
+            private static Boolean Show()
             {
-                bool complete;
-                DirectoryInfo directoryInfo;
-                DirectoryInfo directorySelection;
-                FileInfo fileSelection;
-                int contentWidth;
-
                 // Our return state - altered by the "Select" button
-                complete = false;
+                Boolean complete = false;
 
                 // Get the directory info of the current location
-                fileSelection = new FileInfo(location);
-                if ((fileSelection.Attributes & FileAttributes.Directory) == FileAttributes.Directory)
-                {
-                    directoryInfo = new DirectoryInfo(location);
-                }
-                else
-                {
-                    directoryInfo = fileSelection.Directory;
-                }
+                FileInfo fileSelection = new FileInfo(location);
+                DirectoryInfo directoryInfo = (fileSelection.Attributes & FileAttributes.Directory) == FileAttributes.Directory ? new DirectoryInfo(location) : fileSelection.Directory;
 
                 mode = GUI.Toolbar(new Rect(10, 20, 510, 20), mode, new[] { "Files", "Builtin" });
                 builtin = mode == 1;
@@ -49,8 +70,8 @@ namespace Kopernicus
                 {
                     if (!location.EndsWith("GameData") && GUI.Button(new Rect(10, 45, 510, 20), "Up one level"))
                     {
-                        directoryInfo = directoryInfo.Parent;
-                        location = directoryInfo.FullName;
+                        directoryInfo = directoryInfo?.Parent;
+                        location = directoryInfo?.FullName;
                     }
                     else if (location.EndsWith("GameData"))
                     {
@@ -62,7 +83,7 @@ namespace Kopernicus
                     GUILayout.Label("Directories:");
                     directoryScroll = GUILayout.BeginScrollView(directoryScroll);
 
-                    directorySelection = SelectList(directoryInfo.GetDirectories(), null, GUI.skin.button, GUI.skin.button) as DirectoryInfo;
+                    DirectoryInfo directorySelection = SelectList(directoryInfo?.GetDirectories(), null, GUI.skin.button, GUI.skin.button) as DirectoryInfo;
                     GUILayout.EndScrollView();
                     GUILayout.EndArea();
 
@@ -102,9 +123,9 @@ namespace Kopernicus
                 // The manual location box and the select button
                 GUILayout.BeginArea(new Rect(10, 375, 510, 25));
                 GUILayout.BeginHorizontal();
-                GUILayout.Label(builtin ? value != null ? value.ToString() : "" : location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, ""), GUI.skin.textArea, new GUILayoutOption[0]);
+                GUILayout.Label(builtin ? value?.ToString() ?? "" : location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, ""), GUI.skin.textArea);
 
-                contentWidth = (int)GUI.skin.GetStyle("Button").CalcSize(new GUIContent("Select")).x;
+                Int32 contentWidth = (int)GUI.skin.GetStyle("Button").CalcSize(new GUIContent("Select")).x;
                 if (GUILayout.Button("Select", GUILayout.Width(contentWidth)))
                 {
                     complete = true;
@@ -115,63 +136,23 @@ namespace Kopernicus
                 return complete;
             }
 
-            // Return the GUI-Window
-            public static Rect Render(Rect rect, string title)
-            {
-                return GUI.Window(223456, rect, RenderFuction, title);
-            }
-
-            private static void RenderFuction(int windowID)
-            {
-                if (location == "")
-                    location = Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar;
-
-                if (Show())
-                {
-                    UIController.Instance.isFileBrowser = false;
-                }
-            }
-
             // List-Utils
-            private static object SelectList(ICollection list, object selected, GUIStyle defaultStyle, GUIStyle selectedStyle)
+            private static Object SelectList(IEnumerable list, Object selected, GUIStyle defaultStyle, GUIStyle selectedStyle)
             {
-                foreach (object item in list)
+                foreach (Object item in list)
                 {
                     if (builtin)
                     {
-                        if (item != null && !String.IsNullOrEmpty((item as UnityEngine.Object).name))
-                        {
-                            if (GUILayout.Button((item as UnityEngine.Object).name, (selected == item) ? selectedStyle : defaultStyle))
-                            {
-                                if (selected == item)
-                                // Clicked an already selected item. Deselect.
-                                {
-                                    selected = null;
-                                }
-                                else
-                                {
-                                    selected = item;
-                                }
-                            }
-                        }
+                        if (String.IsNullOrEmpty((item as UnityEngine.Object)?.name)) continue;
+                        if (!GUILayout.Button((item as UnityEngine.Object).name, (selected == item) ? selectedStyle : defaultStyle)) continue;
+                        selected = selected == item ? null : item;
                     }
                     else
                     {
-                        if (GUILayout.Button(item.ToString().Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, ""), (selected == item) ? selectedStyle : defaultStyle))
-                        {
-                            if (selected == item)
-                            // Clicked an already selected item. Deselect.
-                            {
-                                selected = null;
-                            }
-                            else
-                            {
-                                selected = item;
-                            }
-                        }
+                        if (!GUILayout.Button(item.ToString().Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, ""), (selected == item) ? selectedStyle : defaultStyle)) continue;
+                        selected = selected == item ? null : item;
                     }
                 }
-
                 return selected;
             }
         }
