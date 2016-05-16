@@ -42,6 +42,7 @@ namespace Kopernicus
                 }
 
                 // Exit
+                index++;
                 Button("Exit", () => UIController.Instance.DisableWindow(KittopiaWindows.Selector));
 
                 // End Scroll

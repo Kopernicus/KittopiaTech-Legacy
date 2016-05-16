@@ -37,6 +37,7 @@ namespace Kopernicus
                 RenderObject(Current);
 
                 // Exit
+                index++;
                 Callback?.Invoke(Current);
                 Button("Exit", () => UIController.Instance.DisableWindow(KittopiaWindows.Simplex));
 

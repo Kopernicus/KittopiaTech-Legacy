@@ -232,7 +232,10 @@ namespace Kopernicus
                     else if (FieldType == typeof(Color))
                     {
                         Label(info.Name); index--;
-                        Button("Edit", () => UIController.Instance.SetEditedObject(KittopiaWindows.Color, (Color)value, c => info.SetValue(@object, c)), new Rect(200, index * distance + 10, 50, 20));
+                        Button("Edit Color", () => {
+                            UIController.Instance.SetEditedObject(KittopiaWindows.Color, (Color) value, c => info.SetValue(@object, c));
+                            UIController.Instance.EnableWindow(KittopiaWindows.Color);
+                        }, new Rect(200, index * distance + 10, 50, 20));
                         
                     }
                     else if (FieldType == typeof(Vector3))
@@ -413,13 +416,19 @@ namespace Kopernicus
                     else if (FieldType == typeof(PQS))
                     {
                         Label(info.Name); index--;
-                        Button("Edit Sphere", () => { UIController.Instance.SetEditedObject(KittopiaWindows.Selector, value as PQS ?? new PQS(), s => info.SetValue(@object, s)); UIController.Instance.EnableWindow(KittopiaWindows.Selector); });
+                        Button("Edit Sphere", () => {
+                            UIController.Instance.SetEditedObject(KittopiaWindows.Selector, value as PQS ?? new PQS(), s => info.SetValue(@object, s));
+                            UIController.Instance.EnableWindow(KittopiaWindows.Selector);
+                        });
                         
                     }
                     else if (value is Material) // Kopernicus creates Wrappers for the Materials, so key.FieldType == typeof(Material) would return false. :/
                     {
                         Label(info.Name); index--;
-                        Button("Edit Material", () => { UIController.Instance.SetEditedObject(KittopiaWindows.Material, value as Material, m => info.SetValue(@object, m)); UIController.Instance.EnableWindow(KittopiaWindows.Material); });
+                        Button("Edit Material", () => {
+                            UIController.Instance.SetEditedObject(KittopiaWindows.Material, value as Material, m => info.SetValue(@object, m));
+                            UIController.Instance.EnableWindow(KittopiaWindows.Material);
+                        });
                         
                     }
                     else if (FieldType == typeof(FloatCurve))

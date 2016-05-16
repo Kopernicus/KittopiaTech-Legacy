@@ -367,11 +367,19 @@ namespace Kopernicus
             /// </summary>
             public static Int32 GetScrollSize<T>()
             {
+                return GetScrollSize(typeof (T));
+            }
+
+            /// <summary>
+            /// Returns the Size for a Scrollbar
+            /// </summary>
+            public static Int32 GetScrollSize(Type t)
+            {
                 // Integer to store the values
                 Int32 scrollSize = 0;
 
                 // Get all parseable MemberInfos
-                MemberInfo[] infos = typeof (T).GetMembers()
+                MemberInfo[] infos = t.GetMembers()
                     .Where(m => m.MemberType == MemberTypes.Field || m.MemberType == MemberTypes.Property)
                     .Where(m => !(m as FieldInfo)?.IsLiteral ?? true)
                     .Where(m => m is PropertyInfo ? (m as PropertyInfo).CanRead && (m as PropertyInfo).CanWrite : true)
@@ -379,10 +387,10 @@ namespace Kopernicus
                     .ToArray();
 
                 // Get the count of the array
-                scrollSize += infos.Length * Window<T>.distance;
+                scrollSize += infos.Length * Window<System.Object>.distance;
 
                 // Handle special things
-                scrollSize += infos.Where(o => o.GetMemberType() == typeof (MapSO) || o.GetMemberType() == typeof (CBAttributeMapSO)).ToArray().Length * Window<T>.distance;
+                scrollSize += infos.Where(o => o.GetMemberType() == typeof(MapSO) || o.GetMemberType() == typeof(CBAttributeMapSO)).ToArray().Length * Window<System.Object>.distance;
 
                 // Return the Scroll-Size
                 return scrollSize;
