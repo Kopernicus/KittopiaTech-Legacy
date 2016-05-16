@@ -5,6 +5,7 @@
  */
 
 using System;
+using Kopernicus.UI.Enumerations;
 using UnityEngine;
 
 namespace Kopernicus
@@ -56,7 +57,8 @@ namespace Kopernicus
                 GUI.color = Color.white;
 
                 // Save
-                Button("Save", () => Callback(Current), new Rect(10, 150, 200, 50));
+                Callback?.Invoke(Current);
+                Button("Exit", () => UIController.Instance.DisableWindow(KittopiaWindows.Color), new Rect(10, 150, 200, 50));
             }
         }
     }
