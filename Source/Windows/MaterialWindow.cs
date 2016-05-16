@@ -19,7 +19,7 @@ namespace Kopernicus
         /// This class renders a window to edit a float curve
         /// </summary>
         [Position(500, 20, 420, 450)]
-        public class MaterialEditor : Window<Material>
+        public class MaterialWindow : Window<Material>
         {
             /// <summary>
             /// Returns the Title of the window

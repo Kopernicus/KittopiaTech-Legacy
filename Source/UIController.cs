@@ -24,9 +24,6 @@ namespace Kopernicus
 
             // Window Positions
             private Rect landClassWindow = new Rect(420, 400, 420, 250);
-            private Rect noiseModWrapperWindow = new Rect(420, 20, 420, 170);
-            private Rect materialWindow = new Rect(500, 20, 420, 450);
-            private Rect curveWindow = new Rect(420, 400, 420, 250);
 
             // Settings
             public static Double PixelPerFrame = 5000d;
@@ -50,13 +47,16 @@ namespace Kopernicus
                 Single.TryParse(settings.GetValue("normalStrength"), out NormalStrength);
 
                 // Register Windows
-                RegisterWindow<PlanetWindow>(KittopiaWindows.Planet);
-                RegisterWindow<ColorWindow>(KittopiaWindows.Color);
-                RegisterWindow<LerpRangeWindow>(KittopiaWindows.LerpRange);
-                RegisterWindow<FileWindow>(KittopiaWindows.Files);
-                RegisterWindow<SimplexWindow>(KittopiaWindows.Simplex);
-                RegisterWindow<SelectorWindow>(KittopiaWindows.Selector);
                 RegisterWindow<BiomeWindow>(KittopiaWindows.Biome);
+                RegisterWindow<ColorWindow>(KittopiaWindows.Color);
+                RegisterWindow<CurveWindow>(KittopiaWindows.Curve);
+                RegisterWindow<FileWindow>(KittopiaWindows.Files);
+                RegisterWindow<LerpRangeWindow>(KittopiaWindows.LerpRange);
+                RegisterWindow<MaterialWindow>(KittopiaWindows.Material);
+                RegisterWindow<NoiseModWindow>(KittopiaWindows.NoiseMod);
+                RegisterWindow<PlanetWindow>(KittopiaWindows.Planet);
+                RegisterWindow<SelectorWindow>(KittopiaWindows.Selector);
+                RegisterWindow<SimplexWindow>(KittopiaWindows.Simplex);
             }
 
             /// <summary>
