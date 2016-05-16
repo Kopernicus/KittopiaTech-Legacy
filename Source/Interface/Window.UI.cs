@@ -91,7 +91,7 @@ namespace Kopernicus
                     // Show a warning
                     GUIStyle redAlert = new GUIStyle(GUI.skin.label);
                     redAlert.fontStyle = FontStyle.Bold;
-                    redAlert.font.material.color = Color.red;
+                    redAlert.normal.textColor = Color.red;
                     GUI.Label(errorRect ?? new Rect(240, index * distance + 10, 200, 20), "!", redAlert);
                 }
                 else
@@ -101,7 +101,7 @@ namespace Kopernicus
                     // Everything is ok
                     GUIStyle greenAlert = new GUIStyle(GUI.skin.label);
                     greenAlert.fontStyle = FontStyle.Bold;
-                    greenAlert.font.material.color = Color.green;
+                    greenAlert.normal.textColor = Color.green;
                     GUI.Label(errorRect ?? new Rect(240, index * distance + 10, 200, 20), "✓", greenAlert);
                 }
 

@@ -12,17 +12,17 @@ namespace Kopernicus
     namespace UI
     {
         /// <summary>
-        /// This class renders a window to edit pqs lerp ranges
+        /// This class renders a window to edit a simplex
         /// </summary>
-        [Position(420, 20, 420, 260)]
-        public class LerpRangeWindow : Window<PQSLandControl.LerpRange>
+        [Position(420, 20, 420, 190)]
+        public class SimplexWindow : Window<Simplex>
         {
             /// <summary>
             /// Returns the Title of the window
             /// </summary>
             protected override String Title()
             {
-                return "KittopiaTech - LerpRange Editor";
+                return "KittopiaTech - Simplex Editor";
             }
 
             /// <summary>
@@ -30,10 +30,17 @@ namespace Kopernicus
             /// </summary>
             protected override void Render(Int32 id)
             {
+                // Scroll
+                BeginScrollView(200, Utils.GetScrollSize<Simplex>() + 50);
+
+                // Render the editor
                 RenderObject(Current);
 
                 // Exit
-                Button("Exit", () => UIController.Instance.DisableWindow(KittopiaWindows.LerpRange));
+                Button("Exit", () => UIController.Instance.DisableWindow(KittopiaWindows.Simplex));
+
+                // End scroll
+                EndScrollView();
             }
         }
     }

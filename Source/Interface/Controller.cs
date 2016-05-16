@@ -70,10 +70,11 @@ namespace Kopernicus
             /// </summary>
             public void RegisterWindow<T_>(T window) where T_ : IWindow, new()
             {
-                if (Windows[window] != null)
+                if (Windows.ContainsKey(window) && Windows[window] != null)
                     Windows[window].Add(new T_());
                 else
                     Windows[window] = new HashSet<IWindow> { new T_() };
+                WindowStates.Add(window, false);
             }
 
             /// <summary>

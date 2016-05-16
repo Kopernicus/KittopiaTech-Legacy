@@ -379,10 +379,10 @@ namespace Kopernicus
                     .ToArray();
 
                 // Get the count of the array
-                scrollSize += infos.Length*25;
+                scrollSize += infos.Length * Window<T>.distance;
 
                 // Handle special things
-                scrollSize += infos.Where(o => o.GetMemberType() == typeof (MapSO) || o.GetMemberType() == typeof (CBAttributeMapSO)).ToArray().Length*25;
+                scrollSize += infos.Where(o => o.GetMemberType() == typeof (MapSO) || o.GetMemberType() == typeof (CBAttributeMapSO)).ToArray().Length * Window<T>.distance;
 
                 // Return the Scroll-Size
                 return scrollSize;

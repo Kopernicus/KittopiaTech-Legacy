@@ -17,7 +17,7 @@ namespace Kopernicus
     namespace UI
     {
         /// <summary>
-        /// This class renders a window to edit colors
+        /// This class renders a window to load files
         /// </summary>
         [Position(500, 20, 530, 410)]
         public class FileWindow : Window<String>

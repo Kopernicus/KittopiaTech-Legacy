@@ -62,6 +62,8 @@ namespace Kopernicus
                 RegisterWindow<ColorWindow>(KittopiaWindows.Color);
                 RegisterWindow<LerpRangeWindow>(KittopiaWindows.LerpRange);
                 RegisterWindow<FileWindow>(KittopiaWindows.Files);
+                RegisterWindow<SimplexWindow>(KittopiaWindows.Simplex);
+                RegisterWindow<SelectorWindow>(KittopiaWindows.Selector);
             }
 
             /// <summary>

@@ -21,7 +21,7 @@ namespace Kopernicus
             /// <summary>
             /// The distance between two elements of the window
             /// </summary>
-            public const Int32 distance = 20;
+            public const Int32 distance = 25;
             
             /// <summary>
             /// The function that gets called when the object was edited

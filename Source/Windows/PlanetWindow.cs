@@ -45,7 +45,8 @@ namespace Kopernicus
                 BeginScrollView(240, 370);
 
                 // Current Body
-                DependencyButton("Current body: " + Current.name, "No body selected!", () => { UIController.Instance.SetEditedObject(KittopiaWindows.Selector, Current, b => Current = b); UIController.Instance.EnableWindow(KittopiaWindows.Selector); }, () => Current != null);
+                DependencyButton("Current body: " + Current?.name, "No body selected!", () => { UIController.Instance.SetEditedObject(KittopiaWindows.Selector, Current ?? new CelestialBody(), b => Current = b); UIController.Instance.EnableWindow(KittopiaWindows.Selector); }, () => Current != null);
+                index++;
 
                 // Editors
                 Button("Atmosphere Editor", () => EditorController.EnableWindow(KittopiaEditors.Atmosphere));
