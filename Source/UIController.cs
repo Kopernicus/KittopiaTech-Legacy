@@ -22,9 +22,6 @@ namespace Kopernicus
             // Instance member
             public static UIController Instance { get; private set; }
 
-            // Window Positions
-            private Rect landClassWindow = new Rect(420, 400, 420, 250);
-
             // Settings
             public static Double PixelPerFrame = 5000d;
             public static Single NormalStrength = 9f;
@@ -51,6 +48,7 @@ namespace Kopernicus
                 RegisterWindow<ColorWindow>(KittopiaWindows.Color);
                 RegisterWindow<CurveWindow>(KittopiaWindows.Curve);
                 RegisterWindow<FileWindow>(KittopiaWindows.Files);
+                RegisterWindow<LandClassWindow>(KittopiaWindows.LandClass);
                 RegisterWindow<LerpRangeWindow>(KittopiaWindows.LerpRange);
                 RegisterWindow<MaterialWindow>(KittopiaWindows.Material);
                 RegisterWindow<NoiseModWindow>(KittopiaWindows.NoiseMod);

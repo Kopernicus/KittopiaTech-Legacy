@@ -57,6 +57,9 @@ namespace Kopernicus
                     Collection = collection;
                     Callback(Collection);
                 });
+
+                // Callback
+                Callback(Collection);
             }
 
             /// <summary>
