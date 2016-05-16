@@ -33,46 +33,58 @@
     <NoStdLib>true</NoStdLib>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>..\Assembly-CSharp-firstpass.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Kopernicus">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\GameData\Kopernicus\Plugins\Kopernicus.dll</HintPath>
+      <HintPath>..\Kopernicus.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Kopernicus.Components">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\GameData\Kopernicus\Plugins\Kopernicus.Components.dll</HintPath>
+      <HintPath>..\Kopernicus.Components.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Kopernicus.OnDemand">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\GameData\Kopernicus\Plugins\Kopernicus.OnDemand.dll</HintPath>
+      <HintPath>..\Kopernicus.OnDemand.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="KSPUtil">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\KSPUtil.dll</HintPath>
+    <Reference Include="KSPUtil, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\KSPUtil.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\System.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="mscorlib">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\mscorlib.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\UnityEngine.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enumerations\KittopiaEditors.cs" />
+    <Compile Include="Enumerations\KittopiaWindows.cs" />
+    <Compile Include="Extensions\MemberInfoExtensions.cs" />
+    <Compile Include="Interface\Controller.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScaledPlanetMesh.cs" />
     <Compile Include="UIController.cs" />
-    <Compile Include="ConfigIO.cs" />
-    <Compile Include="Utils.cs" />
+    <Compile Include="Utility\ConfigIO.cs" />
+    <Compile Include="Interface\IWindow.cs" />
+    <Compile Include="Interface\Position.cs" />
+    <Compile Include="Utility\Utils.cs" />
+    <Compile Include="Interface\Window.cs" />
     <Compile Include="Windows\BiomeModifier.cs" />
     <Compile Include="Windows\ColorPicker.cs" />
     <Compile Include="Windows\Editors\AtmosphereEditor.cs" />
@@ -89,10 +101,13 @@
     <Compile Include="Windows\LerpRange.cs" />
     <Compile Include="Windows\MaterialEditor.cs" />
     <Compile Include="Windows\NoiseModWrapper.cs" />
-    <Compile Include="Windows\PlanetUI.cs" />
+    <Compile Include="Windows\PlanetWindow.cs" />
     <Compile Include="Windows\CBBrowser.cs" />
     <Compile Include="Windows\PQSBrowser.cs" />
     <Compile Include="Windows\SimplexWrapper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>"C:\Program Files (x86)\Mono\bin\mono.exe" "C:\Program Files (x86)\Mono\lib\mono\4.5\pdb2mdb.exe" "$(TargetFileName)"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
