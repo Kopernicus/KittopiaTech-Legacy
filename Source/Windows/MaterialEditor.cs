@@ -1,4 +1,11 @@
-﻿using System;
+﻿/** 
+ * KittopiaTech - A Kopernicus Visual Editor
+ * Copyright (c) Thomas P., BorisBee, KCreator, Gravitasi
+ * Licensed under the Terms of a custom License, see LICENSE file
+ */
+
+using System;
+using Kopernicus.UI.Enumerations;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -8,106 +15,63 @@ namespace Kopernicus
 {
     namespace UI
     {
-        // Class that renders a Material Editor
-        public class MaterialEditor
+        /// <summary>
+        /// This class renders a window to edit a float curve
+        /// </summary>
+        [Position(500, 20, 420, 450)]
+        public class MaterialEditor : Window<Material>
         {
-            // The edited Material
-            public static Material material;
-
-            public static FieldInfo field;
-            public static PropertyInfo prop;
-            public static object parent;
-
-            // Return an OnGUI()-Window.
-            public static Rect Render(Rect rect, string title)
+            /// <summary>
+            /// Returns the Title of the window
+            /// </summary>
+            protected override String Title()
             {
-                return GUI.Window(86636, rect, RenderWindow, title);
+                return "KittopiaTech - Curve Editor";
             }
 
-            // Set edited object
-            public static void SetEditedObject(Material mat, FieldInfo fieldInfo, object parentObj)
+            /// <summary>
+            /// The Kopernicus material wrapper
+            /// </summary>
+            private static System.Object kopernicusMaterial { get; set; }
+
+            /// <summary>
+            /// Renders the Window
+            /// </summary>
+            protected override void Render(Int32 id)
             {
-                material = mat;
-                parent = parentObj;
-                prop = null;
-                field = fieldInfo;
-                UIController.Instance.isMaterial = true;
-            }
-
-            // Set edited object
-            public static void SetEditedObject(Material mat, PropertyInfo property, object parentObj)
-            {
-                material = mat;
-                parent = parentObj;
-                field = null;
-                prop = property;
-                UIController.Instance.isMaterial = true;
-            }
-
-            // GUI stuff
-            private static Vector2 scrollPosition;
-
-            // Current Object
-            private static object obj;
-
-            public static void RenderWindow(int windowID)
-            {
-                // Render Stuff
-                int offset = 40;
-
                 // Get the Kopernicus-Parser Type
                 Type type = null;
-                if (obj == null)
+                if (kopernicusMaterial == null)
                 {
                     IEnumerable<Type> types = AssemblyLoader.loadedAssemblies.SelectMany(a => a.assembly.GetTypes());
-                    IEnumerable<Type> materials = types.Where(t => t.BaseType == typeof(Material));
+                    IEnumerable<Type> materials = types.Where(t => t.BaseType == typeof (Material));
                     foreach (Type t in materials)
                     {
                         // Big Reflection, because of internal class
                         Type singleton = types.First(t2 => t2.FullName == t.FullName + "+Properties");
-                        string shaderName = (singleton.GetProperty("shader", BindingFlags.Static | BindingFlags.Public).GetValue(null, null) as Shader).name;
+                        String shaderName = (singleton.GetProperty("shader", BindingFlags.Static | BindingFlags.Public).GetValue(null, null) as Shader)?.name;
 
                         // Compare things and break
-                        if (shaderName == material.shader.name)
-                        {
-                            type = t;
-                            obj = Activator.CreateInstance(t, material);
-                            break;
-                        }
+                        if (shaderName != Current.shader.name) continue;
+                        type = t;
+                        kopernicusMaterial = Activator.CreateInstance(t, Current);
+                        break;
                     }
                 }
 
-                // Get the height of the scroll list
-                object[] objects = Utils.GetInfos<PropertyInfo>(obj);
-                int scrollSize = Utils.GetScrollSize(objects);
+                // Scroll
+                BeginScrollView(400, Utils.GetScrollSize(type) + 75);
 
-                // Render the Scrollbar
-                scrollPosition = GUI.BeginScrollView(new Rect(10, 30, 400, 400), scrollPosition, new Rect(0, 38, 380, scrollSize + 75));
-
-                // Render the Selection
-                Utils.RenderSelection<PropertyInfo>(objects, ref obj, ref offset);
-                offset += 20;
-
-                if (GUI.Button(new Rect(20, offset, 200, 20), "Apply"))
-                {
-                    if (field != null)
-                        field.SetValue(parent, obj);
-                    else
-                        prop.SetValue(parent, obj, null);
-                    if (parent.GetType() == typeof(PQS))
-                        (parent as PQS).RebuildSphere(); // Why?!?!
-                }
-                offset += 25;
-
-                if (GUI.Button(new Rect(20, offset, 200, 20), "Exit"))
-                {
-                    UIController.Instance.isMaterial = false;
-                    obj = null;
-                }
+                // Render Object
+                RenderObject(kopernicusMaterial);
 
                 // Exit
-                GUI.EndScrollView();
-                GUI.DragWindow();
+                index++;
+                Current = kopernicusMaterial as Material;
+                Button("Exit", () => UIController.Instance.DisableWindow(KittopiaWindows.Material));
+
+                // End scroll
+                EndScrollView();
             }
         }
     }
