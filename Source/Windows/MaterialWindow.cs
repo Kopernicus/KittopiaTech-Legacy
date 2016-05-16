@@ -32,7 +32,7 @@ namespace Kopernicus
             /// <summary>
             /// The Kopernicus material wrapper
             /// </summary>
-            private static System.Object kopernicusMaterial { get; set; }
+            private System.Object kopernicusMaterial { get; set; }
 
             /// <summary>
             /// Renders the Window
@@ -72,6 +72,14 @@ namespace Kopernicus
 
                 // End scroll
                 EndScrollView();
+            }
+
+            /// <summary>
+            /// Resets objects
+            /// </summary>
+            protected override void SetEditedObject()
+            {
+                kopernicusMaterial = null;
             }
         }
     }

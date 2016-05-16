@@ -81,6 +81,7 @@ namespace Kopernicus
             {
                 Current = (T)value;
                 Callback = c => callback(c);
+                SetEditedObject();
             }
 
             /// <summary>
@@ -100,6 +101,11 @@ namespace Kopernicus
             /// Returns the Title of the window
             /// </summary>
             protected abstract String Title();
+
+            /// <summary>
+            /// Resets objects
+            /// </summary>
+            protected virtual void SetEditedObject() { }
         }
     }
 }
