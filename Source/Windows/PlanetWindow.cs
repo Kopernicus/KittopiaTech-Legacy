@@ -25,7 +25,7 @@ namespace Kopernicus
             public PlanetWindow()
             {
                 EditorController = new Controller<KittopiaEditors>();
-                EditorController.Create(null, true); // TODO: Implement
+                EditorController.Create(window => window.Render(0), true); // TODO: Implement
             }
 
             /// <summary>
@@ -45,7 +45,7 @@ namespace Kopernicus
                 BeginScrollView(240, 370);
 
                 // Current Body
-                DependencyButton("Current body: " + Current.name, "No body selected!", () => { UIController.Instance.SetEditedObject(KittopiaWindows.Array, Current, b => Current = b); UIController.Instance.EnableWindow(KittopiaWindows.Array); }, () => Current != null);
+                DependencyButton("Current body: " + Current.name, "No body selected!", () => { UIController.Instance.SetEditedObject(KittopiaWindows.Selector, Current, b => Current = b); UIController.Instance.EnableWindow(KittopiaWindows.Selector); }, () => Current != null);
 
                 // Editors
                 Button("Atmosphere Editor", () => EditorController.EnableWindow(KittopiaEditors.Atmosphere));
