@@ -1,46 +1,39 @@
-﻿using System.Reflection;
-using UnityEngine;
+﻿/** 
+ * KittopiaTech - A Kopernicus Visual Editor
+ * Copyright (c) Thomas P., BorisBee, KCreator, Gravitasi
+ * Licensed under the Terms of a custom License, see LICENSE file
+ */
+
+using System;
+using Kopernicus.UI.Enumerations;
 
 namespace Kopernicus
 {
     namespace UI
     {
-        public class LerpRange
+        /// <summary>
+        /// This class renders a window to edit colors
+        /// </summary>
+        [Position(420, 20, 420, 260)]
+        public class LerpRangeWindow : Window<PQSLandControl.LerpRange>
         {
-            //What we're editing
-            private static PQSLandControl.LerpRange lRange;
-
-            //Return the Window
-            public static Rect Render(Rect rect, string title)
+            /// <summary>
+            /// Returns the Title of the window
+            /// </summary>
+            protected override String Title()
             {
-                return GUI.Window(4356, rect, RenderWindow, title);
+                return "KittopiaTech - LerpRange Editor";
             }
 
-            // Activate the Window
-            public static void SetEditedObject(PQSLandControl.LerpRange lrange)
+            /// <summary>
+            /// Renders the Window
+            /// </summary>
+            protected override void Render(Int32 id)
             {
-                lRange = lrange;
-                UIController.Instance.isLerpRange = true;
-            }
-
-            //Render the Window
-            public static void RenderWindow(int windowID)
-            {
-                // Render-Stuff
-                int offset = 40;
-
-                // Loop through all the Fields
-                object[] objects = Utils.GetInfos<FieldInfo>(lRange);
-                object obj = lRange as System.Object;
-                Utils.RenderSelection<FieldInfo>(objects, ref obj, ref offset);
-                offset += 20;
+                RenderObject(Current);
 
                 // Exit
-                if (GUI.Button(new Rect(20, offset, 200, 20), "Exit"))
-                    UIController.Instance.isLerpRange = false;
-
-                // Finish
-                GUI.DragWindow();
+                Button("Exit", () => UIController.Instance.DisableWindow(KittopiaWindows.LerpRange));
             }
         }
     }
