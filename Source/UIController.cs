@@ -23,17 +23,9 @@ namespace Kopernicus
             public static UIController Instance { get; private set; }
 
             // Window Positions
-            private Rect mainWindow = new Rect(20, 20, 420, 560);
-            private Rect colorWindow = new Rect(420, 20, 400, 200);
             private Rect landClassWindow = new Rect(420, 400, 420, 250);
-            private Rect simplexWrapperWindow = new Rect(420, 20, 420, 190);
             private Rect noiseModWrapperWindow = new Rect(420, 20, 420, 170);
-            private Rect lerpRangeWindow = new Rect(420, 20, 420, 260);
-            private Rect fileBrowserWindow = new Rect(500, 20, 530, 410);
-            private Rect biomeWindow = new Rect(420, 400, 420, 250);
             private Rect materialWindow = new Rect(500, 20, 420, 450);
-            private Rect pqsBrowserWindow = new Rect(420, 100, 220, 350);
-            private Rect cbBrowserWindow = new Rect(420, 100, 220, 350);
             private Rect curveWindow = new Rect(420, 400, 420, 250);
 
             // Settings
@@ -64,6 +56,7 @@ namespace Kopernicus
                 RegisterWindow<FileWindow>(KittopiaWindows.Files);
                 RegisterWindow<SimplexWindow>(KittopiaWindows.Simplex);
                 RegisterWindow<SelectorWindow>(KittopiaWindows.Selector);
+                RegisterWindow<BiomeWindow>(KittopiaWindows.Biome);
             }
 
             /// <summary>

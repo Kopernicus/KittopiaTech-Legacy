@@ -33,6 +33,7 @@ namespace Kopernicus
                 RenderObject(Current);
 
                 // Exit
+                Callback?.Invoke(Current);
                 Button("Exit", () => UIController.Instance.DisableWindow(KittopiaWindows.LerpRange));
             }
         }

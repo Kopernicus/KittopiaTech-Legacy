@@ -38,7 +38,7 @@ namespace Kopernicus
                 // Selectors
                 foreach (UnityEngine.Object o in UnityEngine.Object.FindObjectsOfType(Current.GetType()))
                 {
-                    Button(o.ToString(), () => Callback(o), new Rect(20, index * distance + 10, 280, 20));
+                    Button(o.ToString(), () => Callback(o), width: 280);
                 }
 
                 // Exit
