@@ -34,6 +34,28 @@ namespace Kopernicus
                 /// <summary>
                 /// Gets the value of a member info, by checking whether it is a Field or a Property
                 /// </summary>
+                public static void SetValue<T>(this MemberInfo member, Object reference, T value)
+                {
+                    if (member.MemberType == MemberTypes.Field)
+                        (member as FieldInfo)?.SetValue(reference, value);
+                    else if (member.MemberType == MemberTypes.Property)
+                        (member as PropertyInfo)?.SetValue(reference, value, null);
+                }
+
+                /// <summary>
+                /// Gets the value of a member info, by checking whether it is a Field or a Property
+                /// </summary>
+                public static void SetValue(this MemberInfo member, Object reference, Object value)
+                {
+                    if (member.MemberType == MemberTypes.Field)
+                        (member as FieldInfo)?.SetValue(reference, value);
+                    else if (member.MemberType == MemberTypes.Property)
+                        (member as PropertyInfo)?.SetValue(reference, value, null);
+                }
+
+                /// <summary>
+                /// Gets the value of a member info, by checking whether it is a Field or a Property
+                /// </summary>
                 public static T GetValue<T>(this MemberInfo member, Object reference)
                 {
                     if (member.MemberType == MemberTypes.Field)
