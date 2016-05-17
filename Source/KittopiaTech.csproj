@@ -92,6 +92,7 @@
     <Compile Include="Windows\ColorWindow.cs" />
     <Compile Include="Windows\CurveWindow.cs" />
     <Compile Include="Windows\Editors\CelestialBodyEditor.cs" />
+    <Compile Include="Windows\Editors\ScaledSpaceEditor.cs" />
     <Compile Include="Windows\Editors\OrbitEditor.cs" />
     <Compile Include="Windows\FileWindow.cs" />
     <Compile Include="Windows\LandClassModifier.cs" />

@@ -5,6 +5,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -133,31 +134,55 @@ namespace Kopernicus
                 if (typeof (T) == typeof (Double) || typeof (T) == typeof (Single))
                 {
                     Double value = 0;
+                    if (isParseError.ContainsKey(index) && isParseError[index]) GUI.backgroundColor = Color.red;
                     String cache = GUI.TextField(rect ?? new Rect(20, index*distance + 10, 178, 20), parseCache.ContainsKey(index) && !overrideValue ? parseCache[index] : defaultValue.ToString());
+                    GUI.backgroundColor = Color.white;
                     if (Double.TryParse(cache, out value))
+                    {
                         result = (T) Convert.ChangeType(value, typeof (T));
+                        isParseError[index] = false;
+                    }
                     else
+                    {
                         result = defaultValue;
+                        isParseError[index] = true;
+                    }
                     parseCache[index] = cache;
                 }
                 if (typeof (T) == typeof (Int16) || typeof (T) == typeof (Int32) || typeof (T) == typeof (Int64))
                 {
                     Int64 value = 0;
-                    String cache = GUI.TextField(rect ?? new Rect(20, index*distance + 10, 178, 20), parseCache.ContainsKey(index) && !overrideValue ? parseCache[index] : defaultValue.ToString());
+                    if (isParseError.ContainsKey(index) && isParseError[index]) GUI.backgroundColor = Color.red;
+                    String cache = GUI.TextField(rect ?? new Rect(20, index * distance + 10, 178, 20), parseCache.ContainsKey(index) && !overrideValue ? parseCache[index] : defaultValue.ToString());
+                    GUI.backgroundColor = Color.white;
                     if (Int64.TryParse(cache, out value))
-                        result = (T) Convert.ChangeType(value, typeof (T));
+                    {
+                        result = (T)Convert.ChangeType(value, typeof(T));
+                        isParseError[index] = false;
+                    }
                     else
+                    {
                         result = defaultValue;
+                        isParseError[index] = true;
+                    }
                     parseCache[index] = cache;
                 }
                 if (typeof (T) == typeof (UInt16) || typeof (T) == typeof (UInt32) || typeof (T) == typeof (UInt64))
                 {
                     UInt64 value = 0;
-                    String cache = GUI.TextField(rect ?? new Rect(20, index*distance + 10, 178, 20), parseCache.ContainsKey(index) && !overrideValue ? parseCache[index] : defaultValue.ToString());
+                    if (isParseError.ContainsKey(index) && isParseError[index]) GUI.backgroundColor = Color.red;
+                    String cache = GUI.TextField(rect ?? new Rect(20, index * distance + 10, 178, 20), parseCache.ContainsKey(index) && !overrideValue ? parseCache[index] : defaultValue.ToString());
+                    GUI.backgroundColor = Color.white;
                     if (UInt64.TryParse(cache, out value))
-                        result = (T) Convert.ChangeType(value, typeof (T));
+                    {
+                        result = (T)Convert.ChangeType(value, typeof(T));
+                        isParseError[index] = false;
+                    }
                     else
+                    {
                         result = defaultValue;
+                        isParseError[index] = true;
+                    }
                     parseCache[index] = cache;
                 }
                 if (typeof (T) == typeof (Boolean))
@@ -273,7 +298,8 @@ namespace Kopernicus
                         Label(info.Name);
                         Button("Load", () =>
                         {
-                            UIController.Instance.SetEditedObject(KittopiaWindows.Files, ConfigIO.Format(value as UnityEngine.Object), location =>
+                            FileWindow.type = FieldType;
+                            UIController.Instance.SetEditedObject(KittopiaWindows.Files, value == null ? "" : ConfigIO.Format(value as UnityEngine.Object), location =>
                             {
                                 if (File.Exists(location))
                                 {
@@ -306,7 +332,8 @@ namespace Kopernicus
                         Label(info.Name);
                         Button("Load", () =>
                         {
-                            UIController.Instance.SetEditedObject(KittopiaWindows.Files, ConfigIO.Format(value as UnityEngine.Object), location =>
+                            FileWindow.type = FieldType;
+                            UIController.Instance.SetEditedObject(KittopiaWindows.Files, value == null ? "" : ConfigIO.Format(value as UnityEngine.Object), location =>
                             {
                                 if (File.Exists(location))
                                 {
@@ -444,35 +471,30 @@ namespace Kopernicus
                         }, new Rect(200, index * distance + 10, 170, 20));
 
                     }
-                    /*else if (FieldType == typeof(Mesh))
+                    else if (FieldType == typeof(Mesh))
                     {
-                        // Load the Texture
-                        GUI.Label(new Rect(20, index * distance + 10, 178, 20), "" + info.Name);
-                        if (GUI.Button(new Rect(200, index * distance + 10, 80, 20), "Load"))
+                        Label(info.Name); index--;
+                        Button("Load Mesh", () =>
                         {
-                            UIController.Instance.isFileBrowser = !UIController.Instance.isFileBrowser;
-                            FileBrowser.type = key.FieldType;
-                            FileBrowser.location = "";
-                        }
-
-                        // Apply the new Texture
-                        if (GUI.Button(new Rect(290, index * distance + 10, 80, 20), "Apply"))
-                        {
-                            if (!FileBrowser.builtin)
+                            FileWindow.type = FieldType;
+                            UIController.Instance.SetEditedObject(KittopiaWindows.Files, value == null ? "" : ConfigIO.Format(value as UnityEngine.Object), location =>
                             {
-                                string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
-                                MeshParser parser = new MeshParser(key.GetValue(obj) as Mesh);
-                                parser.SetFromString(path);
-                                parser.value.name = path.Replace("\\", "/");
-                                key.SetValue(obj, parser.value);
-                            }
-                            else
-                            {
-                                key.SetValue(obj, FileBrowser.value);
-                            }
-                        }
-                        
-                    }*/
+                                if (File.Exists(location))
+                                {
+                                    String path = location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
+                                    MeshParser parser = new MeshParser(value as Mesh);
+                                    parser.SetFromString(path);
+                                    parser.value.name = path.Replace("\\", "/");
+                                    info.SetValue(@object, parser.value);
+                                }
+                                else
+                                {
+                                    info.SetValue(@object, Resources.FindObjectsOfTypeAll<Mesh>().Where(m => m.name == location));
+                                }
+                            });
+                            UIController.Instance.EnableWindow(KittopiaWindows.Files);
+                        }, new Rect(200, index * distance + 10, 170, 20));
+                    }
                 }
             }
         

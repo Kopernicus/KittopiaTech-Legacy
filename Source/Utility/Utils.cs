@@ -22,7 +22,7 @@ namespace Kopernicus
         // Collection of Utillity-functions
         public class Utils
         {
-            public static void Generate(CelestialBody body, Mesh meshinput)
+            public static void GenerateScaledSpace(CelestialBody body, Mesh meshinput)
             {
                 PQS bodyPQS = body.pqsController;
                 Single joolScaledRad = 1000f;
@@ -80,6 +80,9 @@ namespace Kopernicus
                 Utility.RecalculateTangents(meshfilter.sharedMesh);
                 collider.radius = radius;
                 body.scaledBody.transform.localScale = localScale;
+
+                // Serialize
+                Utility.SerializeMesh(meshfilter.sharedMesh, KSPUtil.ApplicationRootPath + Body.ScaledSpaceCacheDirectory + "/" + body.name + ".bin");
             }
 
             /// <summary>

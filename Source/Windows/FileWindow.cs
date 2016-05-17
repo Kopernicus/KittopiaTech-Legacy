@@ -54,20 +54,20 @@ namespace Kopernicus
 
             // Class that renders a file-browser for Texture-Loading
             // Code from the Unify-Wiki, adapted by Thomas P.
-            private static Boolean Show()
+            private Boolean Show()
             {
                 // Our return state - altered by the "Select" button
                 Boolean complete = false;
-
-                // Get the directory info of the current location
-                FileInfo fileSelection = new FileInfo(location);
-                DirectoryInfo directoryInfo = (fileSelection.Attributes & FileAttributes.Directory) == FileAttributes.Directory ? new DirectoryInfo(location) : fileSelection.Directory;
 
                 mode = GUI.Toolbar(new Rect(10, 20, 510, 20), mode, new[] { "Files", "Builtin" });
                 builtin = mode == 1;
 
                 if (!builtin)
                 {
+                    // Get the directory info of the current location
+                    FileInfo fileSelection = String.IsNullOrEmpty(location) ? null : new FileInfo(location);
+                    DirectoryInfo directoryInfo = fileSelection == null ? new DirectoryInfo(KSPUtil.ApplicationRootPath + "GameData/") : (fileSelection.Attributes & FileAttributes.Directory) == FileAttributes.Directory ? new DirectoryInfo(location) : fileSelection.Directory;
+
                     if (!location.EndsWith("GameData") && GUI.Button(new Rect(10, 45, 510, 20), "Up one level"))
                     {
                         directoryInfo = directoryInfo?.Parent;
@@ -133,6 +133,7 @@ namespace Kopernicus
                 GUILayout.EndHorizontal();
                 GUILayout.EndArea();
 
+                Current = builtin ? value?.ToString() : location;
                 return complete;
             }
 

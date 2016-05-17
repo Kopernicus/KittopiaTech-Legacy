@@ -46,7 +46,12 @@ namespace Kopernicus
             /// <summary>
             /// Caches the values in the parser fields
             /// </summary>
-            protected Dictionary<Int32, String> parseCache { get; set; } 
+            protected Dictionary<Int32, String> parseCache { get; set; }
+
+            /// <summary>
+            /// Whether ther was a parsing error
+            /// </summary>
+            private Dictionary<Int32, Boolean> isParseError { get; set; }
 
             /// <summary>
             /// The position of the window
@@ -70,6 +75,8 @@ namespace Kopernicus
                 index = 0;
                 if (parseCache == null)
                     parseCache = new Dictionary<Int32, String>();
+                if (isParseError == null)
+                    isParseError = new Dictionary<Int32, Boolean>();
                 Render(id);
                 GUI.DragWindow();
             }

@@ -11,7 +11,7 @@ namespace Kopernicus
     namespace UI
     {
         /// <summary>
-        /// This class represents the main Planet Window. Here the main components of a planet are edited
+        /// This class represents the editor for the properties of a single body
         /// </summary>
         public class CelestialBodyEditor : Editor<CelestialBody>
         {
