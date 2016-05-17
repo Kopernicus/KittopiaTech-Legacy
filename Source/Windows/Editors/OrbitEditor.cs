@@ -1,56 +1,44 @@
-﻿using System.Reflection;
-using UnityEngine;
+﻿/** 
+ * KittopiaTech - A Kopernicus Visual Editor
+ * Copyright (c) Thomas P., BorisBee, KCreator, Gravitasi
+ * Licensed under the Terms of a custom License, see LICENSE file
+ */
+
+using System;
 
 namespace Kopernicus
 {
     namespace UI
     {
-        // Class that renders a Orbit-Editor
-        public class OrbitEditor
+        /// <summary>
+        /// This class represents the main Planet Window. Here the main components of a planet are edited
+        /// </summary>
+        public class OrbitEditor : Editor<OrbitDriver>
         {
-            // GUI stuff
-            private static Vector2 scrollPosition;
-
-            // Orbital stuff
-            public static string reference = "";
-
-            // Return an OnGUI()-Window.
-            public static void Render()
+            /// <summary>
+            /// Renders the Window
+            /// </summary>
+            protected override void Render(Int32 id)
             {
-                // Render variables
-                int offset = 280;
+                // Call base
+                base.Render(id);
 
-                // If we have no Body selected, abort
-                if (PlanetUI.currentName == "")
-                {
-                    GUI.Label(new Rect(20, 310, 400, 20), "No Planet selected!");
-                    return;
-                }
+                // Scroll
+                BeginScrollView(250, Utils.GetScrollSize<OrbitDriver>() + Utils.GetScrollSize<Orbit>() + Utils.GetScrollSize<OrbitRenderer>() + 50, 20);
 
-                // Create the height of the Scroll-List
-                object[] objects = Utils.GetInfos<FieldInfo>(PlanetUI.currentBody.orbitDriver.orbit);
-                int scrollSize = Utils.GetScrollSize(objects);
+                // Index
+                index = 0;
 
-                // Render the Scrollbar
-                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollSize + 80));
+                // Render Objects
+                RenderObject(Current.orbit);
+                RenderObject(Current);
+                RenderObject(Current.Renderer);
 
-                // Render the Selection
-                object obj = PlanetUI.currentBody.orbitDriver.orbit as System.Object;
-                Utils.RenderSelection<FieldInfo>(objects, ref obj, ref offset);
-                offset += 20;
+                // Update Orbit
+                Button("Update Orbit", () => Current.UpdateOrbit());
 
-                // Update the Orbit
-                if (GUI.Button(new Rect(20, offset, 178, 20), "Update Orbit"))
-                    PlanetUI.currentBody.orbitDriver.UpdateOrbit();
-
-                offset += 25;
-
-                // Hide the Orbit
-                if (GUI.Button(new Rect(20, offset, 178, 20), "Deactivate orbit renderer"))
-                    PlanetUI.currentBody.orbitDriver.Renderer.drawMode = OrbitRenderer.DrawMode.OFF;
-
-                // Finish
-                GUI.EndScrollView();
+                // End Scroll
+                EndScrollView();
             }
         }
     }

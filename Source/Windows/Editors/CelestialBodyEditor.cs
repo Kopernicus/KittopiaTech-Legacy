@@ -1,47 +1,39 @@
-﻿using System.Reflection;
-using UnityEngine;
+﻿/** 
+ * KittopiaTech - A Kopernicus Visual Editor
+ * Copyright (c) Thomas P., BorisBee, KCreator, Gravitasi
+ * Licensed under the Terms of a custom License, see LICENSE file
+ */
+
+using System;
 
 namespace Kopernicus
 {
     namespace UI
     {
-        // Class that renders a CelestialBody-Editor
-        public class CelestialBodyEditor
+        /// <summary>
+        /// This class represents the main Planet Window. Here the main components of a planet are edited
+        /// </summary>
+        public class CelestialBodyEditor : Editor<CelestialBody>
         {
-            // GUI stuff
-            private static Vector2 scrollPosition;
-
-            // Return an OnGUI()-Window.
-            public static void Render()
+            /// <summary>
+            /// Renders the Window
+            /// </summary>
+            protected override void Render(Int32 id)
             {
-                // Render variables
-                int offset = 280;
+                // Call base
+                base.Render(id);
 
-                // If we have no Body selected, abort
-                if (PlanetUI.currentName == "")
-                {
-                    GUI.Label(new Rect(20, 310, 400, 20), "No Planet selected!");
-                    return;
-                }
+                // Scroll
+                BeginScrollView(250, Utils.GetScrollSize<CelestialBody>() + 10, 20);
 
-                // Create the height of the Scroll-List
-                object[] objects = Utils.GetInfos<FieldInfo>(PlanetUI.currentBody);
-                int scrollSize = Utils.GetScrollSize(objects);
+                // Index
+                index = 0;
 
-                // Render the Scrollbar
-                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollSize + 50));
+                // Render the Object
+                RenderObject(Current);
 
-                // Render the Selection
-                object obj = PlanetUI.currentBody as System.Object;
-                Utils.RenderSelection<FieldInfo>(objects, ref obj, ref offset);
-                offset += 20;
-
-                // Update the CelestialBody
-                if (GUI.Button(new Rect(20, offset, 200, 20), "Update"))
-                    PlanetUI.currentBody.CBUpdate();
-
-                // Finish
-                GUI.EndScrollView();
+                // No callback needed, directly end scroll
+                EndScrollView();
             }
         }
     }
