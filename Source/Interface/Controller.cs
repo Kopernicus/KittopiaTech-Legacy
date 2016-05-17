@@ -39,6 +39,7 @@ namespace Kopernicus
                 WindowStates = new Dictionary<T, Boolean>();
                 RectCache = new Dictionary<IWindow, Rect>();
                 Callback = callback;
+                this.singleObject = singleObject;
             }
 
             /// <summary>
@@ -91,7 +92,11 @@ namespace Kopernicus
             public void EnableWindow(T window)
             {
                 if (singleObject)
-                    foreach (T key in WindowStates.Keys) WindowStates[key] = false;
+                {
+                    Dictionary<T, Boolean> states = new Dictionary<T, Boolean>();
+                    foreach (T key in WindowStates.Keys) states[key] = false;
+                    WindowStates = states;
+                }
                 WindowStates[window] = true;
             }
 
@@ -103,6 +108,15 @@ namespace Kopernicus
                 if (singleObject && !WindowStates[window])
                     foreach (T key in WindowStates.Keys) WindowStates[key] = false;
                 WindowStates[window] = !WindowStates[window];
+            }
+
+            /// <summary>
+            /// Sets the edited object for the window
+            /// </summary>
+            public void SetEditedObject<T_>(T window, T_ value)
+            {
+                foreach (IWindow w in Windows[window])
+                    w.SetEditedObject(value, o => {});
             }
 
             /// <summary>

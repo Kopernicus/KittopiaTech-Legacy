@@ -6,6 +6,8 @@
 
 using System;
 using Kopernicus.UI.Enumerations;
+using UnityEngine;
+using Random = System.Random;
 
 namespace Kopernicus
 {
@@ -14,7 +16,7 @@ namespace Kopernicus
         /// <summary>
         /// This class represents the main Planet Window. Here the main components of a planet are edited
         /// </summary>
-        [Position(20, 20, 420, 560)]
+        [Position(20, 20, 420, 590)]
         public class PlanetWindow : Window<CelestialBody>
         {
             /// <summary>
@@ -25,7 +27,11 @@ namespace Kopernicus
             public PlanetWindow()
             {
                 EditorController = new Controller<KittopiaEditors>();
-                EditorController.Create(window => window.Render(0), true); // TODO: Implement
+                EditorController.Create(window => window.Render(index), true); // TODO: Implement
+
+                // Register Editors
+                EditorController.RegisterWindow<CelestialBodyEditor>(KittopiaEditors.CelestialBody);
+                EditorController.RegisterWindow<OrbitEditor>(KittopiaEditors.Orbit);
             }
 
             /// <summary>
@@ -42,7 +48,7 @@ namespace Kopernicus
             protected override void Render(Int32 id)
             {
                 // Scroll
-                BeginScrollView(240, 370);
+                BeginScrollView(240, 345);
 
                 // Current Body
                 DependencyButton("Current body: " + Current?.name, "No body selected!", () => { UIController.Instance.SetEditedObject(KittopiaWindows.Selector, Current ?? new CelestialBody(), b => Current = b); UIController.Instance.EnableWindow(KittopiaWindows.Selector); }, () => Current != null);
@@ -50,9 +56,9 @@ namespace Kopernicus
 
                 // Editors
                 Button("Atmosphere Editor", () => EditorController.EnableWindow(KittopiaEditors.Atmosphere));
-                Button("CelestialBody Editor", () => EditorController.EnableWindow(KittopiaEditors.CelestialBody));
+                Button("CelestialBody Editor", () => { EditorController.SetEditedObject(KittopiaEditors.CelestialBody, Current); EditorController.EnableWindow(KittopiaEditors.CelestialBody); });
                 Button("PQS Editor", () => EditorController.EnableWindow(KittopiaEditors.Terrain)); // TODO: Set PQS editor to mode LIST?
-                Button("Orbit Editor", () => EditorController.EnableWindow(KittopiaEditors.Orbit));
+                Button("Orbit Editor", () => { EditorController.SetEditedObject(KittopiaEditors.Orbit, Current.orbitDriver); EditorController.EnableWindow(KittopiaEditors.Orbit); });
                 Button("ScaledSpace Editor", () => EditorController.EnableWindow(KittopiaEditors.ScaledSpace));
                 Button("Starlight Editor", () => EditorController.EnableWindow(KittopiaEditors.Starlight));
                 Button("Ring Editor", () => EditorController.EnableWindow(KittopiaEditors.Ring));
@@ -68,8 +74,14 @@ namespace Kopernicus
                 // Scroll
                 EndScrollView();
 
+                // Index
+                index = 230 / 25 + 2;
+
                 // Design Hack
-                HorizontalLine(5f);
+                Boolean e = isError;
+                isError = false;
+                HorizontalLine(8f);
+                isError = e;
 
                 // Render the EditorControler
                 EditorController.RenderUI();

@@ -51,7 +51,7 @@ namespace Kopernicus
             /// <summary>
             /// The position of the window
             /// </summary>
-            protected Rect position
+            protected virtual Rect position
             {
                 get { return UIController.Instance.RectCache[this]; }
                 set { UIController.Instance.RectCache[this] = value; }

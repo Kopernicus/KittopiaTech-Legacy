@@ -35,14 +35,14 @@ namespace Kopernicus
                 Texture2D blankTexture = new Texture2D(1, 1) { wrapMode = TextureWrapMode.Repeat };
 
                 // Render Sliders
-                Current.r = GUI.HorizontalSlider(new Rect(10, 30, 190, 20), Current.r, 0, 1);
-                TextField(Current.r, r => Current.r = r, new Rect(200, 30, 100, 20));
-                Current.g = GUI.HorizontalSlider(new Rect(10, 60, 190, 20), Current.g, 0, 1);
-                TextField(Current.g, g => Current.g = g, new Rect(200, 60, 100, 20));
-                Current.b = GUI.HorizontalSlider(new Rect(10, 90, 190, 20), Current.b, 0, 1);
-                TextField(Current.b, b => Current.b = b, new Rect(200, 90, 100, 20));
-                Current.a = GUI.HorizontalSlider(new Rect(10, 120, 190, 20), Current.a, 0, 1);
-                TextField(Current.a, a => Current.a = a, new Rect(200, 120, 100, 20));
+                Single r_ = GUI.HorizontalSlider(new Rect(10, 30, 190, 20), Current.r, 0, 1);
+                TextField(Current.r, r => Current.r = Current.r == r ? r_ : r, new Rect(220, 30, 100, 20), Current.r == r_);
+                Single g_ = GUI.HorizontalSlider(new Rect(10, 60, 190, 20), Current.g, 0, 1);
+                TextField(Current.g, g => Current.g = Current.g == g ? g_ : g, new Rect(220, 60, 100, 20), Current.g == g_);
+                Single b_ = GUI.HorizontalSlider(new Rect(10, 90, 190, 20), Current.b, 0, 1);
+                TextField(Current.b, b => Current.b = Current.b == b ? b_ : b, new Rect(220, 90, 100, 20), Current.b == b_);
+                Single a_ = GUI.HorizontalSlider(new Rect(10, 120, 190, 20), Current.a, 0, 1);
+                TextField(Current.a, a => Current.a = Current.a == a ? a_ : a, new Rect(220, 120, 100, 20), Current.a == a_);
 
                 // Show the color
                 GUI.color = Current;

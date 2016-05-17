@@ -5,6 +5,7 @@
  */
 
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -27,9 +28,9 @@ namespace Kopernicus
             /// <summary>
             /// Starts scrolling
             /// </summary>
-            protected void BeginScrollView(Int32 viewHeight, Int32 maxHeight)
+            protected void BeginScrollView(Int32 viewHeight, Int32 maxHeight, [Optional]Int32? offset)
             {
-                scrollPosition = GUI.BeginScrollView(new Rect(10, 30, position.width - 20, viewHeight), scrollPosition, new Rect(0, 0, position.width - 40, maxHeight));
+                scrollPosition = GUI.BeginScrollView(new Rect(10, index * distance + 30 - (offset ?? 0), position.width - 20, viewHeight), scrollPosition, new Rect(0, 0, position.width - 40, maxHeight));
             }
 
             /// <summary>
@@ -37,7 +38,7 @@ namespace Kopernicus
             /// </summary>
             protected void EndScrollView()
             {
-                GUI.EndScrollView(true);
+                GUI.EndScrollView();
             }
 
             /// <summary>
@@ -53,14 +54,16 @@ namespace Kopernicus
                 GUI.enabled = !isError;
                 if (GUI.Button(rect ?? new Rect(20, index * distance + 10, width ?? 200, 20), label))
                     callback();
-                
+                index++;
+
             }
 
             protected void Label(String label)
             {
                 // Draw the label
                 GUI.enabled = !isError;
-                GUI.Label(new Rect(20, index * distance + 10, 200, 20), label);
+                GUI.Label(new Rect(20, index * distance + 10, 170, 20), label);
+                index++;
             }
 
             /// <summary>
@@ -106,7 +109,8 @@ namespace Kopernicus
                 }
 
                 // Index
-                
+                index++;
+
             }
 
             /// <summary>
@@ -116,67 +120,54 @@ namespace Kopernicus
             {
                 GUI.enabled = !isError;
                 GUI.HorizontalSlider(rect ?? new Rect(10, index * distance + 10, 400, height), 0.5f, 0, 1, GUI.skin.horizontalSlider, new GUIStyle());
+                index++;
             }
 
             /// <summary>
             /// Renders a Textfield and converts it into the given type T
             /// </summary>
-            protected void TextField<T>(T defaultValue, Action<T> callback, [Optional]Rect? rect)
+            protected void TextField<T>(T defaultValue, Action<T> callback, [Optional] Rect? rect, [Optional][DefaultValue("false")]Boolean overrideValue)
             {
                 GUI.enabled = !isError;
                 T result = default(T);
-                try
+                if (typeof (T) == typeof (Double) || typeof (T) == typeof (Single))
                 {
-                    if (typeof (T) == typeof (Double) || typeof (T) == typeof (Single))
-                    {
-                        Double value = 0;
-                        String cache = GUI.TextField(rect ?? new Rect(20, index * distance + 10, 178, 20), parseCache.Count >= index ? parseCache[index] : defaultValue.ToString());
-                        if (Double.TryParse(cache, out value))
-                            result = (T) (Object) value;
-                        else
-                        {
-                            parseCache[index] = cache;
-                            result = defaultValue;
-                        }
-                    }
-                    if (typeof (T) == typeof (Int16) || typeof (T) == typeof (Int32) || typeof (T) == typeof (Int64))
-                    {
-                        Int64 value = 0;
-                        String cache = GUI.TextField(rect ?? new Rect(20, index * distance + 10, 178, 20), parseCache.Count >= index ? parseCache[index] : defaultValue.ToString());
-                        if (Int64.TryParse(cache, out value))
-                            result = (T) (Object) value;
-                        else
-                        {
-                            parseCache[index] = cache;
-                            result = defaultValue;
-                        }
-                    }
-                    if (typeof (T) == typeof (UInt16) || typeof (T) == typeof (UInt32) || typeof (T) == typeof (UInt64))
-                    {
-                        UInt64 value = 0;
-                        String cache = GUI.TextField(rect ?? new Rect(20, index * distance + 10, 178, 20), parseCache.Count >= index ? parseCache[index] : defaultValue.ToString());
-                        if (UInt64.TryParse(cache, out value))
-                            result = (T) (Object) value;
-                        else
-                        {
-                            parseCache[index] = cache;
-                            result = defaultValue;
-                        }
-                    }
-                    if (typeof (T) == typeof (Boolean))
-                        result = (T) (Object) GUI.Toggle(rect ?? new Rect(20, index*distance + 10, 178, 20), (Boolean) (Object) defaultValue, "Bool");
-                    if (typeof (T) == typeof (String))
-                        result = (T)(Object)GUI.TextField(rect ?? new Rect(20, index * distance + 10, 178, 20), defaultValue.ToString());
+                    Double value = 0;
+                    String cache = GUI.TextField(rect ?? new Rect(20, index*distance + 10, 178, 20), parseCache.ContainsKey(index) && !overrideValue ? parseCache[index] : defaultValue.ToString());
+                    if (Double.TryParse(cache, out value))
+                        result = (T) Convert.ChangeType(value, typeof (T));
+                    else
+                        result = defaultValue;
+                    parseCache[index] = cache;
+                }
+                if (typeof (T) == typeof (Int16) || typeof (T) == typeof (Int32) || typeof (T) == typeof (Int64))
+                {
+                    Int64 value = 0;
+                    String cache = GUI.TextField(rect ?? new Rect(20, index*distance + 10, 178, 20), parseCache.ContainsKey(index) && !overrideValue ? parseCache[index] : defaultValue.ToString());
+                    if (Int64.TryParse(cache, out value))
+                        result = (T) Convert.ChangeType(value, typeof (T));
+                    else
+                        result = defaultValue;
+                    parseCache[index] = cache;
+                }
+                if (typeof (T) == typeof (UInt16) || typeof (T) == typeof (UInt32) || typeof (T) == typeof (UInt64))
+                {
+                    UInt64 value = 0;
+                    String cache = GUI.TextField(rect ?? new Rect(20, index*distance + 10, 178, 20), parseCache.ContainsKey(index) && !overrideValue ? parseCache[index] : defaultValue.ToString());
+                    if (UInt64.TryParse(cache, out value))
+                        result = (T) Convert.ChangeType(value, typeof (T));
+                    else
+                        result = defaultValue;
+                    parseCache[index] = cache;
+                }
+                if (typeof (T) == typeof (Boolean))
+                    result = (T) (Object) GUI.Toggle(rect ?? new Rect(20, index*distance + 10, 178, 20), (Boolean) (Object) defaultValue, "Bool");
+                if (typeof (T) == typeof (String))
+                    result = (T) (Object) GUI.TextField(rect ?? new Rect(20, index*distance + 10, 178, 20), defaultValue.ToString());
 
-                    // Return
-                    
-                    callback(result);
-                }
-                catch
-                {
-                    
-                    callback(default(T));
-                }
+                // Return
+                index++;
+                callback(result);
             }
 
             /// <summary>
@@ -184,6 +175,10 @@ namespace Kopernicus
             /// </summary>
             protected void RenderObject(Object @object)
             {
+                // Null check
+                if (@object == null)
+                    return;
+
                 // Get all parseable MemberInfos
                 MemberInfo[] infos = @object.GetType().GetMembers()
                     .Where(m => m.MemberType == MemberTypes.Field || m.MemberType == MemberTypes.Property)
@@ -205,28 +200,28 @@ namespace Kopernicus
                         TextField(value.ToString(), v => info.SetValue(@object, v), new Rect(200, index * distance + 10, 170, 20));
                         
                     }
-                    else if (FieldType == typeof(bool))
+                    else if (FieldType == typeof(Boolean))
                     {
                         Label(info.Name); index--;
-                        TextField(value.ToString(), v => info.SetValue(@object, v), new Rect(200, index * distance + 10, 170, 20));
+                        TextField((Boolean)value, v => info.SetValue(@object, v), new Rect(200, index * distance + 10, 170, 20));
                         
                     }
-                    else if (FieldType == typeof(int))
+                    else if (FieldType == typeof(Int32))
                     {
                         Label(info.Name); index--;
-                        TextField(value.ToString(), v => info.SetValue(@object, v), new Rect(200, index * distance + 10, 170, 20));
+                        TextField((Int32)value, v => info.SetValue(@object, v), new Rect(200, index * distance + 10, 170, 20));
                         
                     }
-                    else if (FieldType == typeof(float))
+                    else if (FieldType == typeof(Single))
                     {
                         Label(info.Name); index--;
-                        TextField(value.ToString(), v => info.SetValue(@object, v), new Rect(200, index * distance + 10, 170, 20));
+                        TextField((Single)value, v => info.SetValue(@object, v), new Rect(200, index * distance + 10, 170, 20));
                         
                     }
-                    else if (FieldType == typeof(double))
+                    else if (FieldType == typeof(Double))
                     {
                         Label(info.Name); index--;
-                        TextField(value.ToString(), v => info.SetValue(@object, v), new Rect(200, index * distance + 10, 170, 20));
+                        TextField((Double)value, v => info.SetValue(@object, v), new Rect(200, index * distance + 10, 170, 20));
                         
                     }
                     else if (FieldType == typeof(Color))
@@ -235,15 +230,15 @@ namespace Kopernicus
                         Button("Edit Color", () => {
                             UIController.Instance.SetEditedObject(KittopiaWindows.Color, (Color) value, c => info.SetValue(@object, c));
                             UIController.Instance.EnableWindow(KittopiaWindows.Color);
-                        }, new Rect(200, index * distance + 10, 50, 20));
+                        }, new Rect(200, index * distance + 10, 170, 20));
                         
                     }
                     else if (FieldType == typeof(Vector3))
                     {
                         Label(info.Name); index--;
                         Vector3 value_ = (Vector3) value;
-                        TextField(value_.x, f => { value_.x = f; info.SetValue(@object, value_); }, new Rect(200, index * distance + 10, 50, 20));
-                        TextField(value_.y, f => { value_.y = f; info.SetValue(@object, value_); }, new Rect(260, index * distance + 10, 50, 20));
+                        TextField(value_.x, f => { value_.x = f; info.SetValue(@object, value_); }, new Rect(200, index * distance + 10, 50, 20)); index--;
+                        TextField(value_.y, f => { value_.y = f; info.SetValue(@object, value_); }, new Rect(260, index * distance + 10, 50, 20)); index--;
                         TextField(value_.z, f => { value_.z = f; info.SetValue(@object, value_); }, new Rect(320, index * distance + 10, 50, 20));
                         
                     }
@@ -251,8 +246,8 @@ namespace Kopernicus
                     {
                         Label(info.Name); index--;
                         Vector3d value_ = (Vector3d)value;
-                        TextField(value_.x, f => { value_.x = f; info.SetValue(@object, value_); }, new Rect(200, index * distance + 10, 50, 20));
-                        TextField(value_.y, f => { value_.y = f; info.SetValue(@object, value_); }, new Rect(260, index * distance + 10, 50, 20));
+                        TextField(value_.x, f => { value_.x = f; info.SetValue(@object, value_); }, new Rect(200, index * distance + 10, 50, 20)); index--;
+                        TextField(value_.y, f => { value_.y = f; info.SetValue(@object, value_); }, new Rect(260, index * distance + 10, 50, 20)); index--;
                         TextField(value_.z, f => { value_.z = f; info.SetValue(@object, value_); }, new Rect(320, index * distance + 10, 50, 20));
                         
                     }
@@ -260,7 +255,7 @@ namespace Kopernicus
                     {
                         Label(info.Name); index--;
                         Vector2 value_ = (Vector2)value;
-                        TextField(value_.x, f => { value_.x = f; info.SetValue(@object, value_); }, new Rect(200, index * distance + 10, 50, 20));
+                        TextField(value_.x, f => { value_.x = f; info.SetValue(@object, value_); }, new Rect(200, index * distance + 10, 50, 20)); index--;
                         TextField(value_.y, f => { value_.y = f; info.SetValue(@object, value_); }, new Rect(285, index * distance + 10, 50, 20));
                         
                     }
@@ -268,7 +263,7 @@ namespace Kopernicus
                     {
                         Label(info.Name); index--;
                         Vector2d value_ = (Vector2d)value;
-                        TextField(value_.x, f => { value_.x = f; info.SetValue(@object, value_); }, new Rect(200, index * distance + 10, 50, 20));
+                        TextField(value_.x, f => { value_.x = f; info.SetValue(@object, value_); }, new Rect(200, index * distance + 10, 50, 20)); index--;
                         TextField(value_.y, f => { value_.y = f; info.SetValue(@object, value_); }, new Rect(285, index * distance + 10, 50, 20));
                         
                     }
@@ -419,7 +414,7 @@ namespace Kopernicus
                         Button("Edit Sphere", () => {
                             UIController.Instance.SetEditedObject(KittopiaWindows.Selector, value as PQS ?? new PQS(), s => info.SetValue(@object, s));
                             UIController.Instance.EnableWindow(KittopiaWindows.Selector);
-                        });
+                        }, new Rect(200, index * distance + 10, 170, 20));
                         
                     }
                     else if (value is Material) // Kopernicus creates Wrappers for the Materials, so key.FieldType == typeof(Material) would return false. :/
@@ -428,7 +423,7 @@ namespace Kopernicus
                         Button("Edit Material", () => {
                             UIController.Instance.SetEditedObject(KittopiaWindows.Material, value as Material, m => info.SetValue(@object, m));
                             UIController.Instance.EnableWindow(KittopiaWindows.Material);
-                        });
+                        }, new Rect(200, index * distance + 10, 170, 20));
                         
                     }
                     else if (FieldType == typeof(FloatCurve))
