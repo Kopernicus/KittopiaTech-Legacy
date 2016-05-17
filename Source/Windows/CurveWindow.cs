@@ -54,7 +54,7 @@ namespace Kopernicus
                     }, new Rect(300, index*distance + 10, 30, 20)); index--;
 
                     // Remove
-                    Button("+", () => {
+                    Button("-", () => {
                         List<Keyframe> frames = Current.Curve.keys.ToList(); frames.RemoveAt(i);
                         Current.Curve.keys = frames.ToArray();
                     }, new Rect(340, index * distance + 10, 30, 20));
@@ -63,6 +63,9 @@ namespace Kopernicus
                 // Exit
                 Callback?.Invoke(Current);
                 Button("Exit", () => UIController.Instance.DisableWindow(KittopiaWindows.Curve));
+
+                // End Scroll
+                EndScrollView();
             }
         }
     }
