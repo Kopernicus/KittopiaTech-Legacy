@@ -265,6 +265,10 @@ namespace Kopernicus
 
                         // Load
                         ConfigNode modNode = WriteObjectToConfigNode(loaderType.Name, ref modsNode, loader);
+                        modNode.AddValue("name", mod.name);
+                        IEnumerable<PQSMod> existingMods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType() == mod.GetType() && m.transform.parent == pqsVersion.transform);
+                        modNode.AddValue("index", existingMods.ToList().IndexOf(mod));
+
                         // Submods
                         if (mod is PQSMod_HeightColorMap)
                         {
