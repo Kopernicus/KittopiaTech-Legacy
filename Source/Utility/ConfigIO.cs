@@ -372,8 +372,6 @@ namespace Kopernicus
                             ConfigNode watermain = modNode.AddNode((loader as OceanFX).watermain);
                             foreach (ConfigNode.Value value in watermain.values)
                                 value.value = Format(Resources.FindObjectsOfTypeAll<Texture2D>().First(o => o.name == value.value));
-                            watermain.comment = "moo";
-                            watermain.values[0].comment = "aa";
                         }
                     }
                 }
