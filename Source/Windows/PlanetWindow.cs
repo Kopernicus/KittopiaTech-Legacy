@@ -33,6 +33,7 @@ namespace Kopernicus
                 EditorController.RegisterWindow<AtmosphereEditor>(KittopiaEditors.Atmosphere);
                 EditorController.RegisterWindow<CelestialBodyEditor>(KittopiaEditors.CelestialBody);
                 EditorController.RegisterWindow<OrbitEditor>(KittopiaEditors.Orbit);
+                EditorController.RegisterWindow<ParticleEditor>(KittopiaEditors.Particles);
                 EditorController.RegisterWindow<RingEditor>(KittopiaEditors.Ring);
                 EditorController.RegisterWindow<ScaledSpaceEditor>(KittopiaEditors.ScaledSpace);
             }
@@ -65,7 +66,7 @@ namespace Kopernicus
                 Button("ScaledSpace Editor", () => { EditorController.SetEditedObject(KittopiaEditors.ScaledSpace, Current.scaledBody); EditorController.EnableWindow(KittopiaEditors.ScaledSpace); });
                 Button("Starlight Editor", () => EditorController.EnableWindow(KittopiaEditors.Starlight));
                 Button("Ring Editor", () => { EditorController.SetEditedObject(KittopiaEditors.Ring, Current); EditorController.EnableWindow(KittopiaEditors.Ring); });
-                Button("Particles Editor", () => EditorController.EnableWindow(KittopiaEditors.Particles));
+                Button("Particles Editor", () => { EditorController.SetEditedObject(KittopiaEditors.Particles, Current); EditorController.EnableWindow(KittopiaEditors.Particles); });
 
                 // Space
                 index++;

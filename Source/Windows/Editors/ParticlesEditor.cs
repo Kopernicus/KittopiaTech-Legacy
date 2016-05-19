@@ -1,101 +1,118 @@
-﻿using Kopernicus.Configuration;
+﻿/** 
+ * KittopiaTech - A Kopernicus Visual Editor
+ * Copyright (c) Thomas P., BorisBee, KCreator, Gravitasi
+ * Licensed under the Terms of a custom License, see LICENSE file
+ */
+
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using UnityEngine;
 using Kopernicus.Components;
+using Kopernicus.UI.Enumerations;
+using UnityEngine;
 
 namespace Kopernicus
 {
     namespace UI
     {
-        // Class that renders a Particle-Editor
-        public class ParticlesEditor
+        /// <summary>
+        /// This class represents the editor for the particles.
+        /// </summary>
+        public class ParticleEditor : Editor<CelestialBody>
         {
-            // GUI stuff
-            private static Vector2 scrollPosition;
+            /// <summary>
+            /// The currently edited particle system
+            /// </summary>
+            private PlanetParticleEmitter particle { get; set; }
 
-            // Particle
-            public static PlanetParticleEmitter particle;
+            /// <summary>
+            /// The index of the current system in all particles
+            /// </summary>
+            private Int32 position { get; set; }
 
-            private static List<GameObject> particles = null;
-            private static int index = 0;
+            /// <summary>
+            /// All particles attached to the planet
+            /// </summary>
+            private List<GameObject> particles = null;
 
-            // Return an OnGUI()-Window.
-            public static void Render()
+            /// <summary>
+            /// Renders the Window
+            /// </summary>
+            protected override void Render(Int32 id)
             {
-                // Render variables
-                int offset = 280;
+                // Call base
+                base.Render(id);
 
-                // If we have no Body selected, abort
-                if (PlanetUI.currentName == "")
-                {
-                    GUI.Label(new Rect(20, 310, 400, 20), "No Planet selected!");
-                    return;
-                }
+                // Scroll
+                BeginScrollView(250, Utils.GetScrollSize<PlanetParticleEmitter>() + 150, 20);
 
                 // Get the list
                 if (particles == null)
                 {
                     particles = new List<GameObject>();
-                    foreach (Transform t in PlanetUI.currentBody.scaledBody.transform)
-                        if (t.name.Contains("Particles")) particles.Add(t.gameObject);
+                    foreach (Transform t in from Transform t in Current.scaledBody.transform where t.name.EndsWith("Particles") select t)
+                        particles.Add(t.gameObject);
                 }
 
-                // Render the Window
-                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, 480));
+                // Index
+                index = 0;
 
-                // Particle-Selector
-                if (index > 0)
+                // Menu
+                Enabled(() => position > 0, () => Button("<<", () => position--, new Rect(20, index * distance + 10, 30, 20))); index--;
+                Button("Add new Particles", () =>
                 {
-                    if (GUI.Button(new Rect(20, offset, 30, 20), "<<"))
-                        index--;
-                }
-                if (GUI.Button(new Rect(60, offset, 250, 20), "Add new Particles"))
-                {
-                    // Add a new Particle
-                    particle = PlanetParticleEmitter.Create(PlanetUI.currentBody.scaledBody);
+                    // Add a new Particle System
+                    PlanetParticleEmitter.Create(Current.scaledBody).colorAnimation = new [] { Color.white, Color.white, Color.white, Color.white, Color.white };
 
                     // Get all particles
                     particles = new List<GameObject>();
-                    foreach (Transform t in PlanetUI.currentBody.scaledBody.transform)
-                        if (t.name.Contains("Particles")) particles.Add(t.gameObject);
-                    index = particles.Count - 1;
-                }
-                if (index < particles.Count - 1)
+                    foreach (Transform t in from Transform t in Current.scaledBody.transform where t.name.EndsWith("Particles") select t)
+                        particles.Add(t.gameObject);
+                    position = particles.Count - 1;
+                }, new Rect(60, index * distance + 10, 250, 20)); index--;
+                Enabled(() => position < particles.Count - 1, () => Button(">>", () => position++, new Rect(320, index * distance + 10, 30, 20))); index++;
+
+                // Render the Particle Editor
+                if (particles.Count <= 0) return;
+
+                // Assign
+                particle = particles[position].GetComponent<PlanetParticleEmitter>();
+
+                // Loop through all the Fields
+                RenderObject(particle);
+
+                // Color Array
+                Int32 buttonOffset = 20;
+                Debug.Log(particle.colorAnimation.Length);
+                for (Int32 i = 0; i < 5; i++)
                 {
-                    if (GUI.Button(new Rect(320, offset, 30, 20), ">>"))
-                        index++;
+                    Int32 i1 = i;
+                    Button("Color " + (i + 1), () => {
+                        UIController.Instance.SetEditedObject(KittopiaWindows.Color, particle.colorAnimation[i1], c => particle.colorAnimation[i1] = c);
+                        UIController.Instance.EnableWindow(KittopiaWindows.Color);
+                    }, new Rect(buttonOffset, index*distance + 10, 60, 20));
+                    buttonOffset += 65; index--;
                 }
-                offset += 35;
-                if (particles.Count > 0)
+                index += 2;
+
+                // Rebuild the Ring
+                Button("Rebuild Particles", () =>
                 {
-                    // Assign
-                    particle = particles[index].GetComponent<PlanetParticleEmitter>();
+                    typeof(PlanetParticleEmitter).GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(particle, null);
+                    particle.targetTransform = null;
+                });
 
-                    // Loop through all the Fields
-                    object[] objects = Utils.GetInfos<FieldInfo>(particle);
-                    object obj = particle as System.Object;
-                    Utils.RenderSelection<FieldInfo>(objects, ref obj, ref offset);
-                    offset += 20;
+                // Delete Ring
+                Button("Delete Particles", () =>
+                {
+                    UnityEngine.Object.Destroy(particles[index]);
+                    particles = null;
+                    position = 0;
+                });
 
-                    if (GUI.Button(new Rect(20, offset, 200, 20), "Rebuild Particles"))
-                    {
-                        typeof(PlanetParticleEmitter).GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(particle, null);
-                        particle.targetTransform = null;
-                    }
-                    offset += 25;
-                    if (GUI.Button(new Rect(20, offset, 200, 20), "Delete particles on: " + PlanetUI.currentName))
-                    {
-                        UnityEngine.Object.Destroy(particles[index]);
-
-                        // Refresh the Ring-List
-                        particles = null;
-                        index = 0;
-                    }
-                }
-                GUI.EndScrollView();
+                // End Scroll
+                EndScrollView();
             }
         }
     }

@@ -234,31 +234,26 @@ namespace Kopernicus
                     {
                         Label(info.Name); index--;
                         TextField(value.ToString(), v => info.SetValue(@object, v), new Rect(200, index * distance + 10, 170, 20));
-                        
                     }
                     else if (FieldType == typeof(Boolean))
                     {
                         Label(info.Name); index--;
                         TextField((Boolean)value, v => info.SetValue(@object, v), new Rect(200, index * distance + 10, 170, 20));
-                        
                     }
                     else if (FieldType == typeof(Int32))
                     {
                         Label(info.Name); index--;
                         TextField((Int32)value, v => info.SetValue(@object, v), new Rect(200, index * distance + 10, 170, 20));
-                        
                     }
                     else if (FieldType == typeof(Single))
                     {
                         Label(info.Name); index--;
                         TextField((Single)value, v => info.SetValue(@object, v), new Rect(200, index * distance + 10, 170, 20));
-                        
                     }
                     else if (FieldType == typeof(Double))
                     {
                         Label(info.Name); index--;
                         TextField((Double)value, v => info.SetValue(@object, v), new Rect(200, index * distance + 10, 170, 20));
-                        
                     }
                     else if (FieldType == typeof(Color))
                     {
@@ -267,7 +262,6 @@ namespace Kopernicus
                             UIController.Instance.SetEditedObject(KittopiaWindows.Color, (Color) value, c => info.SetValue(@object, c));
                             UIController.Instance.EnableWindow(KittopiaWindows.Color);
                         }, new Rect(200, index * distance + 10, 170, 20));
-                        
                     }
                     else if (FieldType == typeof(Vector3))
                     {
@@ -303,11 +297,11 @@ namespace Kopernicus
                         TextField(value_.y, f => { value_.y = f; info.SetValue(@object, value_); }, new Rect(285, index * distance + 10, 50, 20));
                         
                     }
-                    /*else if (FieldType == typeof(CBAttributeMapSO))
+                    else if (FieldType == typeof(CBAttributeMapSO))
                     {
                         // Load the MapSO
-                        Label(info.Name);
-                        Button("Load", () =>
+                        Label(info.Name); index--;
+                        Button("Load CBMap", () =>
                         {
                             FileWindow.type = FieldType;
                             UIController.Instance.SetEditedObject(KittopiaWindows.Files, value == null ? "" : ConfigIO.Format(value as UnityEngine.Object), location =>
@@ -331,7 +325,7 @@ namespace Kopernicus
                                 }
                             });
                             UIController.Instance.EnableWindow(KittopiaWindows.Files);
-                        }, new Rect(200, index * distance + 10, 80, 20));
+                        });
                         
 
                         // Edit the Biome-Definitions
@@ -340,8 +334,8 @@ namespace Kopernicus
                     }
                     else if (FieldType == typeof(Texture2D) || FieldType == typeof(Texture))
                     {
-                        Label(info.Name);
-                        Button("Load", () =>
+                        Label(info.Name); index--;
+                        Button("Load Texture", () =>
                         {
                             FileWindow.type = FieldType;
                             UIController.Instance.SetEditedObject(KittopiaWindows.Files, value == null ? "" : ConfigIO.Format(value as UnityEngine.Object), location =>
@@ -359,9 +353,9 @@ namespace Kopernicus
                                 }
                             });
                             UIController.Instance.EnableWindow(KittopiaWindows.Files);
-                        }, new Rect(200, index * distance + 10, 80, 20));
+                        });
                         
-                    }*/
+                    }
                     else if (FieldType == typeof(PQSLandControl.LandClass[]))
                     {
                         Button("Edit LandClasses", () => {
@@ -375,7 +369,6 @@ namespace Kopernicus
                             UIController.Instance.SetEditedObject(KittopiaWindows.LandClass, (PQSMod_VertexPlanet.LandClass[])value, lc => info.SetValue(@object, lc));
                             UIController.Instance.EnableWindow(KittopiaWindows.LandClass);
                         });
-
                     }
                     else if (FieldType == typeof(PQSMod_HeightColorMap.LandClass[]))
                     {
