@@ -1,108 +1,107 @@
-﻿using Kopernicus.Configuration;
+﻿/** 
+ * KittopiaTech - A Kopernicus Visual Editor
+ * Copyright (c) Thomas P., BorisBee, KCreator, Gravitasi
+ * Licensed under the Terms of a custom License, see LICENSE file
+ */
+
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using UnityEngine;
+using System.Linq;
 using Kopernicus.Components;
+using UnityEngine;
 
 namespace Kopernicus
 {
     namespace UI
     {
-        // Class that renders a Ring-Editor
-        public class RingEditor
+        /// <summary>
+        /// This class represents the editor for the rings.
+        /// </summary>
+        public class RingEditor : Editor<CelestialBody>
         {
-            // GUI stuff
-            private static Vector2 scrollPosition;
+            /// <summary>
+            /// The currently edited Ring
+            /// </summary>
+            private Ring ring { get; set; }
 
-            // Ring
-            public static Ring ring = new Ring();
+            /// <summary>
+            /// The index of the current Ring in all rings
+            /// </summary>
+            private Int32 position { get; set; }
 
-            private static List<GameObject> rings = null;
-            private static int index = 0;
+            /// <summary>
+            /// All rings attached to the planet
+            /// </summary>
+            private List<GameObject> rings = null;
 
-            // Return an OnGUI()-Window.
-            public static void Render()
+            /// <summary>
+            /// Renders the Window
+            /// </summary>
+            protected override void Render(Int32 id)
             {
-                // Render variables
-                int offset = 280;
+                // Call base
+                base.Render(id);
 
-                // If we have no Body selected, abort
-                if (PlanetUI.currentName == "")
-                {
-                    GUI.Label(new Rect(20, 310, 400, 20), "No Planet selected!");
-                    return;
-                }
+                // Scroll
+                BeginScrollView(250, Utils.GetScrollSize<Ring>() + 125, 20);
 
                 // Get the list
                 if (rings == null)
                 {
                     rings = new List<GameObject>();
-                    foreach (Transform t in PlanetUI.currentBody.scaledBody.transform)
-                        if (t.name.EndsWith("Ring")) rings.Add(t.gameObject);
+                    foreach (Transform t in from Transform t in Current.scaledBody.transform where t.name.EndsWith("Ring") select t)
+                        rings.Add(t.gameObject);
                 }
 
-                // Render the Window
-                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, 300));
+                // Index
+                index = 0;
 
-                // Ring-Selector
-                if (index > 0)
-                {
-                    if (GUI.Button(new Rect(20, offset, 30, 20), "<<"))
-                        index--;
-                }
-                if (GUI.Button(new Rect(60, offset, 250, 20), "Add new Ring"))
+                // Menu
+                Enabled(() => position > 0, () => Button("<<", () => position--, new Rect(20, index * distance + 10, 30, 20))); index--;
+                Button("Add new Ring", () =>
                 {
                     // Add a new Ring
-                    GameObject @object = new GameObject(PlanetUI.currentName + "Ring");
-                    @object.transform.parent = PlanetUI.currentBody.scaledBody.transform;
-                    @object.transform.position = PlanetUI.currentBody.scaledBody.transform.position;
-                    ring = @object.AddComponent<Ring>();
+                    GameObject gameObject = new GameObject(Current.name + "Ring");
+                    gameObject.transform.parent = Current.scaledBody.transform;
+                    gameObject.transform.position = Current.scaledBody.transform.position;
+                    ring = gameObject.AddComponent<Ring>();
 
                     // Get all rings
                     rings = new List<GameObject>();
-                    foreach (Transform t in PlanetUI.currentBody.scaledBody.transform)
-                        if (t.name.EndsWith("Ring")) rings.Add(t.gameObject);
-                    index = rings.Count - 1;
-                }
-                if (index < rings.Count - 1)
+                    foreach (Transform t in from Transform t in Current.scaledBody.transform where t.name.EndsWith("Ring") select t)
+                        rings.Add(t.gameObject);
+                    position = rings.Count - 1;
+                }, new Rect(60, index * distance + 10, 250, 20)); index--;
+                Enabled(() => position < rings.Count - 1, () => Button(">>", () => position++, new Rect(320, index * distance + 10, 30, 20))); index++;
+
+                // Render the Ring Editor
+                if (rings.Count <= 0) return;
+
+                // Assign
+                ring = rings[position].GetComponent<Ring>();
+
+                // Loop through all the Fields
+                RenderObject(ring);
+                index++;
+
+                // Rebuild the Ring
+                Button("Rebuild Ring", () =>
                 {
-                    if (GUI.Button(new Rect(320, offset, 30, 20), ">>"))
-                        index++;
-                }
-                offset += 35;
+                    UnityEngine.Object.DestroyImmediate(ring.GetComponent<MeshFilter>());
+                    UnityEngine.Object.DestroyImmediate(ring.GetComponent<MeshRenderer>());
+                    ring.BuildRing();
+                });
 
-                if (rings.Count > 0)
+                // Delete Ring
+                Button("Delete Ring", () =>
                 {
-                    // Assign
-                    ring = rings[index].GetComponent<Ring>();
+                    UnityEngine.Object.Destroy(rings[index]);
+                    rings = null;
+                    position = 0;
+                });
 
-                    // Loop through all the Fields
-                    object[] objects = Utils.GetInfos<FieldInfo>(ring);
-                    object obj = ring as System.Object;
-                    Utils.RenderSelection<FieldInfo>(objects, ref obj, ref offset);
-                    offset += 20;
-
-                    if (GUI.Button(new Rect(20, offset, 200, 20), "Rebuild Rings"))
-                    {
-                        UnityEngine.Object.DestroyImmediate(ring.GetComponent<MeshFilter>());
-                        UnityEngine.Object.DestroyImmediate(ring.GetComponent<MeshRenderer>());
-                        ring.BuildRing();
-                    }
-                    offset += 25;
-
-                    if (GUI.Button(new Rect(20, offset, 200, 20), "Delete rings on: " + PlanetUI.currentName))
-                    {
-                        UnityEngine.Object.Destroy(rings[index]);
-
-                        // Refresh the Ring-List
-                        rings = null;
-                        index = 0;
-                    }
-                }
-
-                GUI.EndScrollView();
+                // End Scroll
+                EndScrollView();
             }
         }
     }

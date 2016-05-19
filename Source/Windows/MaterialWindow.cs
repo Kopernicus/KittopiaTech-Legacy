@@ -53,11 +53,16 @@ namespace Kopernicus
 
                         // Compare things and break
                         if (shaderName != Current.shader.name) continue;
-                        type = t;
                         kopernicusMaterial = Activator.CreateInstance(t, Current);
                         break;
                     }
                 }
+                if (kopernicusMaterial == null)
+                {
+                    type = Current.GetType();
+                    kopernicusMaterial = Current;
+                }
+                type = kopernicusMaterial.GetType();
 
                 // Scroll
                 BeginScrollView(400, Utils.GetScrollSize(type) + 75);

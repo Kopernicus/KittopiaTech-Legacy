@@ -25,7 +25,7 @@ namespace Kopernicus
                 {
                     if (member.MemberType == MemberTypes.Field)
                         return (member as FieldInfo)?.GetValue(reference);
-                    else if (member.MemberType == MemberTypes.Property)
+                    else if (member.MemberType == MemberTypes.Property && (member as PropertyInfo).CanRead)
                         return (member as PropertyInfo)?.GetValue(reference, null);
                     else
                         return null;
@@ -38,7 +38,7 @@ namespace Kopernicus
                 {
                     if (member.MemberType == MemberTypes.Field)
                         (member as FieldInfo)?.SetValue(reference, value);
-                    else if (member.MemberType == MemberTypes.Property)
+                    else if (member.MemberType == MemberTypes.Property && (member as PropertyInfo).CanWrite)
                         (member as PropertyInfo)?.SetValue(reference, value, null);
                 }
 
@@ -49,7 +49,7 @@ namespace Kopernicus
                 {
                     if (member.MemberType == MemberTypes.Field)
                         (member as FieldInfo)?.SetValue(reference, value);
-                    else if (member.MemberType == MemberTypes.Property)
+                    else if (member.MemberType == MemberTypes.Property && (member as PropertyInfo).CanWrite)
                         (member as PropertyInfo)?.SetValue(reference, value, null);
                 }
 
@@ -60,7 +60,7 @@ namespace Kopernicus
                 {
                     if (member.MemberType == MemberTypes.Field)
                         return (T)(member as FieldInfo)?.GetValue(reference);
-                    else if (member.MemberType == MemberTypes.Property)
+                    else if (member.MemberType == MemberTypes.Property && (member as PropertyInfo).CanRead)
                         return (T)(member as PropertyInfo)?.GetValue(reference, null);
                     else
                         return default(T);

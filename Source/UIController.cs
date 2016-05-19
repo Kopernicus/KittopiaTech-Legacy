@@ -5,6 +5,7 @@
  */
 
 using System;
+using System.Linq;
 using Kopernicus.UI.Enumerations;
 using UnityEngine;
 
@@ -36,7 +37,7 @@ namespace Kopernicus
                 DontDestroyOnLoad(this);
 
                 // Invoke Create
-                Create(w => RectCache[w] = GUI.Window(w.GetHashCode(), GetRect(w), w.Render, w.Title()), false);
+                Create(w => RectCache[w] = GUI.Window(w.Title().GetHashCode(), GetRect(w), w.Render, w.Title()), false);
 
                 // Load the settings
                 ConfigNode settings = GameDatabase.Instance.GetConfigs("KittopiaTech")[0].config;

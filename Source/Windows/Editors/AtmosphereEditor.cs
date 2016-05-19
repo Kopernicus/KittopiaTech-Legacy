@@ -1,74 +1,66 @@
-﻿using Kopernicus.Configuration;
-using System.Reflection;
+﻿/** 
+ * KittopiaTech - A Kopernicus Visual Editor
+ * Copyright (c) Thomas P., BorisBee, KCreator, Gravitasi
+ * Licensed under the Terms of a custom License, see LICENSE file
+ */
+
+using System;
+using Kopernicus.Configuration;
 using UnityEngine;
 
 namespace Kopernicus
 {
     namespace UI
     {
-        // Class that renders a AFG-Editor
-        public class AtmosphereEditor
+        /// <summary>
+        /// This class represents the orbital editor.
+        /// </summary>
+        public class AtmosphereEditor : Editor<CelestialBody>
         {
-            // GUI stuff
-            private static Vector2 scrollPosition;
-
-            // Return an OnGUI()-Window.
-            public static void Render()
+            /// <summary>
+            /// Renders the Window
+            /// </summary>
+            protected override void Render(Int32 id)
             {
-                // Render variables
-                int offset = 280;
+                // Call base
+                base.Render(id);
 
-                // If we have no Body selected, abort
-                if (PlanetUI.currentName == "")
+                // Scroll
+                BeginScrollView(250, Utils.GetScrollSize<AtmosphereFromGround>() + 50, 20);
+
+                // Index
+                index = 0;
+
+                // Check for existing AFG
+                if (Current.afg == null)
                 {
-                    GUI.Label(new Rect(20, 310, 400, 20), "No Planet selected!");
-                    return;
-                }
-
-                // Get the AtmosphereFromGround
-                AtmosphereFromGround[] afgs = PlanetUI.currentBody.scaledBody.GetComponentsInChildren<AtmosphereFromGround>(true);
-
-                // If afg == null
-                if (afgs.Length == 0)
-                {
-                    // Render a button to add one
-                    if (GUI.Button(new Rect(20, 300, 350, 20), "Add AtmosphereFromGround to " + PlanetUI.currentName))
+                    Button("Add Atmosphere to " + Current.name, () =>
                     {
                         // Create the atmosphere shell game object
-                        GameObject scaledAtmosphere = new GameObject("atmosphere");
-                        scaledAtmosphere.transform.parent = PlanetUI.currentBody.scaledBody.transform;
+                        GameObject scaledAtmosphere = new GameObject("Atmosphere");
+                        scaledAtmosphere.transform.parent = Current.scaledBody.transform;
                         scaledAtmosphere.layer = Constants.GameLayers.ScaledSpaceAtmosphere;
                         MeshRenderer renderer = scaledAtmosphere.AddComponent<MeshRenderer>();
-                        renderer.material = new Kopernicus.MaterialWrapper.AtmosphereFromGround();
+                        renderer.sharedMaterial = new MaterialWrapper.AtmosphereFromGround();
                         MeshFilter meshFilter = scaledAtmosphere.AddComponent<MeshFilter>();
                         meshFilter.sharedMesh = Templates.ReferenceGeosphere;
+                        Current.afg = scaledAtmosphere.AddComponent<AtmosphereFromGround>();
 
-                        // Create the AFGParser, because I'm lazy
-                        AtmosphereFromGroundLoader parser = new AtmosphereFromGroundLoader(PlanetUI.currentBody);
-                        (parser as IParserEventSubscriber).Apply(new ConfigNode());
-                    }
+                        // Register the AFG for updates
+                        AFGInfo.StoreAFG(Current.afg);
+                    });
                     return;
                 }
 
-                // Create the height of the Scroll-List
-                object[] objects = Utils.GetInfos<FieldInfo>(afgs[0]);
-                int scrollSize = Utils.GetScrollSize(objects);
+                // Render AFG
+                RenderObject(Current.afg);
+                index++;
 
-                // Render the Scrollbar
-                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollSize + 50));
+                // Updates
+                Button("Update Atmosphere", () => { AtmosphereFromGroundLoader.CalculatedMembers(Current.afg); AFGInfo.PatchAFG(Current.afg); });
 
-                // Render the Selection
-                object obj = afgs[0] as System.Object;
-                Utils.RenderSelection<FieldInfo>(objects, ref obj, ref offset);
-                offset += 20;
-
-                if (GUI.Button(new Rect(20, offset, 200, 20), "Update"))
-                {
-                    AtmosphereFromGroundLoader parser = new AtmosphereFromGroundLoader(PlanetUI.currentBody);
-                    (parser as IParserEventSubscriber).PostApply(new ConfigNode());
-                }
-
-                GUI.EndScrollView();
+                // End Scroll
+                EndScrollView();
             }
         }
     }

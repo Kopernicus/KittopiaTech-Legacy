@@ -11,6 +11,8 @@
     <AssemblyName>KittopiaTech</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -91,7 +93,9 @@
     <Compile Include="Interface\Window.cs" />
     <Compile Include="Windows\ColorWindow.cs" />
     <Compile Include="Windows\CurveWindow.cs" />
+    <Compile Include="Windows\Editors\AtmosphereEditor.cs" />
     <Compile Include="Windows\Editors\CelestialBodyEditor.cs" />
+    <Compile Include="Windows\Editors\RingEditor.cs" />
     <Compile Include="Windows\Editors\ScaledSpaceEditor.cs" />
     <Compile Include="Windows\Editors\OrbitEditor.cs" />
     <Compile Include="Windows\FileWindow.cs" />

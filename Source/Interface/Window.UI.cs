@@ -27,6 +27,17 @@ namespace Kopernicus
         public abstract partial class Window<T>
         {
             /// <summary>
+            /// Enables the UI element drawn in callback only if check passes
+            /// </summary>
+            protected void Enabled(Func<Boolean> check, Action callback)
+            {
+                Boolean e = isError;
+                isError = !check();
+                callback();
+                isError = e;
+            }
+
+            /// <summary>
             /// Starts scrolling
             /// </summary>
             protected void BeginScrollView(Int32 viewHeight, Int32 maxHeight, [Optional]Int32? offset)

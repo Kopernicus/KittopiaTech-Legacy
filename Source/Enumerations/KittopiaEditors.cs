@@ -21,7 +21,6 @@ namespace Kopernicus
                 CelestialBody,
                 Orbit,
                 Particles,
-                Selection,
                 Terrain,
                 Ring,
                 Starlight,

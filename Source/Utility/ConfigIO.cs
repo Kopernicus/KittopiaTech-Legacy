@@ -7,6 +7,7 @@
 using Kopernicus.Configuration;
 using Kopernicus.Components;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -141,7 +142,7 @@ namespace Kopernicus
                 ConfigNode config = node.AddNode(name);
 
                 // Crawl it's member infos
-                foreach (MemberInfo member in typeof(T).GetMembers(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
+                foreach (MemberInfo member in target.GetType().GetMembers(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
                 {
                     // Get the parser target
                     ParserTarget[] targets = member.GetCustomAttributes(typeof(ParserTarget), false) as ParserTarget[];
@@ -168,11 +169,11 @@ namespace Kopernicus
                             targetType.GetProperty("material").GetValue(value, null) :
                             targetType == typeof(FloatCurveParser) ?
                                 targetType.GetProperty("curve").GetValue(value, null) :
-                                targetType.GetField("target").GetValue(value);
+                                targetType.GetField("value").GetValue(value);
                         if (value == null || targetType == typeof(LandControl.LandClassScatterLoader.StockMaterialParser))
                             continue;
                         if (value.GetType().GetInterface("IEnumerable") != null && targetType != typeof(string))
-                            value = String.Join(targetType == typeof (StringCollectionParser) ? "," : " ", (value as IEnumerable<object>).Select(o => o.ToString()).ToArray());
+                            value = String.Join(targetType == typeof (StringCollectionParser) ? "," : " ", (value as IEnumerable).Cast<System.Object>().Select(o => o.ToString()).ToArray());
                     }
 
                     // Do ConfigNode stuff
@@ -230,13 +231,13 @@ namespace Kopernicus
                     pqs = WriteObjectToConfigNode("Ocean", ref body, oceanLoader);
                     WriteObjectToConfigNode("Material", ref pqs, oceanLoader.surfaceMaterial);
                     WriteObjectToConfigNode("FallbackMaterial", ref pqs, oceanLoader.fallbackMaterial);
-                    WriteObjectToConfigNode("Fog", ref pqs, oceanLoader.fog);
+                    WriteObjectToConfigNode("Fog", ref pqs, new FogLoader(Part.GetComponentUpwards<CelestialBody>(pqsVersion.gameObject)));
                     if (pqsVersion.gameObject.GetComponent<HazardousOcean>() != null)
                         pqsVersion.gameObject.GetComponent<HazardousOcean>().heatCurve.Save(pqs.AddNode("HazardousOcean"));
                 }
 
                 // Mods
-                IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.sphere == pqsVersion);
+                IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => ocean ? true : m.sphere == pqsVersion);
 
                 // Get all loaded types
                 IEnumerable<Type> types = AssemblyLoader.loadedAssemblies.SelectMany(a => a.assembly.GetTypes());
@@ -365,6 +366,14 @@ namespace Kopernicus
                                     WriteObjectToConfigNode("SimplexNoiseMap", ref classNode, new VertexPlanet.SimplexWrapper(landClass.colorNoiseMap));
                                 }
                             }
+                        }
+                        if (mod is PQSMod_OceanFX)
+                        {
+                            ConfigNode watermain = modNode.AddNode((loader as OceanFX).watermain);
+                            foreach (ConfigNode.Value value in watermain.values)
+                                value.value = Format(Resources.FindObjectsOfTypeAll<Texture2D>().First(o => o.name == value.value));
+                            watermain.comment = "moo";
+                            watermain.values[0].comment = "aa";
                         }
                     }
                 }
