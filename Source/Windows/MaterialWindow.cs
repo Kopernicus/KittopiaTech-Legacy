@@ -26,7 +26,7 @@ namespace Kopernicus
             /// </summary>
             protected override String Title()
             {
-                return "KittopiaTech - Curve Editor";
+                return "KittopiaTech - Material Editor";
             }
 
             /// <summary>

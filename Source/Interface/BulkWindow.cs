@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Kopernicus
 {
@@ -59,15 +60,19 @@ namespace Kopernicus
             {
                 if (mode == Mode.Selection)
                 {
+                    BeginScrollView((Int32)position.height - 30, Collection.Count() * 25 + 100, 10);
                     foreach (T obj in base.Current)
-                        Button(obj.ToString(), () => { Current = obj; mode = Mode.Editor; }, width: position.width - 40);
+                        Button(obj.ToString(), () => { Current = obj; mode = Mode.Editor; }, width: position.width - 80);
                     RenderModifiers(id);
-                    Button("Exit", Exit, width: position.width - 40);
+                    Button("Exit", Exit);
+                    EndScrollView();
                 }
                 else
                 {
+                    BeginScrollView(200, Utils.GetScrollSize(Current.GetType()) + 100);
                     RenderEditor(id);
-                    Button("Exit", () => { Current = default(T); mode = Mode.Selection; }, width: position.width - 40);
+                    Button("Exit", () => { Current = default(T); mode = Mode.Selection; });
+                    EndScrollView();
                 }
             }
 

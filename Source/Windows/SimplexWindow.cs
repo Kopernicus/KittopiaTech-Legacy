@@ -15,7 +15,7 @@ namespace Kopernicus
         /// This class renders a window to edit a simplex
         /// </summary>
         [Position(420, 20, 420, 190)]
-        public class SimplexWindow : Window<Simplex>
+        public class SimplexWindow : Window<PQSMod_VertexPlanet.SimplexWrapper>
         {
             /// <summary>
             /// Returns the Title of the window
@@ -31,7 +31,7 @@ namespace Kopernicus
             protected override void Render(Int32 id)
             {
                 // Scroll
-                BeginScrollView(200, Utils.GetScrollSize<Simplex>() + 50);
+                BeginScrollView(200, Utils.GetScrollSize<Simplex>() + 50, 10);
 
                 // Render the editor
                 RenderObject(Current);

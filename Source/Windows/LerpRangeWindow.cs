@@ -30,6 +30,7 @@ namespace Kopernicus
             /// </summary>
             protected override void Render(Int32 id)
             {
+                index++;
                 RenderObject(Current);
 
                 // Exit

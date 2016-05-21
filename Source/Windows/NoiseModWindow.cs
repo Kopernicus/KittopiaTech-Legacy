@@ -14,7 +14,7 @@ namespace Kopernicus
         /// <summary>
         /// This class renders a window to edit pqs lerp ranges
         /// </summary>
-        [Position(420, 20, 420, 170)]
+        [Position(420, 20, 420, 220)]
         public class NoiseModWindow : Window<PQSMod_VertexPlanet.NoiseModWrapper>
         {
             /// <summary>
@@ -31,7 +31,7 @@ namespace Kopernicus
             protected override void Render(Int32 id)
             {
                 // Scroll
-                BeginScrollView(200, Utils.GetScrollSize<PQSMod_VertexPlanet.NoiseModWrapper>() + 50);
+                BeginScrollView(200, Utils.GetScrollSize<PQSMod_VertexPlanet.NoiseModWrapper>() + 50, 10);
 
                 // Render the editor
                 RenderObject(Current);

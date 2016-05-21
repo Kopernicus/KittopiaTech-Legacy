@@ -43,12 +43,6 @@ namespace Kopernicus
             /// </summary>
             protected override void RenderEditor(Int32 id)
             {
-                // Index
-                index++;
-
-                // Scroll
-                BeginScrollView(200, Utils.GetScrollSize(Current.GetType()) + 50);
-
                 // Render the Object
                 RenderObject(Current);
 

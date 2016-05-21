@@ -45,7 +45,7 @@ namespace Kopernicus
                 base.Render(id);
 
                 // Scroll
-                BeginScrollView(250, Utils.GetScrollSize<PlanetParticleEmitter>() + 150, 20);
+                BeginScrollView(250, Utils.GetScrollSize<PlanetParticleEmitter>() + 175, 20);
 
                 // Get the list
                 if (particles == null)
@@ -106,13 +106,21 @@ namespace Kopernicus
                 // Delete Ring
                 Button("Delete Particles", () =>
                 {
-                    UnityEngine.Object.Destroy(particles[index]);
+                    UnityEngine.Object.Destroy(particles[position]);
                     particles = null;
                     position = 0;
                 });
 
                 // End Scroll
                 EndScrollView();
+            }
+
+            /// <summary>
+            /// Resets objects
+            /// </summary>
+            protected override void SetEditedObject()
+            {
+                particles = null;
             }
         }
     }

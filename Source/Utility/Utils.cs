@@ -94,26 +94,6 @@ namespace Kopernicus
             }
 
             /// <summary>
-            /// Loads a Texture from GameDatabase or from the Game-Assets
-            /// </summary>
-            public static Texture2D LoadTexture(string path)
-            {
-                Texture2DParser parser = new Texture2DParser();
-                parser.SetFromString(path);
-                return parser.value;
-            }
-
-            /// <summary>
-            /// Updates the Atmosphere-Ramp in ScaledSpace for a body
-            /// </summary>
-            public static void UpdateAtmosphereRamp(CelestialBody body, Texture2D texture)
-            {
-                GameObject scaledVersion = body.scaledBody;
-                MeshRenderer meshRenderer = scaledVersion.GetComponentInChildren<MeshRenderer>();
-                meshRenderer.material.SetTexture("_rimColorRamp", texture);
-            }
-
-            /// <summary>
             /// [HACK] Spawn a new body from the PSystem-Prefab
             /// </summary>
             public static void Instantiate(PSystemBody template, string name)
@@ -293,77 +273,37 @@ namespace Kopernicus
             }
 
             /// <summary>
-            /// Searches for a node in a Kopernicus-Body definition
-            /// </summary>
-            public static ConfigNode SearchNode(string name, string planet, ConfigNode node = null)
-            {
-                // Get the Body-Node
-                if (node == null)
-                {
-                    ConfigNode root = GameDatabase.Instance.GetConfigNodes("Kopernicus").First();
-                    IEnumerable<ConfigNode> bodies = root.GetNodes().Where(n => n.HasValue("name") && n.GetValue("name") == planet);
-
-                    // If we didn't found a body, abort
-                    if (!bodies.Any())
-                        return null;
-
-                    node = bodies.First();
-                }
-
-                // Are we already the searched node?
-                if (node.name == name)
-                    return node;
-
-                // Loop through the nodes, to find the node
-                return (from ConfigNode subNode in node.nodes select SearchNode(name, planet, subNode)).FirstOrDefault(result => result != null);
-            }
-
-            /// <summary>
-            /// Returns the Default Ring-Texture
-            /// </summary>
-            public static Texture2D defaultRing
-            {
-                get { return LoadTexture("KittopiaTech/Textures/ring"); }
-            }
-
-            /// <summary>
             /// Returns the Types that are supported by the Renderer
             /// </summary>
-            public static Type[] supportedTypes
+            public static Type[] supportedTypes => new Type[]
             {
-                get
-                {
-                    return new Type[]
-                    {
-                        typeof (string),
-                        typeof (bool),
-                        typeof (int),
-                        typeof (float),
-                        typeof (double),
-                        typeof (Color),
-                        typeof (Vector3),
-                        typeof (Vector3d),
-                        typeof (Vector2),
-                        typeof (Vector2d),
-                        typeof (PQSLandControl.LandClass[]),
-                        typeof (PQSLandControl.LerpRange),
-                        typeof (PQSMod_VertexPlanet.LandClass[]),
-                        typeof (PQSMod_HeightColorMap.LandClass[]),
-                        typeof (PQS),
-                        typeof (PQSMod_VertexPlanet.SimplexWrapper),
-                        typeof (PQSMod_VertexPlanet.NoiseModWrapper),
-                        typeof (MapSO),
-                        typeof (CBAttributeMapSO),
-                        typeof (Texture2D),
-                        typeof (Texture),
-                        typeof (Material),
-                        typeof (CelestialBody),
-                        typeof (FloatCurve),
-                        typeof (AnimationCurve),
-                        typeof (Mesh)
-                    };
-                }
-            }
+                typeof (String),
+                typeof (Boolean),
+                typeof (Int32),
+                typeof (Single),
+                typeof (Double),
+                typeof (Color),
+                typeof (Vector3),
+                typeof (Vector3d),
+                typeof (Vector2),
+                typeof (Vector2d),
+                typeof (PQSLandControl.LandClass[]),
+                typeof (PQSLandControl.LerpRange),
+                typeof (PQSMod_VertexPlanet.LandClass[]),
+                typeof (PQSMod_HeightColorMap.LandClass[]),
+                typeof (PQS),
+                typeof (PQSMod_VertexPlanet.SimplexWrapper),
+                typeof (PQSMod_VertexPlanet.NoiseModWrapper),
+                typeof (MapSO),
+                typeof (CBAttributeMapSO),
+                typeof (Texture2D),
+                typeof (Texture),
+                typeof (Material),
+                typeof (CelestialBody),
+                typeof (FloatCurve),
+                typeof (AnimationCurve),
+                typeof (Mesh)
+            };
 
             /// <summary>
             /// Returns the Size for a Scrollbar
@@ -386,7 +326,7 @@ namespace Kopernicus
                     .Where(m => m.MemberType == MemberTypes.Field || m.MemberType == MemberTypes.Property)
                     .Where(m => !(m as FieldInfo)?.IsLiteral ?? true)
                     .Where(m => m is PropertyInfo ? (m as PropertyInfo).CanRead && (m as PropertyInfo).CanWrite : true)
-                    .Where(m => Utils.supportedTypes.Contains(m.GetMemberType()))
+                    .Where(m => supportedTypes.Contains(m.GetMemberType()))
                     .ToArray();
 
                 // Get the count of the array

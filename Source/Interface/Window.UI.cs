@@ -70,11 +70,11 @@ namespace Kopernicus
 
             }
 
-            protected void Label(String label)
+            protected void Label(String label, [Optional]Rect? rect)
             {
                 // Draw the label
                 GUI.enabled = !isError;
-                GUI.Label(new Rect(20, index * distance + 10, 170, 20), label);
+                GUI.Label(rect ?? new Rect(20, index * distance + 10, 170, 20), label);
                 index++;
             }
 
@@ -325,7 +325,7 @@ namespace Kopernicus
                                 }
                             });
                             UIController.Instance.EnableWindow(KittopiaWindows.Files);
-                        });
+                        }, new Rect(200, index * distance + 10, 170, 20));
                         
 
                         // Edit the Biome-Definitions
@@ -353,7 +353,7 @@ namespace Kopernicus
                                 }
                             });
                             UIController.Instance.EnableWindow(KittopiaWindows.Files);
-                        });
+                        }, new Rect(200, index * distance + 10, 170, 20));
                         
                     }
                     else if (FieldType == typeof(PQSLandControl.LandClass[]))

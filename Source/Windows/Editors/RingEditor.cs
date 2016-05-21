@@ -43,7 +43,7 @@ namespace Kopernicus
                 base.Render(id);
 
                 // Scroll
-                BeginScrollView(250, Utils.GetScrollSize<Ring>() + 125, 20);
+                BeginScrollView(250, Utils.GetScrollSize<Ring>() + 150, 20);
 
                 // Get the list
                 if (rings == null)
@@ -95,13 +95,21 @@ namespace Kopernicus
                 // Delete Ring
                 Button("Delete Ring", () =>
                 {
-                    UnityEngine.Object.Destroy(rings[index]);
+                    UnityEngine.Object.Destroy(rings[position]);
                     rings = null;
                     position = 0;
                 });
 
                 // End Scroll
                 EndScrollView();
+            }
+
+            /// <summary>
+            /// Resets objects
+            /// </summary>
+            protected override void SetEditedObject()
+            {
+                rings = null;
             }
         }
     }
