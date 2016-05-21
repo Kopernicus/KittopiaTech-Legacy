@@ -434,6 +434,7 @@ namespace Kopernicus
                             UIController.Instance.EnableWindow(KittopiaWindows.Files);
                         }, new Rect(200, index * distance + 10, 170, 20));
                         mapDepth = GUI.SelectionGrid(new Rect(20, index * distance + 10, 350, 20), mapDepth, new [] { "Greyscale", "HeightAlpha", "RGB", "RGBA" }, 4);
+                        index++;
                     }
                     else if (FieldType == typeof(PQS))
                     {
