@@ -1,74 +1,90 @@
-﻿using Kopernicus.Configuration;
-using Kopernicus.MaterialWrapper;
+﻿/** 
+ * KittopiaTech - A Kopernicus Visual Editor
+ * Copyright (c) Thomas P., BorisBee, KCreator, Gravitasi
+ * Licensed under the Terms of a custom License, see LICENSE file
+ */
+
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UnityEngine;
 using Kopernicus.Components;
+using Kopernicus.MaterialWrapper;
+using Kopernicus.UI.Enumerations;
+using UnityEngine;
 
 namespace Kopernicus
 {
     namespace UI
     {
-        // Class that renders a Orbit-Editor
-        public class StarlightEditor
+        /// <summary>
+        /// This class represents the editor for the starlight.
+        /// </summary>
+        public class StarlightEditor : Editor<CelestialBody>
         {
-            // GUI stuff
-            private static Vector2 scrollPosition;
+            /// <summary>
+            /// The light component
+            /// </summary>
+            public LightShifter lsc;
 
-            // Light
-            public static LightShifter lsc = null;
+            /// <summary>
+            /// The material of the sun surface
+            /// </summary>
+            public EmissiveMultiRampSunspots material;
 
-            public static EmissiveMultiRampSunspots material = null;
-
-            // Return an OnGUI()-Window.
-            public static void Render()
+            /// <summary>
+            /// Renders the Window
+            /// </summary>
+            protected override void Render(Int32 id)
             {
-                // Render variables
-                int offset = 280;
+                // Call base
+                base.Render(id);
 
-                // If we have no Body selected, abort
-                if (PlanetUI.currentName == "")
+                // Scroll
+                BeginScrollView(250, Utils.GetScrollSize<LightShifter>() + Utils.GetScrollSize<EmissiveMultiRampSunspots>() + 75, 20);
+
+                // Index
+                index = 0;
+
+                // Planet must be a star
+                if (Current.scaledBody.GetComponentsInChildren<SunShaderController>(true).Length == 0)
                 {
-                    GUI.Label(new Rect(20, 310, 400, 20), "No Planet selected!");
+                    Label("Selected planet isn't a star!", new Rect(20, 310, 400, 20));
                     return;
                 }
 
-                // If we aren't a star, abort
-                if (PlanetUI.currentBody.scaledBody.GetComponentsInChildren<SunShaderController>(true).Length == 0)
+                // Get the light components
+                if (lsc == null || material == null)
                 {
-                    GUI.Label(new Rect(20, 310, 400, 20), "Selected Planet is not a Star!");
-                    return;
+                    lsc = Current.scaledBody.GetComponentsInChildren<LightShifter>(true).First();
+                    material = new EmissiveMultiRampSunspots(Current.scaledBody.GetComponent<Renderer>().sharedMaterial);
                 }
 
-                if (lsc == null)
+                // Render the objects
+                RenderObject(material);
+                RenderObject(lsc);
+
+                // Space
+                index++;
+
+                // Apply
+                Button("Apply", () =>
                 {
-                    material = new EmissiveMultiRampSunspots(PlanetUI.currentBody.scaledBody.GetComponent<Renderer>().sharedMaterial);
-                    lsc = PlanetUI.currentBody.scaledBody.GetComponentsInChildren<LightShifter>(true).First();
-                }
+                    Current.scaledBody.GetComponent<Renderer>().sharedMaterial = material;
+                    Current.scaledBody.GetComponentsInChildren<StarComponent>().First().SetAsActive();
+                });
 
-                // Create the height of the Scroll-List
-                object[] matObjects = Utils.GetInfos<PropertyInfo>(material);
-                int scrollSize = Utils.GetScrollSize(matObjects);
-                object[] lscObjects = Utils.GetInfos<FieldInfo>(lsc);
-                scrollSize += Utils.GetScrollSize(lscObjects);
+                // End Scroll
+                EndScrollView();
+            }
 
-                // Render the Scrollbar
-                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollSize + 60));
-
-                // Render the Properties of the Shader and the Fields of the LSC
-                object matObj = material as System.Object;
-                Utils.RenderSelection<PropertyInfo>(matObjects, ref matObj, ref offset);
-                object lscObj = lsc as System.Object;
-                Utils.RenderSelection<FieldInfo>(lscObjects, ref lscObj, ref offset);
-                offset += 20;
-
-                if (GUI.Button(new Rect(20, offset, 200, 20), "Apply"))
-                {
-                    PlanetUI.currentBody.scaledBody.GetComponent<Renderer>().sharedMaterial = material;
-                    PlanetUI.currentBody.scaledBody.GetComponentsInChildren<StarComponent>().First().SetAsActive();
-                }
-
-                GUI.EndScrollView();
+            /// <summary>
+            /// Resets objects
+            /// </summary>
+            protected override void SetEditedObject()
+            {
+                lsc = null;
+                material = null;
             }
         }
     }

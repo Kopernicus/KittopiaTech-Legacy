@@ -34,8 +34,10 @@ namespace Kopernicus
                 EditorController.RegisterWindow<CelestialBodyEditor>(KittopiaEditors.CelestialBody);
                 EditorController.RegisterWindow<OrbitEditor>(KittopiaEditors.Orbit);
                 EditorController.RegisterWindow<ParticleEditor>(KittopiaEditors.Particles);
+                EditorController.RegisterWindow<PQSEditor>(KittopiaEditors.Terrain);
                 EditorController.RegisterWindow<RingEditor>(KittopiaEditors.Ring);
                 EditorController.RegisterWindow<ScaledSpaceEditor>(KittopiaEditors.ScaledSpace);
+                EditorController.RegisterWindow<StarlightEditor>(KittopiaEditors.Starlight);
             }
 
             /// <summary>
@@ -61,10 +63,10 @@ namespace Kopernicus
                 // Editors
                 Button("Atmosphere Editor", () => { EditorController.SetEditedObject(KittopiaEditors.Atmosphere, Current); EditorController.EnableWindow(KittopiaEditors.Atmosphere); });
                 Button("CelestialBody Editor", () => { EditorController.SetEditedObject(KittopiaEditors.CelestialBody, Current); EditorController.EnableWindow(KittopiaEditors.CelestialBody); });
-                Button("PQS Editor", () => EditorController.EnableWindow(KittopiaEditors.Terrain)); // TODO: Set PQS editor to mode LIST?
+                Button("PQS Editor", () => { EditorController.SetEditedObject(KittopiaEditors.Terrain, Current); EditorController.EnableWindow(KittopiaEditors.Terrain); });
                 Button("Orbit Editor", () => { EditorController.SetEditedObject(KittopiaEditors.Orbit, Current.orbitDriver); EditorController.EnableWindow(KittopiaEditors.Orbit); });
                 Button("ScaledSpace Editor", () => { EditorController.SetEditedObject(KittopiaEditors.ScaledSpace, Current.scaledBody); EditorController.EnableWindow(KittopiaEditors.ScaledSpace); });
-                Button("Starlight Editor", () => EditorController.EnableWindow(KittopiaEditors.Starlight));
+                Button("Starlight Editor", () => {EditorController.SetEditedObject(KittopiaEditors.Starlight, Current); EditorController.EnableWindow(KittopiaEditors.Starlight); });
                 Button("Ring Editor", () => { EditorController.SetEditedObject(KittopiaEditors.Ring, Current); EditorController.EnableWindow(KittopiaEditors.Ring); });
                 Button("Particles Editor", () => { EditorController.SetEditedObject(KittopiaEditors.Particles, Current); EditorController.EnableWindow(KittopiaEditors.Particles); });
 

@@ -1,21 +1,27 @@
-﻿using System;
+﻿/** 
+ * KittopiaTech - A Kopernicus Visual Editor
+ * Copyright (c) Thomas P., BorisBee, KCreator, Gravitasi
+ * Licensed under the Terms of a custom License, see LICENSE file
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using UnityEngine;
 
 namespace Kopernicus
 {
     namespace UI
     {
-        // Class that renders a PQS-Editor
-        public class PQSEditor
+        /// <summary>
+        /// This class represents the editor for the planetary terrain.
+        /// </summary>
+        public class PQSEditor : Editor<CelestialBody>
         {
-            // GUI stuff
-            private static Vector2 scrollPosition;
-
-            // Modes
-            public enum Modes : int
+            /// <summary>
+            /// The different stages for this editor
+            /// </summary>
+            public enum Modes
             {
                 List,
                 PQS,
@@ -23,234 +29,213 @@ namespace Kopernicus
                 AddMod
             }
 
-            public static Modes mode = Modes.List;
+            /// <summary>
+            /// The current mode
+            /// </summary>
+            private Modes _mode = Modes.List;
 
-            // Current PQS Components
-            public static PQS currentPQS;
+            /// <summary>
+            /// The current PQS that is rendered
+            /// </summary>
+            private PQS _sphere;
 
-            public static PQSMod currentPQSMod;
+            /// <summary>
+            /// The current PQS mod that is rendered
+            /// </summary>
+            private PQSMod _mod;
 
-            // PQSMod Stuff
-            private static string pqsModSphereName = "";
-
-            private static int currentMapDepth = 5;
-
-            // Return an OnGUI()-Window.
-            public static void Render()
+            /// <summary>
+            /// Renders the Window
+            /// </summary>
+            protected override void Render(Int32 id)
             {
-                // If we have no Body selected, abort
-                if (PlanetUI.currentName == "")
-                {
-                    GUI.Label(new Rect(20, 310, 400, 20), "No Planet selected!");
+                // Call base
+                base.Render(id);
+
+                // Check for PQS
+                if (Current.pqsController == null)
                     return;
-                }
 
-                // If the body has no PQS, abort
-                if (PlanetUI.currentBody.pqsController == null)
+                // Mode List
+                if (_mode == Modes.List)
                 {
-                    GUI.Label(new Rect(20, 310, 400, 20), "No PQS found! Is the body a GasPlanet?");
-                    return;
-                }
+                    // Get the PQS-Spheres and their mods
+                    IEnumerable<PQS> pqsList = Current.GetComponentsInChildren<PQS>(true);
+                    IEnumerable<PQSMod> pqsModList = Current.GetComponentsInChildren<PQSMod>(true);
 
-                // Render an UI based on the current Mode
-                try
-                {
-                    MethodInfo method = typeof(PQSEditor).GetMethod(mode.ToString().Replace("Modes.", ""), BindingFlags.NonPublic | BindingFlags.Static);
-                    method.Invoke(null, null);
-                }
-                catch
-                {
-                    Debug.LogWarning("[KittopiaTech]: RenderMethod \"" + mode.ToString().Replace("Modes.", "") + "\" not available!");
-                    mode = Modes.List;
-                }
-            }
+                    // Scroll
+                    BeginScrollView(250, (pqsList.Count() + pqsModList.Count()) * 25 + 50, 20);
 
-            // Show a list of all PQS mods applied to a body.
-            private static void List()
-            {
-                // Render Stuff
-                int offset = 280;
+                    // Index
+                    index = 0;
 
-                // Get the PQS-Spheres and their mods
-                IEnumerable<PQS> pqsList = PlanetUI.currentBody.GetComponentsInChildren<PQS>(true);
-                IEnumerable<PQSMod> pqsModList = PlanetUI.currentBody.GetComponentsInChildren<PQSMod>(true);
-
-                // Render the scrollbar
-                int scrollSize = ((pqsList.Count() + pqsModList.Count()) * 25) + 20;
-                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollSize + 25));
-
-                // Display every PQS
-                foreach (PQS pqs in pqsList)
-                {
-                    if (GUI.Button(new Rect(20, offset, 350, 20), "" + pqs))
+                    // Render
+                    foreach (PQS pqs in pqsList)
                     {
-                        // Select the PQS
-                        currentPQS = pqs;
-
-                        // Set the current Sphere-Name
-                        if (pqsModSphereName == "" && currentPQS.parentSphere != null)
-                            pqsModSphereName = currentPQS.parentSphere.name;
-                        else
-                            pqsModSphereName = "";
-
-                        // Set the Mode
-                        mode = Modes.PQS;
-                    }
-                    offset += 25;
-                }
-                offset += 10;
-
-                // Display every PQSMod
-                foreach (PQSMod pqsMod in pqsModList)
-                {
-                    if (GUI.Button(new Rect(20, offset, 350, 20), pqsMod.name + " (" + pqsMod.GetType().Name + ")"))
-                    {
-                        // Select the PQSMod
-                        currentPQSMod = pqsMod;
-
-                        // Set the current Sphere-Name
-                        if (pqsModSphereName == "" && currentPQSMod.sphere != null)
-                            pqsModSphereName = currentPQSMod.sphere.name;
-                        else
-                            pqsModSphereName = "";
-
-                        // Set the Mode
-                        mode = Modes.PQSMod;
-                    }
-                    offset += 25;
-                }
-                offset += 10;
-
-                // Display the "Add Mod" button
-                if (GUI.Button(new Rect(20, offset, 350, 20), "Add new PQSMod"))
-                    mode = Modes.AddMod;
-
-                // Finish
-                GUI.EndScrollView();
-            }
-
-            // GUI for modifying a PQSMod.
-            private static void PQSMod()
-            {
-                // Render Stuff
-                int offset = 280;
-
-                // Create the height of the Scroll-List
-                object[] objects = Utils.GetInfos<FieldInfo>(currentPQSMod);
-                int scrollSize = Utils.GetScrollSize(objects);
-
-                // Render the Scrollbar
-                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollSize + 115));
-
-                // Render the Selection
-                object obj = currentPQSMod as System.Object;
-                Utils.RenderSelection<FieldInfo>(objects, ref obj, ref offset, ref currentMapDepth);
-                offset += 20;
-
-                // Rebuild the PQS-Sphere
-                if (GUI.Button(new Rect(20, offset, 200, 20), "Rebuild"))
-                    currentPQSMod.RebuildSphere();
-                offset += 25;
-
-                // Remove the PQSMod
-                if (GUI.Button(new Rect(20, offset, 200, 20), "Remove PQSMod"))
-                {
-                    currentPQSMod.sphere = null;
-                    MonoBehaviour.Destroy(currentPQSMod);
-                    currentPQSMod = null;
-
-                    // Hack
-                    PlanetUI.currentBody.pqsController.SetupExternalRender();
-                    PlanetUI.currentBody.pqsController.CloseExternalRender();
-
-                    mode = Modes.List;
-                }
-
-                // Finish
-                GUI.EndScrollView();
-            }
-
-            // GUI for modifing a PQS-Sphere
-            private static void PQS()
-            {
-                // Render Stuff
-                int offset = 280;
-
-                // Create the height of the Scroll-List
-                object[] objects = Utils.GetInfos<FieldInfo>(currentPQS);
-                int scrollSize = Utils.GetScrollSize(objects);
-
-                // Render the Scrollbar
-                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollSize + 65));
-
-                // Render the Selection
-                object obj = currentPQS as System.Object;
-                Utils.RenderSelection<FieldInfo>(objects, ref obj, ref offset);
-                offset += 20;
-
-                // Rebuild the Sphere
-                if (GUI.Button(new Rect(20, offset, 200, 20), "Rebuild"))
-                    currentPQS.RebuildSphere();
-
-                // Finish
-                GUI.EndScrollView();
-            }
-
-            // GUI for adding more PQSMods to a body.
-            private static void AddMod()
-            {
-                // Get all PQSMod-Types
-                List<Type> types = Assembly.GetAssembly(typeof(PQSMod)).GetTypes().Where(type => type.IsSubclassOf(typeof(PQSMod))).ToList();
-                types.AddRange(AssemblyLoader.loadedAssemblies.SelectMany(a => a.assembly.GetTypes()).Where(type => type.IsSubclassOf(typeof(PQSMod))));
-
-                // Create the Height for the Scrollbar
-                int scrollOffset = (types.Count() + 1) * 25;
-
-                // Render-Stuff
-                int offset = 280;
-
-                // Render the Scrollbar
-                scrollPosition = GUI.BeginScrollView(new Rect(10, 300, 400, 250), scrollPosition, new Rect(0, 280, 380, scrollOffset));
-
-                // Go through all Types and display them
-                foreach (Type type in types)
-                {
-                    if (GUI.Button(new Rect(20, offset, 350, 20), "" + type.Name))
-                    {
-                        // Hack^6
-                        GameObject pqsModObject = new GameObject(type.Name);
-                        pqsModObject.transform.parent = PlanetUI.currentBody.pqsController.transform;
-                        PQSMod mod = pqsModObject.AddComponent(type) as PQSMod;
-                        mod.sphere = PlanetUI.currentBody.pqsController;
-
-                        if (type.Name == "PQSMod_VoronoiCraters")
+                        Button(pqs.ToString(), () =>
                         {
-                            CelestialBody mun = Utils.FindCB("Mun");
-                            PQSMod_VoronoiCraters craters = mun.GetComponentsInChildren<PQSMod_VoronoiCraters>()[0];
-
-                            PQSMod_VoronoiCraters nc = pqsModObject.GetComponentsInChildren<PQSMod_VoronoiCraters>()[0];
-                            nc.craterColourRamp = craters.craterColourRamp;
-                            nc.craterCurve = craters.craterCurve;
-                            nc.jitterCurve = craters.jitterCurve;
-                        }
-                        else if (type.Name == "PQSMod_VertexPlanet")
-                        {
-                            PQSMod_VertexPlanet vp = mod as PQSMod_VertexPlanet;
-                            vp.continental = new PQSMod_VertexPlanet.SimplexWrapper(0, 0, 0, 0);
-                            vp.continentalRuggedness = new PQSMod_VertexPlanet.SimplexWrapper(0, 0, 0, 0);
-                            vp.continentalSharpness = new PQSMod_VertexPlanet.NoiseModWrapper(0, 0, 0, 0);
-                            vp.continentalSharpnessMap = new PQSMod_VertexPlanet.SimplexWrapper(0, 0, 0, 0);
-                            vp.terrainType = new PQSMod_VertexPlanet.SimplexWrapper(0, 0, 0, 0);
-                        }
-
-                        // Revert to the List
-                        mode = Modes.List;
+                            _mode = Modes.PQS;
+                            _sphere = pqs;
+                        }, new Rect(20, index * distance + 10, 350, 20));
                     }
-                    offset += 25;
+                    foreach (PQSMod mod in pqsModList)
+                    {
+                        Button(mod.ToString(), () =>
+                        {
+                            _mode = Modes.PQSMod;
+                            _sphere = mod.sphere;
+                            _mod = mod;
+                        }, new Rect(20, index * distance + 10, 350, 20));
+                    }
+                    index++;
+                    Button("Add PQSMod", () => _mode = Modes.AddMod);
+
+                    // End Scroll
+                    EndScrollView();
                 }
 
-                // Finish
-                GUI.EndScrollView();
+                // Mode PQS
+                if (_mode == Modes.PQS)
+                {
+                    // Scroll
+                    BeginScrollView(250, Utils.GetScrollSize<PQS>() + 65, 20);
+
+                    // Index
+                    index = 0;
+
+                    // Render the PQS
+                    RenderObject(_sphere);
+                    index++;
+
+                    // Rebuild
+                    Button("Rebuild Sphere", () => _sphere.RebuildSphere());
+
+                    // End Scroll
+                    EndScrollView();
+                }
+
+                // Mode PQSMod
+                if (_mode == Modes.PQSMod)
+                {
+                    // Scroll
+                    BeginScrollView(250, Utils.GetScrollSize(_mod.GetType()) + 115, 20);
+
+                    // Index
+                    index = 0;
+
+                    // Render the PQS
+                    RenderObject(_mod);
+                    index++;
+
+                    // Rebuild
+                    Button("Rebuild Sphere", () => _sphere.RebuildSphere());
+
+                    // Remove
+                    Button("Remove PQSMod", () =>
+                    {
+                        _mod.sphere = null;
+                        UnityEngine.Object.Destroy(_mod);
+                        _mod = null;
+
+                        // Hack
+                        _sphere.SetupExternalRender();
+                        _sphere.CloseExternalRender();
+
+                        _mode = Modes.List;
+                    });
+
+                    // End Scroll
+                    EndScrollView();
+                }
+
+                // Mode AddPQSMod
+                if (_mode == Modes.AddMod)
+                {
+                    // Get all PQSMod types
+                    List<Type> types = Injector.ModTypes.Where(t => t.IsSubclassOf(typeof (PQSMod))).ToList();
+
+                    // Begin Scroll
+                    BeginScrollView(250, types.Count * 25, 20);
+
+                    // Index
+                    index = 0;
+
+                    // Render the possible types
+                    foreach (Type t in types)
+                        Button(t.FullName, () =>
+                        {
+                            // Hack^6
+                            GameObject pqsModObject = new GameObject(t.Name);
+                            pqsModObject.transform.parent = Current.pqsController.transform;
+                            PQSMod mod = pqsModObject.AddComponent(t) as PQSMod;
+                            mod.sphere = Current.pqsController;
+
+                            if (t == typeof(PQSMod_VoronoiCraters))
+                            {
+                                CelestialBody mun = Utils.FindCB("Mun");
+                                PQSMod_VoronoiCraters craters = mun.GetComponentsInChildren<PQSMod_VoronoiCraters>()[0];
+                                PQSMod_VoronoiCraters nc = pqsModObject.GetComponentsInChildren<PQSMod_VoronoiCraters>()[0];
+                                nc.craterColourRamp = craters.craterColourRamp;
+                                nc.craterCurve = craters.craterCurve;
+                                nc.jitterCurve = craters.jitterCurve;
+                            }
+                            else if (t == typeof(PQSMod_VertexPlanet))
+                            {
+                                PQSMod_VertexPlanet vp = mod as PQSMod_VertexPlanet;
+                                vp.landClasses = new [] { new PQSMod_VertexPlanet.LandClass("Class", 0, 1, Color.black, Color.white, 0) };
+                                vp.continental = new PQSMod_VertexPlanet.SimplexWrapper(0, 0, 0, 0);
+                                vp.continentalRuggedness = new PQSMod_VertexPlanet.SimplexWrapper(0, 0, 0, 0);
+                                vp.continentalSharpness = new PQSMod_VertexPlanet.NoiseModWrapper(0, 0, 0, 0);
+                                vp.continentalSharpnessMap = new PQSMod_VertexPlanet.SimplexWrapper(0, 0, 0, 0);
+                                vp.terrainType = new PQSMod_VertexPlanet.SimplexWrapper(0, 0, 0, 0);
+                            }
+                            else if (t == typeof (PQSMod_HeightColorMap))
+                            {
+                                (mod as PQSMod_HeightColorMap).landClasses = new [] { new PQSMod_HeightColorMap.LandClass("Class", 0, 1, Color.black, Color.white, 0) };
+                            }
+                            else if (t == typeof(PQSMod_HeightColorMap2))
+                            {
+                                (mod as PQSMod_HeightColorMap2).landClasses = new[] { new PQSMod_HeightColorMap2.LandClass("Class", 0, 1, Color.black, Color.white, 0) };
+                            }
+                            else if (t == typeof(PQSMod_HeightColorMapNoise))
+                            {
+                                (mod as PQSMod_HeightColorMapNoise).landClasses = new[] { new PQSMod_HeightColorMapNoise.LandClass("Class", 0, 1, Color.black, Color.white, 0) };
+                            }
+                            else if (t == typeof (PQSLandControl))
+                            {
+                                PQSLandControl lc = mod as PQSLandControl;
+                                lc.altitudeSimplex = new Simplex();
+                                lc.scatters = new PQSLandControl.LandClassScatter[0];
+                                lc.landClasses = new [] { new PQSLandControl.LandClass() { altitudeRange = new PQSLandControl.LerpRange(),
+                                                                                           coverageSimplex = new Simplex(),
+                                                                                           longitudeRange = new PQSLandControl.LerpRange(),
+                                                                                           latitudeDoubleRange = new PQSLandControl.LerpRange(),
+                                                                                           latitudeRange = new PQSLandControl.LerpRange(),
+                                                                                           scatter = new PQSLandControl.LandClassScatterAmount[0] } };
+                                lc.latitudeSimplex = new Simplex();
+                                lc.longitudeSimplex = new Simplex();
+                            }
+                            
+                            // Edit the mod
+                            _mod = mod;
+                            _sphere = mod.sphere;
+                            _mode = Modes.PQSMod;
+                        }, new Rect(20, index * distance + 10, 350, 20));
+
+
+                    // End Scroll
+                    EndScrollView();
+                }
+            }
+
+            /// <summary>
+            /// Resets objects
+            /// </summary>
+            protected override void SetEditedObject()
+            {
+                _mod = null;
+                _sphere = null;
+                _mode = Modes.List;
             }
         }
     }
