@@ -401,44 +401,40 @@ namespace Kopernicus
                             UIController.Instance.EnableWindow(KittopiaWindows.NoiseMod);
                         }, new Rect(200, index * distance + 10, 170, 20));
                     }
-                    /*else if (FieldType == typeof(MapSO))
+                    else if (FieldType == typeof(MapSO))
                     {
-                        // Stuff
-                        if (mapDepth == 5 && key.GetValue(obj) != null)
-                            mapDepth = (int)(key.GetValue(obj) as MapSO).Depth;
-                        else if (mapDepth == 5 && key.GetValue(obj) == null)
+                        // Depth
+                        if (mapDepth == 5 && value != null)
+                            mapDepth = (Int32)(value as MapSO).Depth;
+                        else if (mapDepth == 5 && value == null)
                             mapDepth = 0;
 
                         // Load the MapSO
-                        GUI.Label(new Rect(20, index * distance + 10, 178, 20), "" + info.Name);
-                        if (GUI.Button(new Rect(200, index * distance + 10, 80, 20), "Load"))
+                        Label(info.Name); index--;
+                        Button("Load MapSO", () =>
                         {
-                            UIController.Instance.isFileBrowser = !UIController.Instance.isFileBrowser;
-                            FileBrowser.type = key.FieldType;
-                            FileBrowser.location = "";
-                        }
-
-                        // Apply the new MapSO
-                        if (GUI.Button(new Rect(290, index * distance + 10, 80, 20), "Apply"))
-                        {
-                            if (!FileBrowser.builtin)
+                            FileWindow.type = FieldType;
+                            UIController.Instance.SetEditedObject(KittopiaWindows.Files, value == null ? "" : ConfigIO.Format(value as UnityEngine.Object), location =>
                             {
-                                string path = FileBrowser.location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
-                                Texture2D texture = Utility.LoadTexture(path, false, false, false);
-                                MapSO mapSO = ScriptableObject.CreateInstance<MapSO>();
-                                mapSO.CreateMap((MapSO.MapDepth)mapDepth, texture);
-                                mapSO.name = path.Replace("\\", "/");
-                                key.SetValue(obj, mapSO);
-                            }
-                            else
-                            {
-                                key.SetValue(obj, FileBrowser.value);
-                            }
-                        }
-                        
-                        mapDepth = GUI.SelectionGrid(new Rect(20, index * distance + 10, 350, 20), mapDepth, new string[] { "Greyscale", "HeightAlpha", "RGB", "RGBA" }, 4);
-                        
-                    }*/
+                                if (File.Exists(location))
+                                {
+                                    String path = location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
+                                    Texture2D texture = Utility.LoadTexture(path, false, false, false);
+                                    texture.name = path.Replace("\\", "/");
+                                    MapSO mapSO = ScriptableObject.CreateInstance<MapSO>();
+                                    mapSO.CreateMap((MapSO.MapDepth)mapDepth, texture);
+                                    mapSO.name = path.Replace("\\", "/");
+                                    info.SetValue(@object, mapSO);
+                                }
+                                else
+                                {
+                                    info.SetValue(@object, Resources.FindObjectsOfTypeAll<MapSO>().Where(m => m.name == location));
+                                }
+                            });
+                            UIController.Instance.EnableWindow(KittopiaWindows.Files);
+                        }, new Rect(200, index * distance + 10, 170, 20));
+                        mapDepth = GUI.SelectionGrid(new Rect(20, index * distance + 10, 350, 20), mapDepth, new [] { "Greyscale", "HeightAlpha", "RGB", "RGBA" }, 4);
+                    }
                     else if (FieldType == typeof(PQS))
                     {
                         Label(info.Name); index--;

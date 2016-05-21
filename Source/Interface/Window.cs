@@ -54,6 +54,11 @@ namespace Kopernicus
             private Dictionary<Int32, Boolean> isParseError { get; set; }
 
             /// <summary>
+            /// The depth of mapSO's
+            /// </summary>
+            private Int32 mapDepth { get; set; }
+
+            /// <summary>
             /// The position of the window
             /// </summary>
             protected virtual Rect position
@@ -87,6 +92,7 @@ namespace Kopernicus
             void IWindow.SetEditedObject(Object value, Action<Object> callback)
             {
                 Current = (T)value;
+                mapDepth = 5;
                 Callback = c => callback(c);
                 SetEditedObject();
             }
