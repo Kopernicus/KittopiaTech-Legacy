@@ -25,7 +25,7 @@ namespace Kopernicus
                 base.Render(id);
 
                 // Scroll
-                BeginScrollView(250, Utils.GetScrollSize<MeshFilter>() + Utils.GetScrollSize<MeshRenderer>() + Utils.GetScrollSize<ScaledSpaceFader>() + 75, 20);
+                BeginScrollView(250, Utils.GetScrollSize<MeshFilter>() + Utils.GetScrollSize<MeshRenderer>() + Utils.GetScrollSize<ScaledSpaceFader>() + 150, 20);
 
                 // Index
                 index = 0;
@@ -34,6 +34,15 @@ namespace Kopernicus
                 RenderObject(Current.GetComponent<ScaledSpaceFader>());
                 RenderObject(Current.GetComponent<MeshRenderer>());
                 RenderObject(Current.GetComponent<MeshFilter>());
+
+                // Map Data
+                CelestialBody body = Utils.FindCB(Current.name);
+                Label("mapFilesize"); index--;
+                TextField(body.pqsController.mapFilesize, v => body.pqsController.mapFilesize = v, new Rect(200, index * distance + 10, 170, 20));
+                Label("mapMaxHeight"); index--;
+                TextField(body.pqsController.mapMaxHeight, v => body.pqsController.mapMaxHeight = v, new Rect(200, index * distance + 10, 170, 20));
+                Label("normalStrength"); index--;
+                TextField(UIController.NormalStrength, v => UIController.NormalStrength = v, new Rect(200, index * distance + 10, 170, 20));
 
                 // Update Orbit
                 index++;
