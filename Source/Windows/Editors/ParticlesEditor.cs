@@ -84,7 +84,6 @@ namespace Kopernicus
 
                 // Color Array
                 Int32 buttonOffset = 20;
-                Debug.Log(particle.colorAnimation.Length);
                 for (Int32 i = 0; i < 5; i++)
                 {
                     Int32 i1 = i;
