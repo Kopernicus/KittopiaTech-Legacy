@@ -70,8 +70,12 @@ namespace Kopernicus
                 // Atmosphere
                 if (planet.atmosphere)
                 {
-                    ConfigNode atmo = WriteObjectToConfigNode("Atmosphere", ref body, new AtmosphereLoader(planet));
-                    WriteObjectToConfigNode("AtmosphereFromGround", ref atmo, new AtmosphereFromGroundLoader(planet) { afg = planet.afg }); // Haha
+                    try
+                    {
+                        ConfigNode atmo = WriteObjectToConfigNode("Atmosphere", ref body, new AtmosphereLoader(planet));
+                        WriteObjectToConfigNode("AtmosphereFromGround", ref atmo, new AtmosphereFromGroundLoader(planet) { afg = planet.afg }); // Haha
+                    }
+                    catch { }
                 }
 
                 // ScaledVersion
@@ -223,7 +227,8 @@ namespace Kopernicus
                     pqs = WriteObjectToConfigNode("PQS", ref body, pqsLoader);
                     WriteObjectToConfigNode("Material", ref pqs, pqsLoader.surfaceMaterial);
                     WriteObjectToConfigNode("FallbackMaterial", ref pqs, pqsLoader.fallbackMaterial);
-                    WriteObjectToConfigNode("PhysicsMaterial", ref pqs, pqsLoader.physicsMaterial);
+                    if (pqsLoader.physicsMaterial.material != null)
+                        WriteObjectToConfigNode("PhysicsMaterial", ref pqs, pqsLoader.physicsMaterial);
                 }
                 else
                 {
