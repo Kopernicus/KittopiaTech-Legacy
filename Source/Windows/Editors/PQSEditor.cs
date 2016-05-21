@@ -7,6 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Kopernicus.Components;
+using Kopernicus.MaterialWrapper;
 using UnityEngine;
 
 namespace Kopernicus
@@ -105,6 +107,10 @@ namespace Kopernicus
 
                     // Render the PQS
                     RenderObject(_sphere);
+
+                    // If it is an ocean, create an Hazardous Ocean button
+                    if (_sphere.surfaceMaterial is PQSOceanSurfaceQuad)
+                        RenderObject(_sphere.gameObject.AddOrGetComponent<HazardousOcean>());
                     index++;
 
                     // Rebuild
