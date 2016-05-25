@@ -271,7 +271,7 @@ namespace Kopernicus
                         // Load
                         ConfigNode modNode = WriteObjectToConfigNode(loaderType.Name, ref modsNode, loader);
                         modNode.AddValue("name", mod.name);
-                        IEnumerable<PQSMod> existingMods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType() == mod.GetType() && m.transform.parent == pqsVersion.transform && m.name == mod.name);
+                        IEnumerable<PQSMod> existingMods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType() == mod.GetType() && m.sphere == pqsVersion && m.name == mod.name);
                         modNode.AddValue("index", existingMods.ToList().IndexOf(mod));
 
                         // Submods
