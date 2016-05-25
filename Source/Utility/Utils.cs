@@ -82,6 +82,7 @@ namespace Kopernicus
                 body.scaledBody.transform.localScale = localScale;
 
                 // Serialize
+                Directory.CreateDirectory(KSPUtil.ApplicationRootPath + Body.ScaledSpaceCacheDirectory);
                 Utility.SerializeMesh(meshfilter.sharedMesh, KSPUtil.ApplicationRootPath + Body.ScaledSpaceCacheDirectory + "/" + body.name + ".bin");
             }
 
