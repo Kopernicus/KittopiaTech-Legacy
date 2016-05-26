@@ -78,6 +78,7 @@ namespace Kopernicus
                         {
                             _mode = Modes.PQS;
                             _sphere = pqs;
+                            parseCache = new Dictionary<Int32, String>();
                         }, new Rect(20, index * distance + 10, 350, 20));
                     }
                     foreach (PQSMod mod in pqsModList)
@@ -87,6 +88,7 @@ namespace Kopernicus
                             _mode = Modes.PQSMod;
                             _sphere = mod.sphere;
                             _mod = mod;
+                            parseCache = new Dictionary<Int32, String>();
                         }, new Rect(20, index * distance + 10, 350, 20));
                     }
                     index++;
