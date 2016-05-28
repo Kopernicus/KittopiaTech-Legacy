@@ -13,6 +13,7 @@ using Kopernicus.Configuration;
 using Kopernicus.Configuration.ModLoader;
 using Kopernicus.MaterialWrapper;
 using UnityEngine;
+using Kopernicus.UI.Enumerations;
 
 namespace Kopernicus
 {
@@ -267,7 +268,7 @@ namespace Kopernicus
                 if (_mode == Modes.PQS)
                 {
                     // Scroll
-                    BeginScrollView(250, Utils.GetScrollSize<PQS>() + 65, 20);
+                    BeginScrollView(250, Utils.GetScrollSize<PQS>() + Utils.GetScrollSize<HazardousOcean>() + 65, 20);
 
                     // Index
                     index = 0;
@@ -276,8 +277,23 @@ namespace Kopernicus
                     RenderObject(_sphere);
 
                     // If it is an ocean, create an Hazardous Ocean button
-                    if (_sphere.surfaceMaterial is PQSOceanSurfaceQuad)
-                        RenderObject(_sphere.gameObject.AddOrGetComponent<HazardousOcean>());
+                    if (PQSOceanSurfaceQuad.UsesSameShader(_sphere.surfaceMaterial))
+                    {
+                        Label("hazardousOcean"); index--;
+                        if (_sphere.GetComponent<HazardousOcean>() != null)
+                        {
+                            Button("Edit", () =>
+                            {
+                                UIController.Instance.SetEditedObject(KittopiaWindows.Curve, _sphere.GetComponent<HazardousOcean>().heatCurve ?? new FloatCurve(), c => _sphere.GetComponent<HazardousOcean>().heatCurve = c);
+                                UIController.Instance.EnableWindow(KittopiaWindows.Curve);
+                            }, new Rect(200, index*distance + 10, 75, 20)); index--;
+                            Button("Remove", () => UnityEngine.Object.DestroyImmediate(_sphere.GetComponent<HazardousOcean>()), new Rect(285, index*distance + 10, 75, 20));
+                        }
+                        else
+                        {
+                            Button("Add Hazardous Ocean", () => _sphere.gameObject.AddComponent<HazardousOcean>(), new Rect(200, index * distance + 10, 170, 20));
+                        }
+                    }
                     index++;
 
                     // Rebuild

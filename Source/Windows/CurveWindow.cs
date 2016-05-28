@@ -36,6 +36,13 @@ namespace Kopernicus
                 // Scroll
                 BeginScrollView(200, Current.Curve.keys.Length * 25 + 80);
 
+                // Add default frames
+                if (Current.Curve.keys.Length == 0)
+                {
+                    Current.Add(0, 0);
+                    Current.Add(1, 0);
+                }
+
                 // Edit the frames
                 for (Int32 i = 0; i < Current.Curve.keys.Length; i++)
                 {
