@@ -66,7 +66,7 @@ namespace Kopernicus
                     IEnumerable<PQSMod> pqsModList = Current.GetComponentsInChildren<PQSMod>(true);
 
                     // Scroll
-                    BeginScrollView(250, (pqsList.Count() + pqsModList.Count()) * 25 + 50, 20);
+                    BeginScrollView(250, (pqsList.Count() + pqsModList.Count()) * 25 + 65, 20);
 
                     // Index
                     index = 0;

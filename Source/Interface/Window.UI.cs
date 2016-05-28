@@ -377,6 +377,20 @@ namespace Kopernicus
                             UIController.Instance.EnableWindow(KittopiaWindows.LandClass);
                         });
                     }
+                    else if (FieldType == typeof(PQSMod_HeightColorMap2.LandClass[]))
+                    {
+                        Button("Edit LandClasses", () => {
+                            UIController.Instance.SetEditedObject(KittopiaWindows.LandClass, (PQSMod_HeightColorMap2.LandClass[])value, lc => info.SetValue(@object, lc));
+                            UIController.Instance.EnableWindow(KittopiaWindows.LandClass);
+                        });
+                    }
+                    else if (FieldType == typeof(PQSMod_HeightColorMapNoise.LandClass[]))
+                    {
+                        Button("Edit LandClasses", () => {
+                            UIController.Instance.SetEditedObject(KittopiaWindows.LandClass, (PQSMod_HeightColorMapNoise.LandClass[])value, lc => info.SetValue(@object, lc));
+                            UIController.Instance.EnableWindow(KittopiaWindows.LandClass);
+                        });
+                    }
                     else if (FieldType == typeof(PQSLandControl.LerpRange))
                     {
                         Label(info.Name); index--;

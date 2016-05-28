@@ -62,7 +62,7 @@ namespace Kopernicus
                 {
                     BeginScrollView((Int32)position.height - 30, Collection.Count() * 25 + 100, 10);
                     foreach (T obj in base.Current)
-                        Button(obj.ToString(), () => { Current = obj; mode = Mode.Editor; }, width: position.width - 80);
+                        Button(Format(obj), () => { Current = obj; mode = Mode.Editor; }, width: position.width - 80);
                     RenderModifiers(id);
                     Button("Exit", Exit);
                     EndScrollView();
@@ -74,6 +74,14 @@ namespace Kopernicus
                     Button("Exit", () => { Current = default(T); mode = Mode.Selection; });
                     EndScrollView();
                 }
+            }
+
+            /// <summary>
+            /// Formats the specified object.
+            /// </summary>
+            protected virtual String Format(T obj)
+            {
+                return obj.ToString();
             }
 
             /// <summary>

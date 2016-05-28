@@ -292,6 +292,8 @@ namespace Kopernicus
                 typeof (PQSLandControl.LerpRange),
                 typeof (PQSMod_VertexPlanet.LandClass[]),
                 typeof (PQSMod_HeightColorMap.LandClass[]),
+                typeof (PQSMod_HeightColorMap2.LandClass[]),
+                typeof (PQSMod_HeightColorMapNoise.LandClass[]),
                 typeof (PQS),
                 typeof (PQSMod_VertexPlanet.SimplexWrapper),
                 typeof (PQSMod_VertexPlanet.NoiseModWrapper),

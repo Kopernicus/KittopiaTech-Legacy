@@ -39,6 +39,22 @@ namespace Kopernicus
             }
 
             /// <summary>
+            /// Formats the specified object.
+            /// </summary>
+            protected override String Format(Object obj)
+            {
+                if (obj is PQSMod_VertexPlanet.LandClass)
+                    return ((PQSMod_VertexPlanet.LandClass) obj).name;
+                if (obj is PQSMod_HeightColorMap.LandClass)
+                    return ((PQSMod_HeightColorMap.LandClass) obj).name;
+                if (obj is PQSMod_HeightColorMap2.LandClass)
+                    return ((PQSMod_HeightColorMap2.LandClass) obj).name;
+                if (obj is PQSMod_HeightColorMapNoise.LandClass)
+                    return ((PQSMod_HeightColorMapNoise.LandClass) obj).name;
+                return (obj as PQSLandControl.LandClass)?.landClassName;
+            }
+
+            /// <summary>
             /// Renders the Editor
             /// </summary>
             protected override void RenderEditor(Int32 id)

@@ -102,7 +102,7 @@
     <Compile Include="Windows\Editors\OrbitEditor.cs" />
     <Compile Include="Windows\Editors\StarlightEditor.cs" />
     <Compile Include="Windows\FileWindow.cs" />
-    <Compile Include="Windows\LandClassModifier.cs" />
+    <Compile Include="Windows\LandClassWindow.cs" />
     <Compile Include="Windows\LerpRangeWindow.cs" />
     <Compile Include="Windows\MaterialWindow.cs" />
     <Compile Include="Windows\NoiseModWindow.cs" />
