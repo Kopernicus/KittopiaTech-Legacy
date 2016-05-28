@@ -26,19 +26,19 @@ ZIP_NAME := KittopiaTech-$(shell git describe --tags)-$(shell date "+%Y-%m-%d").
 all: plugin
 kittopia: $(PLUGIN)
 plugin: kittopia copy_plugin_files
-    cd $(RELEASE_DIR); zip -r $(ZIP_NAME) .
+	cd $(RELEASE_DIR); zip -r $(ZIP_NAME) .
 	
 ### LIBRARIES ###
 $(PLUGIN): generate_dirs
-    $(CS) /debug+ /debug:portable /out:$(PLUGIN) /nostdlib+ /target:library /platform:anycpu /recurse:$(CODE)/*.cs /reference:$(REFS)
+	$(CS) /debug+ /debug:portable /out:$(PLUGIN) /nostdlib+ /target:library /platform:anycpu /recurse:$(CODE)/*.cs /reference:$(REFS)
 
 ### UTILS ###
 generate_dirs:
-    mkdir -p $(PLUGIN_DIR)
-    mkdir -p $(BUILD_DIR)
+	mkdir -p $(PLUGIN_DIR)
+	mkdir -p $(BUILD_DIR)
 copy_plugin_files:
-    cp $(PLUGIN) $(BUILD_DIR)
+	cp $(PLUGIN) $(BUILD_DIR)
 clean:
-    rm -r $(PLUGIN_DIR)
-    rm $(RELEASE_DIR)/$(ZIP_NAME)
-    rm *.dll
+	rm -r $(PLUGIN_DIR)
+	rm $(RELEASE_DIR)/$(ZIP_NAME)
+	rm *.dll
