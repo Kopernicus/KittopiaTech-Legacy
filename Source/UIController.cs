@@ -24,7 +24,6 @@ namespace Kopernicus
             public static UIController Instance { get; private set; }
 
             // Settings
-            public static Double PixelPerFrame = 5000d;
             public static Single NormalStrength = 9f;
             
             /// <summary>
@@ -38,11 +37,6 @@ namespace Kopernicus
 
                 // Invoke Create
                 Create(w => RectCache[w] = GUI.Window(w.Title().GetHashCode(), GetRect(w), w.Render, w.Title()), false);
-
-                // Load the settings
-                ConfigNode settings = GameDatabase.Instance.GetConfigs("KittopiaTech")[0].config;
-                Double.TryParse(settings.GetValue("pixelPerFrame"), out PixelPerFrame);
-                Single.TryParse(settings.GetValue("normalStrength"), out NormalStrength);
 
                 // Register Windows
                 RegisterWindow<BiomeWindow>(KittopiaWindows.Biome);
