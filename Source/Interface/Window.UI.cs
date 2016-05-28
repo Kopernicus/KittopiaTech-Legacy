@@ -321,7 +321,7 @@ namespace Kopernicus
                                 }
                                 else
                                 {
-                                    info.SetValue(@object, Resources.FindObjectsOfTypeAll<CBAttributeMapSO>().Where(m => m.name == location));
+                                    info.SetValue(@object, Resources.FindObjectsOfTypeAll<CBAttributeMapSO>().FirstOrDefault(m => m.name == location));
                                 }
                             });
                             UIController.Instance.EnableWindow(KittopiaWindows.Files);
@@ -349,7 +349,7 @@ namespace Kopernicus
                                 }
                                 else
                                 {
-                                    info.SetValue(@object, Resources.FindObjectsOfTypeAll<Texture>().Where(m => m.name == location));
+                                    info.SetValue(@object, Resources.FindObjectsOfTypeAll<Texture>().FirstOrDefault(m => m.name == location));
                                 }
                             });
                             UIController.Instance.EnableWindow(KittopiaWindows.Files);
@@ -442,7 +442,7 @@ namespace Kopernicus
                                 }
                                 else
                                 {
-                                    info.SetValue(@object, Resources.FindObjectsOfTypeAll<MapSO>().Where(m => m.name == location));
+                                    info.SetValue(@object, Resources.FindObjectsOfTypeAll<MapSO>().FirstOrDefault(m => m.name == location));
                                 }
                             });
                             UIController.Instance.EnableWindow(KittopiaWindows.Files);
@@ -504,7 +504,7 @@ namespace Kopernicus
                                 }
                                 else
                                 {
-                                    info.SetValue(@object, Resources.FindObjectsOfTypeAll<Mesh>().Where(m => m.name == location));
+                                    info.SetValue(@object, Resources.FindObjectsOfTypeAll<Mesh>().FirstOrDefault(m => m.name == location));
                                 }
                             });
                             UIController.Instance.EnableWindow(KittopiaWindows.Files);
