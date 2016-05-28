@@ -62,6 +62,7 @@ namespace Kopernicus
                 if (RectCache.ContainsKey(window))
                     return RectCache[window];
                 Position position = (window.GetType().GetCustomAttributes(typeof(Position), false) as Position[])?[0];
+                RectCache[window] = position.Value;
                 return position.Value;
             }
 
