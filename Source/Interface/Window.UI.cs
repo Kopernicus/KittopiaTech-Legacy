@@ -146,7 +146,7 @@ namespace Kopernicus
                 {
                     Double value = 0;
                     if (isParseError.ContainsKey(index) && isParseError[index]) GUI.backgroundColor = Color.red;
-                    String cache = GUI.TextField(rect ?? new Rect(20, index*distance + 10, 178, 20), parseCache.ContainsKey(index) && !overrideValue ? parseCache[index] : defaultValue.ToString());
+                    String cache = GUI.TextField(rect ?? new Rect(20, index*distance + 10, 178, 20), parseCache.ContainsKey(index) && !overrideValue && isParseError[index] ? parseCache[index] : defaultValue.ToString());
                     GUI.backgroundColor = Color.white;
                     if (Double.TryParse(cache, out value))
                     {
