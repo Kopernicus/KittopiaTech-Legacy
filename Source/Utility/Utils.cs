@@ -189,7 +189,7 @@ namespace Kopernicus
 
                 // Get PQS
                 PQS pqs = body.pqsController;
-                pqs.SetupExternalRender();
+                pqs.isBuildingMaps = true;
 
                 // Get the Mod-Building Methods, because I'm lazy :P 
                 MethodInfo modOnVertexBuildHeight = typeof (PQS).GetMethod("Mod_OnVertexBuildHeight", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -252,7 +252,7 @@ namespace Kopernicus
                 heightMap.SetPixels(heightMapValues);
 
                 // Close the Renderer
-                pqs.CloseExternalRender();
+                pqs.isBuildingMaps = false;
 
                 // Bump to Normal Map
                 Texture2D normalMap = Utility.BumpToNormalMap(heightMap, UIController.NormalStrength);

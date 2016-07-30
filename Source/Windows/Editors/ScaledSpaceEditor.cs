@@ -37,17 +37,23 @@ namespace Kopernicus
 
                 // Map Data
                 CelestialBody body = Utils.FindCB(Current.name);
-                Label("mapFilesize"); index--;
-                TextField(body.pqsController.mapFilesize, v => body.pqsController.mapFilesize = v, new Rect(200, index * distance + 10, 170, 20));
-                Label("mapMaxHeight"); index--;
-                TextField(body.pqsController.mapMaxHeight, v => body.pqsController.mapMaxHeight = v, new Rect(200, index * distance + 10, 170, 20));
-                Label("normalStrength"); index--;
-                TextField(UIController.NormalStrength, v => UIController.NormalStrength = v, new Rect(200, index * distance + 10, 170, 20));
+                if (body.pqsController != null)
+                {
+                    Label("mapFilesize");
+                    index--;
+                    TextField(body.pqsController.mapFilesize, v => body.pqsController.mapFilesize = v, new Rect(200, index * distance + 10, 170, 20));
+                    Label("mapMaxHeight");
+                    index--;
+                    TextField(body.pqsController.mapMaxHeight, v => body.pqsController.mapMaxHeight = v, new Rect(200, index * distance + 10, 170, 20));
+                    Label("normalStrength");
+                    index--;
+                    TextField(UIController.NormalStrength, v => UIController.NormalStrength = v, new Rect(200, index * distance + 10, 170, 20));
+                }
 
                 // Update Orbit
                 index++;
                 Button("Update Mesh", () => Utils.GenerateScaledSpace(Utils.FindCB(Current.name), Current.GetComponent<MeshFilter>().sharedMesh));
-                Button("Update Textures", () => { Action<CelestialBody> generate = Utils.GeneratePQSMaps; generate.BeginInvoke(Utils.FindCB(Current.name), ar => generate.EndInvoke(ar), null); });
+                Enabled(() => body.pqsController != null, () => Button("Update Textures", () => { Action<CelestialBody> generate = Utils.GeneratePQSMaps; generate.BeginInvoke(Utils.FindCB(Current.name), ar => generate.EndInvoke(ar), null); }));
 
                 // End Scroll
                 EndScrollView();
