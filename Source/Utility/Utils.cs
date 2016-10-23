@@ -246,10 +246,12 @@ namespace Kopernicus
 
                         // Adjust the Color
                         Color color = data.vertColor;
-                        if (!transparentMaps)
+                        if (!pqs.mapOcean)
                             color.a = 1f;
-                        if (pqs.mapOcean && height <= pqs.mapOceanHeight)
-                            color = pqs.mapOceanColor;
+                        else if (height > pqs.mapOceanHeight)
+                            color.a = transparentMaps ? 0f : 1f;
+                        else
+                            color = pqs.mapOceanColor.A(1f);
 
                         // Set the Pixels
                         colorMapValues[(y*pqs.mapFilesize) + x] = color;
