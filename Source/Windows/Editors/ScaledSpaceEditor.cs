@@ -5,6 +5,7 @@
  */
 
 using System;
+using System.Threading;
 using UnityEngine;
 
 namespace Kopernicus
@@ -16,6 +17,9 @@ namespace Kopernicus
         /// </summary>
         public class ScaledSpaceEditor : Editor<GameObject>
         {
+            // Whether maps should be left transparent (oceans)
+            private Boolean transparentMaps = true;
+
             /// <summary>
             /// Renders the Window
             /// </summary>
@@ -25,7 +29,7 @@ namespace Kopernicus
                 base.Render(id);
 
                 // Scroll
-                BeginScrollView(250, Utils.GetScrollSize<MeshFilter>() + Utils.GetScrollSize<MeshRenderer>() + Utils.GetScrollSize<ScaledSpaceFader>() + 150, 20);
+                BeginScrollView(250, Utils.GetScrollSize<MeshFilter>() + Utils.GetScrollSize<MeshRenderer>() + Utils.GetScrollSize<ScaledSpaceFader>() + 180, 20);
 
                 // Index
                 index = 0;
@@ -48,12 +52,15 @@ namespace Kopernicus
                     Label("normalStrength");
                     index--;
                     TextField(UIController.NormalStrength, v => UIController.NormalStrength = v, new Rect(200, index * distance + 10, 170, 20));
+                    Label("transparentMaps");
+                    index--;
+                    TextField(transparentMaps, v => transparentMaps = v, new Rect(200, index * distance + 10, 170, 20));
                 }
 
                 // Update Orbit
                 index++;
                 Button("Update Mesh", () => Utils.GenerateScaledSpace(Utils.FindCB(Current.name), Current.GetComponent<MeshFilter>().sharedMesh));
-                Enabled(() => body.pqsController != null, () => Button("Update Textures", () => { Action<CelestialBody> generate = Utils.GeneratePQSMaps; generate.BeginInvoke(Utils.FindCB(Current.name), ar => generate.EndInvoke(ar), null); }));
+                Enabled(() => body.pqsController != null, () => Button("Update Textures", () => UIController.Instance.StartCoroutine(Utils.GeneratePQSMaps(Utils.FindCB(Current.name), transparentMaps))));
 
                 // End Scroll
                 EndScrollView();

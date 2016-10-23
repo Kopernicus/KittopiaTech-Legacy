@@ -6,7 +6,6 @@ using Kopernicus.Configuration;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -182,7 +181,7 @@ namespace Kopernicus
             /// <summary>
             /// Generate the scaled space Textures using PQS in a Coroutine
             /// </summary>
-            public static void GeneratePQSMaps(CelestialBody body)
+            public static IEnumerator GeneratePQSMaps(CelestialBody body, Boolean transparentMaps)
             {
                 // Get time
                 DateTime now = DateTime.Now;
@@ -190,21 +189,32 @@ namespace Kopernicus
                 // Get PQS
                 PQS pqs = body.pqsController;
                 pqs.isBuildingMaps = true;
+                pqs.isFakeBuild = true;
 
-                // Get the Mod-Building Methods, because I'm lazy :P 
-                MethodInfo modOnVertexBuildHeight = typeof (PQS).GetMethod("Mod_OnVertexBuildHeight", BindingFlags.Instance | BindingFlags.NonPublic);
-                MethodInfo modOnVertexBuild = typeof (PQS).GetMethod("Mod_OnVertexBuild", BindingFlags.Instance | BindingFlags.NonPublic);
+                // Get the mods
+                Action<PQS.VertexBuildData> modOnVertexBuildHeight = (Action<PQS.VertexBuildData>)Delegate.CreateDelegate(
+                    typeof(Action<PQS.VertexBuildData>), 
+                    pqs, 
+                    typeof (PQS).GetMethod("Mod_OnVertexBuildHeight", BindingFlags.Instance | BindingFlags.NonPublic));
+                Action<PQS.VertexBuildData> modOnVertexBuild = (Action<PQS.VertexBuildData>)Delegate.CreateDelegate(
+                    typeof(Action<PQS.VertexBuildData>), 
+                    pqs, 
+                    typeof(PQS).GetMethod("Mod_OnVertexBuild", BindingFlags.Instance | BindingFlags.NonPublic));
+                PQSMod[] mods = pqs.GetComponentsInChildren<PQSMod>().Where(m => m.sphere == pqs && m.modEnabled).ToArray();
+
+                // Create the Textures
+                Texture2D colorMap = new Texture2D(pqs.mapFilesize, pqs.mapFilesize / 2, TextureFormat.ARGB32, true);
+                Texture2D heightMap = new Texture2D(pqs.mapFilesize, pqs.mapFilesize / 2, TextureFormat.RGB24, true);
 
                 // Arrays
                 Color[] colorMapValues = new Color[pqs.mapFilesize*(pqs.mapFilesize/2)];
                 Color[] heightMapValues = new Color[pqs.mapFilesize*(pqs.mapFilesize/2)];
 
-                // Create the Textures
-                Texture2D colorMap = new Texture2D(pqs.mapFilesize, pqs.mapFilesize/2, TextureFormat.ARGB32, true);
-                Texture2D heightMap = new Texture2D(pqs.mapFilesize, pqs.mapFilesize/2, TextureFormat.RGB24, true);
-
                 // Stuff
                 ScreenMessage message = ScreenMessages.PostScreenMessage("Generating Planet-Maps", Single.MaxValue, ScreenMessageStyle.UPPER_CENTER);
+
+                // Wait a some time
+                yield return null;
 
                 // Loop through the pixels
                 for (int y = 0; y < (pqs.mapFilesize/2); y++)
@@ -224,8 +234,8 @@ namespace Kopernicus
                         };
 
                         // Build from the Mods 
-                        modOnVertexBuildHeight.Invoke(pqs, new[] {data});
-                        modOnVertexBuild.Invoke(pqs, new[] {data});
+                        modOnVertexBuildHeight(data);
+                        modOnVertexBuild(data);
 
                         // Adjust the height
                         double height = (data.vertHeight - pqs.radius)*(1d/pqs.mapMaxHeight);
@@ -236,7 +246,8 @@ namespace Kopernicus
 
                         // Adjust the Color
                         Color color = data.vertColor;
-                        color.a = 1f;
+                        if (!transparentMaps)
+                            color.a = 1f;
                         if (pqs.mapOcean && height <= pqs.mapOceanHeight)
                             color = pqs.mapOceanColor;
 
@@ -244,15 +255,18 @@ namespace Kopernicus
                         colorMapValues[(y*pqs.mapFilesize) + x] = color;
                         heightMapValues[(y*pqs.mapFilesize) + x] = new Color((Single) height, (Single) height, (Single) height);
                     }
+                    yield return null;
                 }
 
                 // Apply the maps
                 colorMap.SetPixels(colorMapValues);
                 colorMap.Apply();
                 heightMap.SetPixels(heightMapValues);
+                yield return null;
 
                 // Close the Renderer
                 pqs.isBuildingMaps = false;
+                pqs.isFakeBuild = false;
 
                 // Bump to Normal Map
                 Texture2D normalMap = Utility.BumpToNormalMap(heightMap, UIController.NormalStrength);
@@ -263,6 +277,7 @@ namespace Kopernicus
                 File.WriteAllBytes(path + body.name + "_Color.png", colorMap.EncodeToPNG());
                 File.WriteAllBytes(path + body.name + "_Height.png", heightMap.EncodeToPNG());
                 File.WriteAllBytes(path + body.name + "_Normal.png", normalMap.EncodeToPNG());
+                yield return null;
 
                 // Apply them to the ScaledVersion
                 body.scaledBody.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", colorMap);

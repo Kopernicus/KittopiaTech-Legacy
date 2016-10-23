@@ -197,7 +197,7 @@ namespace Kopernicus
                     parseCache[index] = cache;
                 }
                 if (typeof (T) == typeof (Boolean))
-                    result = (T) (Object) GUI.Toggle(rect ?? new Rect(20, index*distance + 10, 178, 20), (Boolean) (Object) defaultValue, "Bool");
+                    result = (T) (Object) GUI.Toggle(rect ?? new Rect(20, index*distance + 10, 178, 20), (Boolean) (Object) defaultValue, " Bool");
                 if (typeof (T) == typeof (String))
                     result = (T) (Object) GUI.TextField(rect ?? new Rect(20, index*distance + 10, 178, 20), defaultValue.ToString());
 
