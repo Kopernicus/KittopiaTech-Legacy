@@ -459,6 +459,15 @@ namespace Kopernicus
                         }, new Rect(200, index * distance + 10, 170, 20));
                         
                     }
+                    else if (FieldType == typeof(CelestialBody))
+                    {
+                        Label(info.Name); index--;
+                        Button("Edit Body", () =>
+                        {
+                            UIController.Instance.SetEditedObject(KittopiaWindows.Selector, value ?? new CelestialBody(), b => info.SetValue(@object, b));
+                            UIController.Instance.EnableWindow(KittopiaWindows.Selector);
+                        }, new Rect(200, index * distance + 10, 170, 20));
+                    }
                     else if (value is Material) // Kopernicus creates Wrappers for the Materials, so key.FieldType == typeof(Material) would return false. :/
                     {
                         Label(info.Name); index--;

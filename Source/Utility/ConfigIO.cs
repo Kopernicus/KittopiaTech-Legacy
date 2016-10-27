@@ -157,6 +157,7 @@ namespace Kopernicus
                     RequireConfigType[] types = (member.MemberType == MemberTypes.Field ? (member as FieldInfo).FieldType : (member as PropertyInfo).PropertyType).GetCustomAttributes(typeof(RequireConfigType), false) as RequireConfigType[];
 
                     // Write
+                    if ((member.Name == "mapOcean" || member.Name == "oceanColor" || member.Name == "oceanHeight" || member.Name == "density") && typeof(T) == typeof(OceanLoader)) continue;
                     object value = member.GetValue(target);
                     Type targetType = member.GetMemberType();
 
@@ -232,8 +233,13 @@ namespace Kopernicus
                 }
                 else
                 {
+                    CelestialBody cb = pqsVersion.parentSphere.GetComponentInParent<CelestialBody>();
                     OceanLoader oceanLoader = new OceanLoader(pqsVersion);
                     pqs = WriteObjectToConfigNode("Ocean", ref body, oceanLoader);
+                    pqs.AddValue("ocean", pqsVersion.parentSphere.mapOcean && cb.ocean);
+                    pqs.AddValue("oceanColor", pqsVersion.parentSphere.mapOceanColor);
+                    pqs.AddValue("oceanHeight", pqsVersion.parentSphere.mapOceanHeight);
+                    pqs.AddValue("density", cb.oceanDensity);
                     WriteObjectToConfigNode("Material", ref pqs, oceanLoader.surfaceMaterial);
                     WriteObjectToConfigNode("FallbackMaterial", ref pqs, oceanLoader.fallbackMaterial);
                     WriteObjectToConfigNode("Fog", ref pqs, new FogLoader(Part.GetComponentUpwards<CelestialBody>(pqsVersion.gameObject)));
