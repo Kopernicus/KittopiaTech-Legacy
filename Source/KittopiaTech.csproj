@@ -51,6 +51,9 @@
       <HintPath>..\Kopernicus.OnDemand.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Kopernicus.Parser">
+      <HintPath>..\Kopernicus.Parser.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\System.dll</HintPath>
     </Reference>

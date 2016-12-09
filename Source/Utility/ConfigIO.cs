@@ -157,7 +157,6 @@ namespace Kopernicus
                     RequireConfigType[] types = (member.MemberType == MemberTypes.Field ? (member as FieldInfo).FieldType : (member as PropertyInfo).PropertyType).GetCustomAttributes(typeof(RequireConfigType), false) as RequireConfigType[];
 
                     // Write
-                    if ((member.Name == "mapOcean" || member.Name == "oceanColor" || member.Name == "oceanHeight" || member.Name == "density") && typeof(T) == typeof(OceanLoader)) continue;
                     object value = member.GetValue(target);
                     Type targetType = member.GetMemberType();
 
