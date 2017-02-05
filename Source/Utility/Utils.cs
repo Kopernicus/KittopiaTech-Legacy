@@ -1,7 +1,3 @@
-/*=======================================================================================================*\
- * This code is partitially by Kragrathea (GPL) and by the Kopernicus-Team (LGPL). Used with permission. *
-\*=======================================================================================================*/
-
 using Kopernicus.Configuration;
 using System;
 using System.Collections;
@@ -161,7 +157,7 @@ namespace Kopernicus
                 // Fix and start the OrbitRenderer
                 if (Resources.FindObjectsOfTypeAll<OrbitRenderer>().Count(r => r.name == cBody.name) == 1)
                 {
-                    OrbitRenderer renderer = Resources.FindObjectsOfTypeAll<OrbitRenderer>().Where(r => r.name == cBody.name).First();
+                    OrbitRenderer renderer = Resources.FindObjectsOfTypeAll<OrbitRenderer>().First(r => r.name == cBody.name);
                     renderer.driver = cBody.orbitDriver;
                     renderer.celestialBody = cBody;
                     typeof (OrbitRenderer).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(renderer, null);

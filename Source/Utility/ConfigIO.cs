@@ -4,18 +4,19 @@
  * Licensed under the Terms of a custom License, see LICENSE file
  */
 
-using Kopernicus.Configuration;
-using Kopernicus.Components;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using UnityEngine;
+using Kopernicus.Components;
+using Kopernicus.Configuration;
 using Kopernicus.Configuration.ModLoader;
 using Kopernicus.MaterialWrapper;
 using Kopernicus.UI.Extensions;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Kopernicus
 {
@@ -29,8 +30,7 @@ namespace Kopernicus
             /// <summary>
             /// Types that need special manipulation
             /// </summary>
-            public static readonly Type[] writeableTypes = new Type[]
-            {
+            public static readonly Type[] writeableTypes = {
                 typeof(ColorParser),
                 typeof(Vector2Parser),
                 typeof(Vector3DParser),
@@ -75,7 +75,10 @@ namespace Kopernicus
                         ConfigNode atmo = WriteObjectToConfigNode("Atmosphere", ref body, new AtmosphereLoader(planet));
                         WriteObjectToConfigNode("AtmosphereFromGround", ref atmo, new AtmosphereFromGroundLoader(planet) { afg = planet.afg }); // Haha
                     }
-                    catch { }
+                    catch
+                    {
+                        // ignored
+                    }
                 }
 
                 // ScaledVersion
@@ -84,7 +87,7 @@ namespace Kopernicus
                 if (scaledLoader.type == BodyType.Star)
                 {
                     WriteObjectToConfigNode("Material", ref scaled, new EmissiveMultiRampSunspotsLoader(planet.scaledBody.GetComponent<Renderer>().sharedMaterial));   
-                    WriteObjectToConfigNode("Light", ref scaled, new LightShifterLoader() { lsc = planet.scaledBody.GetComponentsInChildren<LightShifter>(true)[0] });
+                    WriteObjectToConfigNode("Light", ref scaled, new LightShifterLoader { lsc = planet.scaledBody.GetComponentsInChildren<LightShifter>(true)[0] });
                     if (planet.scaledBody.GetComponentsInChildren<SunCoronas>().Length != 0)
                     {
                         ConfigNode coronas = scaled.AddNode("Coronas");
@@ -131,7 +134,7 @@ namespace Kopernicus
             /// <summary>
             /// Formats a texture path
             /// </summary>
-            public static String Format(UnityEngine.Object o)
+            public static String Format(Object o)
             {
                 return GameDatabase.Instance.ExistsTexture(o.name) || Utility.TextureExists(o.name) ? o.name : "BUILTIN/" + o.name;
             }
@@ -200,16 +203,16 @@ namespace Kopernicus
                     }
 
                     // Texture
-                    Type[] textureTypes = new Type[] { typeof(Mesh), typeof(Texture2D), typeof(Texture), typeof(MapSO), typeof(CBAttributeMapSO) };
+                    Type[] textureTypes = { typeof(Mesh), typeof(Texture2D), typeof(Texture), typeof(MapSO), typeof(CBAttributeMapSO) };
                     if (textureTypes.Contains(value.GetType()) || textureTypes.Contains(value.GetType().BaseType))
-                        value = Format(value as UnityEngine.Object);
+                        value = Format(value as Object);
 
                     // Write
                     if (type == ConfigType.Value && value.GetType() != typeof(FloatCurve) && value.GetType() != typeof(AnimationCurve))
                         config.AddValue(targets[0].fieldName, value);
                     else if (value.GetType() == typeof(FloatCurve))
                         (value as FloatCurve).Save(config.AddNode(targets[0].fieldName));
-                    else if (value.GetType() == typeof(AnimationCurve))
+                    else if (value is AnimationCurve)
                         new FloatCurve((value as AnimationCurve).keys).Save(config.AddNode(targets[0].fieldName));
                 }
                 return config;
@@ -247,7 +250,7 @@ namespace Kopernicus
                 }
 
                 // Mods
-                IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => ocean ? true : m.sphere == pqsVersion);
+                IEnumerable<PQSMod> mods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => (ocean || m.sphere == pqsVersion) && !(m is PQSCity) && !(m is PQSCity2));
 
                 // Get all loaded types
                 IEnumerable<Type> types = AssemblyLoader.loadedAssemblies.SelectMany(a => a.assembly.GetTypes());
@@ -275,40 +278,30 @@ namespace Kopernicus
 
                         // Load
                         ConfigNode modNode = WriteObjectToConfigNode(loaderType.Name, ref modsNode, loader);
-                        modNode.AddValue("name", mod.name);
                         IEnumerable<PQSMod> existingMods = pqsVersion.GetComponentsInChildren<PQSMod>(true).Where(m => m.GetType() == mod.GetType() && m.sphere == pqsVersion && m.name == mod.name);
                         modNode.AddValue("index", existingMods.ToList().IndexOf(mod));
 
                         // Submods
-                        if (mod is PQSMod_HeightColorMap)
+                        PQSMod_HeightColorMap hcm = mod as PQSMod_HeightColorMap;
+                        if (hcm?.landClasses != null)
                         {
-                            PQSMod_HeightColorMap hcm = mod as PQSMod_HeightColorMap;
-                            if (hcm.landClasses != null)
-                            {
-                                ConfigNode landClasses = modNode.AddNode("LandClasses");
-                                foreach (PQSMod_HeightColorMap.LandClass landClass in hcm.landClasses)
-                                    WriteObjectToConfigNode("Class", ref landClasses, new HeightColorMap.LandClassLoader(landClass));
-                            }
+                            ConfigNode landClasses = modNode.AddNode("LandClasses");
+                            foreach (PQSMod_HeightColorMap.LandClass landClass in hcm.landClasses)
+                                WriteObjectToConfigNode("Class", ref landClasses, new HeightColorMap.LandClassLoader(landClass));
                         }
-                        if (mod is PQSMod_HeightColorMap2)
+                        PQSMod_HeightColorMap2 hcm2 = mod as PQSMod_HeightColorMap2;
+                        if (hcm2?.landClasses != null)
                         {
-                            PQSMod_HeightColorMap2 hcm2 = mod as PQSMod_HeightColorMap2;
-                            if (hcm2.landClasses != null)
-                            {
-                                ConfigNode landClasses = modNode.AddNode("LandClasses");
-                                foreach (PQSMod_HeightColorMap2.LandClass landClass in hcm2.landClasses)
-                                    WriteObjectToConfigNode("Class", ref landClasses, new HeightColorMap2.LandClassLoader2(landClass));
-                            }
+                            ConfigNode landClasses = modNode.AddNode("LandClasses");
+                            foreach (PQSMod_HeightColorMap2.LandClass landClass in hcm2.landClasses)
+                                WriteObjectToConfigNode("Class", ref landClasses, new HeightColorMap2.LandClassLoader2(landClass));
                         }
-                        if (mod is PQSMod_HeightColorMapNoise)
+                        PQSMod_HeightColorMapNoise hcmNoise = mod as PQSMod_HeightColorMapNoise;
+                        if (hcmNoise?.landClasses != null)
                         {
-                            PQSMod_HeightColorMapNoise hcmNoise = mod as PQSMod_HeightColorMapNoise;
-                            if (hcmNoise.landClasses != null)
-                            {
-                                ConfigNode landClasses = modNode.AddNode("LandClasses");
-                                foreach (PQSMod_HeightColorMapNoise.LandClass landClass in hcmNoise.landClasses)
-                                    WriteObjectToConfigNode("Class", ref landClasses, new HeightColorMapNoise.LandClassLoaderNoise(landClass));
-                            }
+                            ConfigNode landClasses = modNode.AddNode("LandClasses");
+                            foreach (PQSMod_HeightColorMapNoise.LandClass landClass in hcmNoise.landClasses)
+                                WriteObjectToConfigNode("Class", ref landClasses, new HeightColorMapNoise.LandClassLoaderNoise(landClass));
                         }
                         if (mod is PQSLandControl)
                         {
@@ -381,12 +374,10 @@ namespace Kopernicus
                                 }
                             }
                         }
-                        if (mod is PQSMod_OceanFX)
-                        {
-                            ConfigNode watermain = modNode.AddNode((loader as OceanFX).watermain);
-                            foreach (ConfigNode.Value value in watermain.values)
-                                value.value = Format(Resources.FindObjectsOfTypeAll<Texture2D>().First(o => o.name == value.value));
-                        }
+                        if (!(mod is PQSMod_OceanFX)) continue;
+                        ConfigNode watermain = modNode.AddNode((loader as OceanFX).watermain);
+                        foreach (ConfigNode.Value value in watermain.values)
+                            value.value = Format(Resources.FindObjectsOfTypeAll<Texture2D>().First(o => o.name == value.value));
                     }
                 }
             }
