@@ -44,10 +44,11 @@ namespace Kopernicus
                 }
 
                 // Edit the frames
+                Keyframe[] fr = Current.Curve.keys;
                 for (Int32 i = 0; i < Current.Curve.keys.Length; i++)
                 {
                     // Get the value
-                    Keyframe frame = Current.Curve.keys[i];
+                    Keyframe frame = fr[i];
 
                     // Edit
                     TextField(frame.time, t => frame.time = t, new Rect(20, index * distance + 10, 60, 20)); index--;
@@ -55,17 +56,20 @@ namespace Kopernicus
                     TextField(frame.inTangent, t => frame.inTangent = t, new Rect(160, index * distance + 10, 60, 20)); index--;
                     TextField(frame.outTangent, t => frame.outTangent = t, new Rect(230, index * distance + 10, 60, 20)); index--;
 
+                    fr[i] = frame;
+
                     // Add
-                    Button("+", () => { List<Keyframe> frames = Current.Curve.keys.ToList(); frames.Insert(i + 1, new Keyframe());
-                                          Current.Curve.keys = frames.ToArray();
+                    Button("+", () => { List<Keyframe> frames = fr.ToList(); frames.Insert(i + 1, new Keyframe());
+                        fr = frames.ToArray();
                     }, new Rect(300, index*distance + 10, 30, 20)); index--;
 
                     // Remove
                     Button("-", () => {
-                        List<Keyframe> frames = Current.Curve.keys.ToList(); frames.RemoveAt(i);
-                        Current.Curve.keys = frames.ToArray();
+                        List<Keyframe> frames = fr.ToList(); frames.RemoveAt(i);
+                        fr = frames.ToArray();
                     }, new Rect(340, index * distance + 10, 30, 20));
                 }
+                Current.Curve.keys = fr;
 
                 // Exit
                 Callback?.Invoke(Current);

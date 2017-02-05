@@ -64,7 +64,7 @@ namespace Kopernicus
                 Button("Atmosphere Editor", () => { EditorController.SetEditedObject(KittopiaEditors.Atmosphere, Current); EditorController.EnableWindow(KittopiaEditors.Atmosphere); });
                 Button("CelestialBody Editor", () => { EditorController.SetEditedObject(KittopiaEditors.CelestialBody, Current); EditorController.EnableWindow(KittopiaEditors.CelestialBody); });
                 Button("PQS Editor", () => { EditorController.SetEditedObject(KittopiaEditors.Terrain, Current); EditorController.EnableWindow(KittopiaEditors.Terrain); });
-                Enabled(() => Current.orbitDriver != null, () => { Button("Orbit Editor", () => { EditorController.SetEditedObject(KittopiaEditors.Orbit, Current.orbitDriver); EditorController.EnableWindow(KittopiaEditors.Orbit); }); });
+                Enabled(() => Current?.orbitDriver != null, () => { Button("Orbit Editor", () => { EditorController.SetEditedObject(KittopiaEditors.Orbit, Current.orbitDriver); EditorController.EnableWindow(KittopiaEditors.Orbit); }); });
                 Button("ScaledSpace Editor", () => { EditorController.SetEditedObject(KittopiaEditors.ScaledSpace, Current.scaledBody); EditorController.EnableWindow(KittopiaEditors.ScaledSpace); });
                 Button("Starlight Editor", () => {EditorController.SetEditedObject(KittopiaEditors.Starlight, Current); EditorController.EnableWindow(KittopiaEditors.Starlight); });
                 Button("Ring Editor", () => { EditorController.SetEditedObject(KittopiaEditors.Ring, Current); EditorController.EnableWindow(KittopiaEditors.Ring); });
