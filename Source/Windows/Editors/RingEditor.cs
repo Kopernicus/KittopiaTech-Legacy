@@ -27,7 +27,7 @@ namespace Kopernicus
             /// <summary>
             /// The index of the current Ring in all rings
             /// </summary>
-            private Int32 position { get; set; }
+            private new Int32 position { get; set; }
 
             /// <summary>
             /// All rings attached to the planet

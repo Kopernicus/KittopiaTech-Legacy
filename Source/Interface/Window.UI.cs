@@ -138,7 +138,7 @@ namespace Kopernicus
             /// <summary>
             /// Renders a Textfield and converts it into the given type T
             /// </summary>
-            protected void TextField<T>(T defaultValue, Action<T> callback, [Optional] Rect? rect, [Optional][DefaultValue("false")]Boolean overrideValue)
+            protected void TextField<T>(T defaultValue, Action<T> callback, [Optional] Rect? rect, Boolean overrideValue = false)
             {
                 GUI.enabled = !isError;
                 T result = default(T);

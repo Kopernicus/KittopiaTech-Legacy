@@ -29,7 +29,7 @@ namespace Kopernicus
             /// <summary>
             /// The index of the current system in all particles
             /// </summary>
-            private Int32 position { get; set; }
+            private new Int32 position { get; set; }
 
             /// <summary>
             /// All particles attached to the planet
