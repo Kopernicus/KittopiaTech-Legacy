@@ -26,7 +26,7 @@ namespace Kopernicus
             /// </summary>
             protected override String Title()
             {
-                return "KittopiaTech - Material Editor";
+                return $"KittopiaTech - {Localization.LOC_KITTOPIATECH_MATERIALWINDOW}";
             }
 
             /// <summary>
@@ -73,7 +73,7 @@ namespace Kopernicus
                 // Exit
                 index++;
                 Current = kopernicusMaterial as Material;
-                Button("Exit", () => UIController.Instance.DisableWindow(KittopiaWindows.Material));
+                Button(Localization.LOC_KITTOPIATECH_EXIT, () => UIController.Instance.DisableWindow(KittopiaWindows.Material));
 
                 // End scroll
                 EndScrollView();

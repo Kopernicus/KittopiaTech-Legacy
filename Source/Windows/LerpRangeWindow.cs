@@ -22,7 +22,7 @@ namespace Kopernicus
             /// </summary>
             protected override String Title()
             {
-                return "KittopiaTech - LerpRange Editor";
+                return $"KittopiaTech - {Localization.LOC_KITTOPIATECH_LERPRANGEWINDOW}";
             }
 
             /// <summary>
@@ -36,7 +36,7 @@ namespace Kopernicus
                 // Exit
                 index++;
                 Callback?.Invoke(Current);
-                Button("Exit", () => UIController.Instance.DisableWindow(KittopiaWindows.LerpRange));
+                Button(Localization.LOC_KITTOPIATECH_EXIT, () => UIController.Instance.DisableWindow(KittopiaWindows.LerpRange));
             }
         }
     }

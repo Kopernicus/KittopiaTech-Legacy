@@ -60,7 +60,7 @@ namespace Kopernicus
 
                 // Menu
                 Enabled(() => position > 0, () => Button("<<", () => position--, new Rect(20, index * distance + 10, 30, 20))); index--;
-                Button("Add new Particles", () =>
+                Button(Localization.LOC_KITTOPIATECH_PARTICLEEDITOR_ADD, () =>
                 {
                     // Add a new Particle System
                     PlanetParticleEmitter.Create(Current.scaledBody).colorAnimation = new [] { Color.white, Color.white, Color.white, Color.white, Color.white };
@@ -87,7 +87,7 @@ namespace Kopernicus
                 for (Int32 i = 0; i < 5; i++)
                 {
                     Int32 i1 = i;
-                    Button("Color " + (i + 1), () => {
+                    Button(Localization.LOC_KITTOPIATECH_PARTICLEEDITOR_COLOR + " " + (i + 1), () => {
                         UIController.Instance.SetEditedObject(KittopiaWindows.Color, particle.colorAnimation[i1], c => particle.colorAnimation[i1] = c);
                         UIController.Instance.EnableWindow(KittopiaWindows.Color);
                     }, new Rect(buttonOffset, index*distance + 10, 60, 20));
@@ -96,14 +96,14 @@ namespace Kopernicus
                 index += 2;
 
                 // Rebuild the Ring
-                Button("Rebuild Particles", () =>
+                Button(Localization.LOC_KITTOPIATECH_PARTICLEEDITOR_UPDATE, () =>
                 {
                     typeof(PlanetParticleEmitter).GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(particle, null);
                     particle.targetTransform = null;
                 });
 
                 // Delete Ring
-                Button("Delete Particles", () =>
+                Button(Localization.LOC_KITTOPIATECH_PARTICLEEDITOR_REMOVE, () =>
                 {
                     UnityEngine.Object.Destroy(particles[position]);
                     particles = null;

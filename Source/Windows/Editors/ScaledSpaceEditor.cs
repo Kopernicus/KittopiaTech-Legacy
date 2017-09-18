@@ -59,8 +59,8 @@ namespace Kopernicus
 
                 // Update Orbit
                 index++;
-                Button("Update Mesh", () => Utils.GenerateScaledSpace(Utils.FindCB(Current.name), Current.GetComponent<MeshFilter>().sharedMesh));
-                Enabled(() => body.pqsController != null, () => Button("Update Textures", () => UIController.Instance.StartCoroutine(Utils.GeneratePQSMaps(Utils.FindCB(Current.name), transparentMaps))));
+                Button(Localization.LOC_KITTOPIATECH_SCALEDEDITOR_UPDATEMESH, () => Utils.GenerateScaledSpace(Utils.FindCB(Current.name), Current.GetComponent<MeshFilter>().sharedMesh));
+                Enabled(() => body.pqsController != null, () => Button(Localization.LOC_KITTOPIATECH_SCALEDEDITOR_UPDATETEX, () => UIController.Instance.StartCoroutine(Utils.GeneratePQSMaps(Utils.FindCB(Current.name), transparentMaps))));
 
                 // End Scroll
                 EndScrollView();

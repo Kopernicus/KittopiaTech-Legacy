@@ -28,7 +28,8 @@ namespace Kopernicus
                 Curve,
                 Selector,
                 Array,
-                Files
+                Files,
+                Enum
             }
         }
     }

@@ -24,7 +24,7 @@ namespace Kopernicus
             /// </summary>
             protected override String Title()
             {
-                return "KittopiaTech - Selector";
+                return $"KittopiaTech - {Localization.LOC_KITTOPIATECH_SELECTORWINDOW}";
             }
 
             /// <summary>
@@ -48,7 +48,7 @@ namespace Kopernicus
 
                 // Exit
                 index++;
-                Button("Exit", () => UIController.Instance.DisableWindow(KittopiaWindows.Selector), width: 240);
+                Button(Localization.LOC_KITTOPIATECH_EXIT, () => UIController.Instance.DisableWindow(KittopiaWindows.Selector), width: 240);
 
                 // End Scroll
                 EndScrollView();

@@ -220,7 +220,6 @@ namespace Kopernicus
                     .Where(m => m.MemberType == MemberTypes.Field || m.MemberType == MemberTypes.Property)
                     .Where(m => !(m as FieldInfo)?.IsLiteral ?? true)
                     .Where(m => m is PropertyInfo ? (m as PropertyInfo).CanRead && (m as PropertyInfo).CanWrite : true)
-                    .Where(m => Utils.supportedTypes.Contains(m.GetMemberType()))
                     .ToArray();
 
                 // Loop through all fields and display them
@@ -255,10 +254,18 @@ namespace Kopernicus
                         Label(info.Name); index--;
                         TextField((Double)value, v => info.SetValue(@object, v), new Rect(200, index * distance + 10, 170, 20));
                     }
+                    else if (value is Enum)
+                    {
+                        Label(info.Name); index--;
+                        Button(Localization.LOC_KITTOPIATECH_EDIT, () => {
+                            UIController.Instance.SetEditedObject(KittopiaWindows.Enum, value, c => info.SetValue(@object, c));
+                            UIController.Instance.EnableWindow(KittopiaWindows.Enum);
+                        }, new Rect(200, index * distance + 10, 170, 20));
+                    }
                     else if (FieldType == typeof(Color))
                     {
                         Label(info.Name); index--;
-                        Button("Edit Color", () => {
+                        Button(Localization.LOC_KITTOPIATECH_EDIT_COLOR, () => {
                             UIController.Instance.SetEditedObject(KittopiaWindows.Color, (Color) value, c => info.SetValue(@object, c));
                             UIController.Instance.EnableWindow(KittopiaWindows.Color);
                         }, new Rect(200, index * distance + 10, 170, 20));
@@ -301,7 +308,7 @@ namespace Kopernicus
                     {
                         // Load the MapSO
                         Label(info.Name); index--;
-                        Button("Load CBMap", () =>
+                        Button(Localization.LOC_KITTOPIATECH_LOAD_CBMAP, () =>
                         {
                             FileWindow.type = FieldType;
                             UIController.Instance.SetEditedObject(KittopiaWindows.Files, value == null ? "" : ConfigIO.Format(value as UnityEngine.Object), location =>
@@ -329,13 +336,13 @@ namespace Kopernicus
                         
 
                         // Edit the Biome-Definitions
-                        Button("Edit Biomes", () => { UIController.Instance.SetEditedObject(KittopiaWindows.Biome, (value as CBAttributeMapSO).Attributes, att => { (value as CBAttributeMapSO).Attributes = att; info.SetValue(@object, value); }); UIController.Instance.EnableWindow(KittopiaWindows.Biome); });
+                        Button(Localization.LOC_KITTOPIATECH_EDIT_BIOMES, () => { UIController.Instance.SetEditedObject(KittopiaWindows.Biome, (value as CBAttributeMapSO).Attributes, att => { (value as CBAttributeMapSO).Attributes = att; info.SetValue(@object, value); }); UIController.Instance.EnableWindow(KittopiaWindows.Biome); });
                         
                     }
                     else if (FieldType == typeof(Texture2D) || FieldType == typeof(Texture))
                     {
                         Label(info.Name); index--;
-                        Button("Load Texture", () =>
+                        Button(Localization.LOC_KITTOPIATECH_LOAD_TEXTURE, () =>
                         {
                             FileWindow.type = FieldType;
                             UIController.Instance.SetEditedObject(KittopiaWindows.Files, value == null ? "" : ConfigIO.Format(value as UnityEngine.Object), location =>
@@ -358,35 +365,35 @@ namespace Kopernicus
                     }
                     else if (FieldType == typeof(PQSLandControl.LandClass[]))
                     {
-                        Button("Edit LandClasses", () => {
+                        Button(Localization.LOC_KITTOPIATECH_EDIT_LANDCLASSES, () => {
                             UIController.Instance.SetEditedObject(KittopiaWindows.LandClass, (PQSLandControl.LandClass[]) value, lc => info.SetValue(@object, lc));
                             UIController.Instance.EnableWindow(KittopiaWindows.LandClass);
                         });
                     }
                     else if (FieldType == typeof(PQSMod_VertexPlanet.LandClass[]))
                     {
-                        Button("Edit LandClasses", () => {
+                        Button(Localization.LOC_KITTOPIATECH_EDIT_LANDCLASSES, () => {
                             UIController.Instance.SetEditedObject(KittopiaWindows.LandClass, (PQSMod_VertexPlanet.LandClass[])value, lc => info.SetValue(@object, lc));
                             UIController.Instance.EnableWindow(KittopiaWindows.LandClass);
                         });
                     }
                     else if (FieldType == typeof(PQSMod_HeightColorMap.LandClass[]))
                     {
-                        Button("Edit LandClasses", () => {
+                        Button(Localization.LOC_KITTOPIATECH_EDIT_LANDCLASSES, () => {
                             UIController.Instance.SetEditedObject(KittopiaWindows.LandClass, (PQSMod_HeightColorMap.LandClass[])value, lc => info.SetValue(@object, lc));
                             UIController.Instance.EnableWindow(KittopiaWindows.LandClass);
                         });
                     }
                     else if (FieldType == typeof(PQSMod_HeightColorMap2.LandClass[]))
                     {
-                        Button("Edit LandClasses", () => {
+                        Button(Localization.LOC_KITTOPIATECH_EDIT_LANDCLASSES, () => {
                             UIController.Instance.SetEditedObject(KittopiaWindows.LandClass, (PQSMod_HeightColorMap2.LandClass[])value, lc => info.SetValue(@object, lc));
                             UIController.Instance.EnableWindow(KittopiaWindows.LandClass);
                         });
                     }
                     else if (FieldType == typeof(PQSMod_HeightColorMapNoise.LandClass[]))
                     {
-                        Button("Edit LandClasses", () => {
+                        Button(Localization.LOC_KITTOPIATECH_EDIT_LANDCLASSES, () => {
                             UIController.Instance.SetEditedObject(KittopiaWindows.LandClass, (PQSMod_HeightColorMapNoise.LandClass[])value, lc => info.SetValue(@object, lc));
                             UIController.Instance.EnableWindow(KittopiaWindows.LandClass);
                         });
@@ -394,7 +401,7 @@ namespace Kopernicus
                     else if (FieldType == typeof(PQSLandControl.LerpRange))
                     {
                         Label(info.Name); index--;
-                        Button("Edit LerpRange", () => {
+                        Button(Localization.LOC_KITTOPIATECH_EDIT_LERPRANGE, () => {
                             UIController.Instance.SetEditedObject(KittopiaWindows.LerpRange, (PQSLandControl.LerpRange)value, lc => info.SetValue(@object, lc));
                             UIController.Instance.EnableWindow(KittopiaWindows.LerpRange);
                         }, new Rect(200, index * distance + 10, 170, 20));
@@ -402,7 +409,7 @@ namespace Kopernicus
                     else if (FieldType == typeof(PQSMod_VertexPlanet.SimplexWrapper))
                     {
                         Label(info.Name); index--;
-                        Button("Edit Simplex", () => {
+                        Button(Localization.LOC_KITTOPIATECH_EDIT_SIMPLEX, () => {
                             UIController.Instance.SetEditedObject(KittopiaWindows.Simplex, (PQSMod_VertexPlanet.SimplexWrapper)value, lc => info.SetValue(@object, lc));
                             UIController.Instance.EnableWindow(KittopiaWindows.Simplex);
                         }, new Rect(200, index * distance + 10, 170, 20));
@@ -410,7 +417,7 @@ namespace Kopernicus
                     else if (FieldType == typeof(PQSMod_VertexPlanet.NoiseModWrapper))
                     {
                         Label(info.Name); index--;
-                        Button("Edit NoiseMod", () => {
+                        Button(Localization.LOC_KITTOPIATECH_EDIT_NOISEMOD, () => {
                             UIController.Instance.SetEditedObject(KittopiaWindows.NoiseMod, (PQSMod_VertexPlanet.NoiseModWrapper)value, lc => info.SetValue(@object, lc));
                             UIController.Instance.EnableWindow(KittopiaWindows.NoiseMod);
                         }, new Rect(200, index * distance + 10, 170, 20));
@@ -425,7 +432,7 @@ namespace Kopernicus
 
                         // Load the MapSO
                         Label(info.Name); index--;
-                        Button("Load MapSO", () =>
+                        Button(Localization.LOC_KITTOPIATECH_LOAD_MAPSO, () =>
                         {
                             FileWindow.type = FieldType;
                             UIController.Instance.SetEditedObject(KittopiaWindows.Files, value == null ? "" : ConfigIO.Format(value as UnityEngine.Object), location =>
@@ -453,7 +460,7 @@ namespace Kopernicus
                     else if (FieldType == typeof(PQS))
                     {
                         Label(info.Name); index--;
-                        Button("Edit Sphere", () => {
+                        Button(Localization.LOC_KITTOPIATECH_EDIT_SPHERE, () => {
                             UIController.Instance.SetEditedObject(KittopiaWindows.Selector, value as PQS ?? new PQS(), s => info.SetValue(@object, s));
                             UIController.Instance.EnableWindow(KittopiaWindows.Selector);
                         }, new Rect(200, index * distance + 10, 170, 20));
@@ -462,7 +469,7 @@ namespace Kopernicus
                     else if (FieldType == typeof(CelestialBody))
                     {
                         Label(info.Name); index--;
-                        Button("Edit Body", () =>
+                        Button(Localization.LOC_KITTOPIATECH_EDIT_BODY, () =>
                         {
                             UIController.Instance.SetEditedObject(KittopiaWindows.Selector, value ?? new CelestialBody(), b => info.SetValue(@object, b));
                             UIController.Instance.EnableWindow(KittopiaWindows.Selector);
@@ -471,7 +478,7 @@ namespace Kopernicus
                     else if (value is Material) // Kopernicus creates Wrappers for the Materials, so key.FieldType == typeof(Material) would return false. :/
                     {
                         Label(info.Name); index--;
-                        Button("Edit Material", () => {
+                        Button(Localization.LOC_KITTOPIATECH_EDIT_MATERIAL, () => {
                             UIController.Instance.SetEditedObject(KittopiaWindows.Material, value as Material, m => info.SetValue(@object, m));
                             UIController.Instance.EnableWindow(KittopiaWindows.Material);
                         }, new Rect(200, index * distance + 10, 170, 20));
@@ -480,7 +487,7 @@ namespace Kopernicus
                     else if (FieldType == typeof(FloatCurve))
                     {
                         Label(info.Name); index--;
-                        Button("Edit Curve", () => {
+                        Button(Localization.LOC_KITTOPIATECH_EDIT_CURVE, () => {
                             UIController.Instance.SetEditedObject(KittopiaWindows.Curve, (FloatCurve)value, lc => info.SetValue(@object, lc));
                             UIController.Instance.EnableWindow(KittopiaWindows.Curve);
                         }, new Rect(200, index * distance + 10, 170, 20));
@@ -489,7 +496,7 @@ namespace Kopernicus
                     else if (FieldType == typeof(AnimationCurve))
                     {
                         Label(info.Name); index--;
-                        Button("Edit Curve", () => {
+                        Button(Localization.LOC_KITTOPIATECH_EDIT_CURVE, () => {
                             UIController.Instance.SetEditedObject(KittopiaWindows.Curve, new FloatCurve(((AnimationCurve) value).keys), lc => info.SetValue(@object, lc.Curve));
                             UIController.Instance.EnableWindow(KittopiaWindows.Curve);
                         }, new Rect(200, index * distance + 10, 170, 20));
@@ -498,7 +505,7 @@ namespace Kopernicus
                     else if (FieldType == typeof(Mesh))
                     {
                         Label(info.Name); index--;
-                        Button("Load Mesh", () =>
+                        Button(Localization.LOC_KITTOPIATECH_EDIT_MESH, () =>
                         {
                             FileWindow.type = FieldType;
                             UIController.Instance.SetEditedObject(KittopiaWindows.Files, value == null ? "" : ConfigIO.Format(value as UnityEngine.Object), location =>

@@ -23,7 +23,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <NoStdLib>true</NoStdLib>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -32,7 +31,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <NoStdLib>true</NoStdLib>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
@@ -55,12 +53,7 @@
       <HintPath>..\Kopernicus.Parser.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="System">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\System.dll</HintPath>
-    </Reference>
-    <Reference Include="mscorlib">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\mscorlib.dll</HintPath>
-    </Reference>
+    <Reference Include="System" />
     <Reference Include="UnityEngine">
       <HintPath>..\UnityEngine.dll</HintPath>
       <Private>False</Private>
@@ -72,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interface\Editor.cs" />
+    <Compile Include="Localization.cs" />
     <Compile Include="Windows\BiomeWindow.cs" />
     <Compile Include="Enumerations\KittopiaEditors.cs" />
     <Compile Include="Enumerations\KittopiaWindows.cs" />
@@ -96,6 +90,7 @@
     <Compile Include="Windows\Editors\ScaledSpaceEditor.cs" />
     <Compile Include="Windows\Editors\OrbitEditor.cs" />
     <Compile Include="Windows\Editors\StarlightEditor.cs" />
+    <Compile Include="Windows\EnumWindow.cs" />
     <Compile Include="Windows\FileWindow.cs" />
     <Compile Include="Windows\LandClassWindow.cs" />
     <Compile Include="Windows\LerpRangeWindow.cs" />

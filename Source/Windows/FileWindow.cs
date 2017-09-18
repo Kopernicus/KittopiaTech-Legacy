@@ -27,7 +27,7 @@ namespace Kopernicus
             /// </summary>
             protected override String Title()
             {
-                return "KittopiaTech - File Browser";
+                return $"KittopiaTech - {Localization.LOC_KITTOPIATECH_FILEWINDOW}";
             }
             
             /// <summary>
@@ -59,7 +59,7 @@ namespace Kopernicus
                 // Our return state - altered by the "Select" button
                 Boolean complete = false;
 
-                mode = GUI.Toolbar(new Rect(10, 20, 510, 20), mode, new[] { "Files", "Builtin" });
+                mode = GUI.Toolbar(new Rect(10, 20, 510, 20), mode, new[] { Localization.LOC_KITTOPIATECH_FILEWINDOW_FILES, Localization.LOC_KITTOPIATECH_FILEWINDOW_BUILTIN });
                 builtin = mode == 1;
 
                 if (!builtin)
@@ -68,19 +68,19 @@ namespace Kopernicus
                     FileInfo fileSelection = String.IsNullOrEmpty(location) ? null : new FileInfo(location);
                     DirectoryInfo directoryInfo = fileSelection == null ? new DirectoryInfo(KSPUtil.ApplicationRootPath + "GameData/") : (fileSelection.Attributes & FileAttributes.Directory) == FileAttributes.Directory ? new DirectoryInfo(location) : fileSelection.Directory;
 
-                    if (!location.EndsWith("GameData") && GUI.Button(new Rect(10, 45, 510, 20), "Up one level"))
+                    if (!location.EndsWith("GameData") && GUI.Button(new Rect(10, 45, 510, 20), Localization.LOC_KITTOPIATECH_FILEWINDOW_UP))
                     {
                         directoryInfo = directoryInfo?.Parent;
                         location = directoryInfo?.FullName;
                     }
                     else if (location.EndsWith("GameData"))
                     {
-                        GUI.Label(new Rect(10, 45, 510, 20), "Up one level", GUI.skin.button); // Design-Hack, hehe :D
+                        GUI.Label(new Rect(10, 45, 510, 20), Localization.LOC_KITTOPIATECH_FILEWINDOW_UP, GUI.skin.button); // Design-Hack, hehe :D
                     }
 
                     // Handle the directories list
                     GUILayout.BeginArea(new Rect(10, 70, 250, 300));
-                    GUILayout.Label("Directories:");
+                    GUILayout.Label(Localization.LOC_KITTOPIATECH_FILEWINDOW_DIRECTORIES + ":");
                     directoryScroll = GUILayout.BeginScrollView(directoryScroll);
 
                     DirectoryInfo directorySelection = SelectList(directoryInfo?.GetDirectories(), null, GUI.skin.button, GUI.skin.button) as DirectoryInfo;
@@ -95,7 +95,7 @@ namespace Kopernicus
 
                     // Handle the files list
                     GUILayout.BeginArea(new Rect(270, 70, 250, 300));
-                    GUILayout.Label("Files:");
+                    GUILayout.Label(Localization.LOC_KITTOPIATECH_FILEWINDOW_FILES + ":");
                     fileScroll = GUILayout.BeginScrollView(fileScroll);
                     fileSelection = SelectList(directoryInfo.GetFiles(), null, GUI.skin.button, GUI.skin.button) as FileInfo;
                     GUILayout.EndScrollView();
@@ -110,10 +110,10 @@ namespace Kopernicus
                 else
                 {
                     // Design
-                    GUI.Label(new Rect(10, 45, 510, 20), "Up one level", GUI.skin.button);
+                    GUI.Label(new Rect(10, 45, 510, 20), Localization.LOC_KITTOPIATECH_FILEWINDOW_UP, GUI.skin.button);
                     // Handle the directories list
                     GUILayout.BeginArea(new Rect(10, 70, 510, 300));
-                    GUILayout.Label("Builtin files for type " + type.Name + ":");
+                    GUILayout.Label(Localization.LOC_KITTOPIATECH_FILEWINDOW_FOR_TYPE + " " + type.Name + ":");
                     directoryScroll = GUILayout.BeginScrollView(directoryScroll);
                     value = SelectList(Resources.FindObjectsOfTypeAll(type), value, GUI.skin.button, GUI.skin.button);
                     GUILayout.EndScrollView();
@@ -125,8 +125,8 @@ namespace Kopernicus
                 GUILayout.BeginHorizontal();
                 GUILayout.Label(builtin ? value?.ToString() ?? "" : location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, ""), GUI.skin.textArea);
 
-                Int32 contentWidth = (int)GUI.skin.GetStyle("Button").CalcSize(new GUIContent("Select")).x;
-                if (GUILayout.Button("Select", GUILayout.Width(contentWidth)))
+                Int32 contentWidth = (int)GUI.skin.GetStyle("Button").CalcSize(new GUIContent(Localization.LOC_KITTOPIATECH_FILEWINDOW_SELECT)).x;
+                if (GUILayout.Button(Localization.LOC_KITTOPIATECH_FILEWINDOW_SELECT, GUILayout.Width(contentWidth)))
                 {
                     complete = true;
                 }

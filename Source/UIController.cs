@@ -42,6 +42,7 @@ namespace Kopernicus
                 RegisterWindow<BiomeWindow>(KittopiaWindows.Biome);
                 RegisterWindow<ColorWindow>(KittopiaWindows.Color);
                 RegisterWindow<CurveWindow>(KittopiaWindows.Curve);
+                RegisterWindow<EnumWindow>(KittopiaWindows.Enum);
                 RegisterWindow<FileWindow>(KittopiaWindows.Files);
                 RegisterWindow<LandClassWindow>(KittopiaWindows.LandClass);
                 RegisterWindow<LerpRangeWindow>(KittopiaWindows.LerpRange);

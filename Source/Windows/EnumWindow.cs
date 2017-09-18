@@ -6,6 +6,7 @@
 
 using System;
 using Kopernicus.UI.Enumerations;
+using System.Reflection;
 
 namespace Kopernicus
 {
@@ -14,15 +15,15 @@ namespace Kopernicus
         /// <summary>
         /// This class renders a window to edit a simplex
         /// </summary>
-        [Position(420, 20, 420, 190)]
-        public class SimplexWindow : Window<PQSMod_VertexPlanet.SimplexWrapper>
+        [Position(420, 100, 320, 220)]
+        public class EnumWindow : Window<Enum>
         {
             /// <summary>
             /// Returns the Title of the window
             /// </summary>
             protected override String Title()
             {
-                return $"KittopiaTech - {Localization.LOC_KITTOPIATECH_SIMPLEXWINDOW}";
+                return $"KittopiaTech - {Localization.LOC_KITTOPIATECH_ENUMWINDOW}";
             }
 
             /// <summary>
@@ -31,17 +32,17 @@ namespace Kopernicus
             protected override void Render(Int32 id)
             {
                 // Scroll
-                BeginScrollView(200, Utils.GetScrollSize<Simplex>() + 50, 10);
+                FieldInfo[] fields = Current.GetType().GetFields(BindingFlags.Static | BindingFlags.Public);
+                BeginScrollView((Int32)position.height - 30, fields.Length * 25 + 50, 10);
 
-                // Render the editor
-                RenderObject(Current);
+                // Render possible values
+                foreach (FieldInfo obj in fields)
+                    Button(obj.Name, () => { Current = (Enum)obj.GetValue(null); }, width: 240);
 
                 // Exit
-                index++;
-                Callback?.Invoke(Current);
-                Button(Localization.LOC_KITTOPIATECH_EXIT, () => UIController.Instance.DisableWindow(KittopiaWindows.Simplex));
+                Button(Localization.LOC_KITTOPIATECH_EXIT, () => { UIController.Instance.DisableWindow(KittopiaWindows.Enum); }, width: 240);
 
-                // End scroll
+                // End Scroll
                 EndScrollView();
             }
         }

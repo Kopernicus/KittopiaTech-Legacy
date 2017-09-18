@@ -27,7 +27,7 @@ namespace Kopernicus
             /// </summary>
             protected override String Title()
             {
-                return "KittopiaTech - LandClass Editor";
+                return $"KittopiaTech - {Localization.LOC_KITTOPIATECH_LANDCLASSWINDOW}"; ;
             }
 
             /// <summary>
@@ -63,7 +63,7 @@ namespace Kopernicus
                 RenderObject(Current);
 
                 // Remove Biomes
-                Button("Remove LandClass", () =>
+                Button(Localization.LOC_KITTOPIATECH_LANDCLASSWINDOW_REMOVE, () =>
                 {
                     List<Object> collection = Collection.ToList();
                     collection.Remove(Current);
@@ -82,7 +82,7 @@ namespace Kopernicus
                 index++;
 
                 // Add Biomes
-                Button("Add LandClass", () =>
+                Button(Localization.LOC_KITTOPIATECH_LANDCLASSWINDOW_ADD, () =>
                 {
                     Object landClass_ = null;
                     if (Collection is IEnumerable<PQSMod_VertexPlanet.LandClass>)

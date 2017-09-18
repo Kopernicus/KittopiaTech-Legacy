@@ -64,14 +64,14 @@ namespace Kopernicus
                     foreach (T obj in base.Current)
                         Button(Format(obj), () => { Current = obj; mode = Mode.Editor; }, width: position.width - 80);
                     RenderModifiers(id);
-                    Button("Exit", Exit);
+                    Button(Localization.LOC_KITTOPIATECH_EXIT, Exit);
                     EndScrollView();
                 }
                 else
                 {
                     BeginScrollView(200, Utils.GetScrollSize(Current.GetType()) + 100);
                     RenderEditor(id);
-                    Button("Exit", () => { Current = default(T); mode = Mode.Selection; });
+                    Button(Localization.LOC_KITTOPIATECH_EXIT, () => { Current = default(T); mode = Mode.Selection; });
                     EndScrollView();
                 }
             }

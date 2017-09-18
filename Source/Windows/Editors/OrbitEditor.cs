@@ -35,7 +35,7 @@ namespace Kopernicus
                 RenderObject(Current.Renderer);
 
                 // Update Orbit
-                Button("Update Orbit", () => Current.UpdateOrbit());
+                Button(Localization.LOC_KITTOPIATECH_ORBITEDITOR_UPDATE, () => Current.UpdateOrbit());
 
                 // End Scroll
                 EndScrollView();

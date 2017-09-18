@@ -45,7 +45,7 @@ namespace Kopernicus
             /// </summary>
             protected override String Title()
             {
-                return "KittopiaTech - a Kopernicus Visual Editor";
+                return $"KittopiaTech - {Localization.LOC_KITTOPIATECH_PLANETWINDOW}";
             }
 
             /// <summary>
@@ -57,25 +57,25 @@ namespace Kopernicus
                 BeginScrollView(240, 345);
 
                 // Current Body
-                DependencyButton("Current body: " + Current?.name, "No body selected!", () => { UIController.Instance.SetEditedObject(KittopiaWindows.Selector, Current ?? new CelestialBody(), b => Current = b); UIController.Instance.EnableWindow(KittopiaWindows.Selector); }, () => Current != null);
+                DependencyButton(Localization.LOC_KITTOPIATECH_PLANETWINDOW_CURRENT + ": " + Current?.displayName.Replace("^N", ""), Localization.LOC_KITTOPIATECH_PLANETWINDOW_NOCURRENT, () => { UIController.Instance.SetEditedObject(KittopiaWindows.Selector, Current ?? new CelestialBody(), b => Current = b); UIController.Instance.EnableWindow(KittopiaWindows.Selector); }, () => Current != null);
                 index++;
 
                 // Editors
-                Button("Atmosphere Editor", () => { EditorController.SetEditedObject(KittopiaEditors.Atmosphere, Current); EditorController.EnableWindow(KittopiaEditors.Atmosphere); });
-                Button("CelestialBody Editor", () => { EditorController.SetEditedObject(KittopiaEditors.CelestialBody, Current); EditorController.EnableWindow(KittopiaEditors.CelestialBody); });
-                Button("PQS Editor", () => { EditorController.SetEditedObject(KittopiaEditors.Terrain, Current); EditorController.EnableWindow(KittopiaEditors.Terrain); });
-                Enabled(() => Current?.orbitDriver != null, () => { Button("Orbit Editor", () => { EditorController.SetEditedObject(KittopiaEditors.Orbit, Current.orbitDriver); EditorController.EnableWindow(KittopiaEditors.Orbit); }); });
-                Button("ScaledSpace Editor", () => { EditorController.SetEditedObject(KittopiaEditors.ScaledSpace, Current.scaledBody); EditorController.EnableWindow(KittopiaEditors.ScaledSpace); });
-                Button("Starlight Editor", () => {EditorController.SetEditedObject(KittopiaEditors.Starlight, Current); EditorController.EnableWindow(KittopiaEditors.Starlight); });
-                Button("Ring Editor", () => { EditorController.SetEditedObject(KittopiaEditors.Ring, Current); EditorController.EnableWindow(KittopiaEditors.Ring); });
-                Button("Particles Editor", () => { EditorController.SetEditedObject(KittopiaEditors.Particles, Current); EditorController.EnableWindow(KittopiaEditors.Particles); });
+                Button(Localization.LOC_KITTOPIATECH_PLANETWINDOW_AFG_EDITOR, () => { EditorController.SetEditedObject(KittopiaEditors.Atmosphere, Current); EditorController.EnableWindow(KittopiaEditors.Atmosphere); });
+                Button(Localization.LOC_KITTOPIATECH_PLANETWINDOW_CB_EDITOR, () => { EditorController.SetEditedObject(KittopiaEditors.CelestialBody, Current); EditorController.EnableWindow(KittopiaEditors.CelestialBody); });
+                Button(Localization.LOC_KITTOPIATECH_PLANETWINDOW_PQS_EDITOR, () => { EditorController.SetEditedObject(KittopiaEditors.Terrain, Current); EditorController.EnableWindow(KittopiaEditors.Terrain); });
+                Enabled(() => Current?.orbitDriver != null, () => { Button(Localization.LOC_KITTOPIATECH_PLANETWINDOW_ORBIT_EDITOR, () => { EditorController.SetEditedObject(KittopiaEditors.Orbit, Current.orbitDriver); EditorController.EnableWindow(KittopiaEditors.Orbit); }); });
+                Button(Localization.LOC_KITTOPIATECH_PLANETWINDOW_SCALED_EDITOR, () => { EditorController.SetEditedObject(KittopiaEditors.ScaledSpace, Current.scaledBody); EditorController.EnableWindow(KittopiaEditors.ScaledSpace); });
+                Button(Localization.LOC_KITTOPIATECH_PLANETWINDOW_LIGHT_EDITOR, () => {EditorController.SetEditedObject(KittopiaEditors.Starlight, Current); EditorController.EnableWindow(KittopiaEditors.Starlight); });
+                Button(Localization.LOC_KITTOPIATECH_PLANETWINDOW_RING_EDITOR, () => { EditorController.SetEditedObject(KittopiaEditors.Ring, Current); EditorController.EnableWindow(KittopiaEditors.Ring); });
+                Button(Localization.LOC_KITTOPIATECH_PLANETWINDOW_PARTICLES_EDITOR, () => { EditorController.SetEditedObject(KittopiaEditors.Particles, Current); EditorController.EnableWindow(KittopiaEditors.Particles); });
 
                 // Space
                 index++;
 
                 // Special Stuff
-                Button("Save Body", () => ConfigIO.SaveCelestial(Current));
-                Button("[HACK] Instantiate Body", () => Utils.Instantiate(Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, Current.transform.name), "Body" + new Random().Next(1000)));
+                Button(Localization.LOC_KITTOPIATECH_PLANETWINDOW_SAVE, () => ConfigIO.SaveCelestial(Current));
+                Button(Localization.LOC_KITTOPIATECH_PLANETWINDOW_INSTANTIATE, () => Utils.Instantiate(Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, Current.transform.name), "Body" + new Random().Next(1000)));
 
                 // Scroll
                 EndScrollView();

@@ -24,7 +24,7 @@ namespace Kopernicus
             /// </summary>
             protected override String Title()
             {
-                return "KittopiaTech - Biome Editor";
+                return $"KittopiaTech - {Localization.LOC_KITTOPIATECH_BIOMEWINDOW}";
             }
 
             /// <summary>
@@ -44,7 +44,7 @@ namespace Kopernicus
                 RenderObject(Current);
 
                 // Remove Biomes
-                Button("Remove Biome", () =>
+                Button(Localization.LOC_KITTOPIATECH_BIOMEWINDOW_REMOVE, () =>
                 {
                     List<CBAttributeMapSO.MapAttribute> collection = Collection.ToList();
                     collection.Remove(Current);
@@ -65,7 +65,7 @@ namespace Kopernicus
                 index++;
 
                 // Add Biomes
-                Button("Add Biome", () =>
+                Button(Localization.LOC_KITTOPIATECH_BIOMEWINDOW_ADD, () =>
                 {
                     CBAttributeMapSO.MapAttribute biome = new CBAttributeMapSO.MapAttribute { name = "Biome" };
                     List<CBAttributeMapSO.MapAttribute> collection = Collection.ToList();

@@ -34,7 +34,7 @@ namespace Kopernicus
                 // Check for existing AFG
                 if (Current.afg == null)
                 {
-                    Button("Add Atmosphere to " + Current.name, () =>
+                    Button(Localization.LOC_KITTOPIATECH_AFGEDITOR_ADD + Current.displayName.Replace("^N", ""), () =>
                     {
                         // Create the atmosphere shell game object
                         GameObject scaledAtmosphere = new GameObject("Atmosphere");
@@ -57,7 +57,7 @@ namespace Kopernicus
                 index++;
 
                 // Updates
-                Button("Update Atmosphere", () => { AtmosphereFromGroundLoader.CalculatedMembers(Current.afg); AFGInfo.PatchAFG(Current.afg); });
+                Button(Localization.LOC_KITTOPIATECH_AFGEDITOR_UPDATE, () => { AtmosphereFromGroundLoader.CalculatedMembers(Current.afg); AFGInfo.PatchAFG(Current.afg); });
 
                 // End Scroll
                 EndScrollView();

@@ -349,7 +349,7 @@ namespace Kopernicus
                 scrollSize += infos.Length * Window<System.Object>.distance;
 
                 // Handle special things
-                scrollSize += infos.Where(o => o.GetMemberType() == typeof(MapSO) || o.GetMemberType() == typeof(CBAttributeMapSO)).ToArray().Length * Window<System.Object>.distance;
+                scrollSize += infos.Where(o => o.GetMemberType() == typeof(MapSO) || o.GetMemberType() == typeof(CBAttributeMapSO) || typeof(Enum).IsAssignableFrom(o.GetMemberType())).ToArray().Length * Window<System.Object>.distance;
 
                 // Return the Scroll-Size
                 return scrollSize;

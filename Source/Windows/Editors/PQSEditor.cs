@@ -61,7 +61,7 @@ namespace Kopernicus
                 // Check for PQS
                 if (Current.pqsController == null)
                 {
-                    Button("Add PQS", () =>
+                    Button(Localization.LOC_KITTOPIATECH_PQSEDITOR_ADD, () =>
                     {
                         // Create a new PQS
                         GameObject controllerRoot = new GameObject(Current.name);
@@ -176,10 +176,10 @@ namespace Kopernicus
                         }, new Rect(20, index * distance + 10, 350, 20));
                     }
                     index++;
-                    Button("Add PQSMod", () => _mode = Modes.AddMod, new Rect(20, index * distance + 10, 350, 20));
+                    Button(Localization.LOC_KITTOPIATECH_PQSEDITOR_ADD_MOD, () => _mode = Modes.AddMod, new Rect(20, index * distance + 10, 350, 20));
                     if (Current.pqsController.ChildSpheres.All(s => s.name != Current.pqsController.name + "Ocean"))
                     {
-                        Button("Add Ocean", () =>
+                        Button(Localization.LOC_KITTOPIATECH_PQSEDITOR_ADD_OCEAN, () =>
                         {
                             // Generate the PQS object
                             GameObject gameObject = new GameObject("Ocean");
@@ -243,7 +243,7 @@ namespace Kopernicus
                     }
                     else
                     {
-                        Button("Remove Ocean", () =>
+                        Button(Localization.LOC_KITTOPIATECH_PQSEDITOR_REMOVE_OCEAN, () =>
                         {
                             // Find atmosphere the ocean PQS
                             PQS ocean = Current.pqsController.GetComponentsInChildren<PQS>(true).First(pqs => pqs != Current.pqsController);
@@ -280,22 +280,22 @@ namespace Kopernicus
                         Label("hazardousOcean"); index--;
                         if (_sphere.GetComponent<HazardousOcean>() != null)
                         {
-                            Button("Edit", () =>
+                            Button(Localization.LOC_KITTOPIATECH_EDIT, () =>
                             {
                                 UIController.Instance.SetEditedObject(KittopiaWindows.Curve, _sphere.GetComponent<HazardousOcean>().heatCurve ?? new FloatCurve(), c => _sphere.GetComponent<HazardousOcean>().heatCurve = c);
                                 UIController.Instance.EnableWindow(KittopiaWindows.Curve);
                             }, new Rect(200, index*distance + 10, 75, 20)); index--;
-                            Button("Remove", () => UnityEngine.Object.DestroyImmediate(_sphere.GetComponent<HazardousOcean>()), new Rect(285, index*distance + 10, 75, 20));
+                            Button(Localization.LOC_KITTOPIATECH_REMOVE, () => UnityEngine.Object.DestroyImmediate(_sphere.GetComponent<HazardousOcean>()), new Rect(285, index*distance + 10, 75, 20));
                         }
                         else
                         {
-                            Button("Add Hazardous Ocean", () => _sphere.gameObject.AddComponent<HazardousOcean>(), new Rect(200, index * distance + 10, 170, 20));
+                            Button(Localization.LOC_KITTOPIATECH_PQSEDITOR_ADD_HAZOCEAN, () => _sphere.gameObject.AddComponent<HazardousOcean>(), new Rect(200, index * distance + 10, 170, 20));
                         }
                     }
                     index++;
 
                     // Rebuild
-                    Button("Rebuild Sphere", () => _sphere.RebuildSphere());
+                    Button(Localization.LOC_KITTOPIATECH_PQSEDITOR_REBUILD, () => _sphere.RebuildSphere());
 
                     // End Scroll
                     EndScrollView();
@@ -315,10 +315,10 @@ namespace Kopernicus
                     index++;
 
                     // Rebuild
-                    Button("Rebuild Sphere", () => _sphere.RebuildSphere());
+                    Button(Localization.LOC_KITTOPIATECH_PQSEDITOR_REBUILD, () => _sphere.RebuildSphere());
 
                     // Remove
-                    Button("Remove PQSMod", () =>
+                    Button(Localization.LOC_KITTOPIATECH_PQSEDITOR_REMOVE_MOD, () =>
                     {
                         _mod.sphere = null;
                         UnityEngine.Object.Destroy(_mod);

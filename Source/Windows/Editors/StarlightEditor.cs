@@ -49,7 +49,7 @@ namespace Kopernicus
                 // Planet must be a star
                 if (Current.scaledBody.GetComponentsInChildren<SunShaderController>(true).Length == 0)
                 {
-                    Label("Selected planet isn't a star!", new Rect(20, 310, 400, 20));
+                    Label(Localization.LOC_KITTOPIATECH_STARLIGHTEDITOR_NOSTAR, new Rect(20, 310, 400, 20));
                     return;
                 }
 
@@ -68,7 +68,7 @@ namespace Kopernicus
                 index++;
 
                 // Apply
-                Button("Apply", () =>
+                Button(Localization.LOC_KITTOPIATECH_APPLY, () =>
                 {
                     Current.scaledBody.GetComponent<Renderer>().sharedMaterial = material;
                     Current.scaledBody.GetComponentsInChildren<StarComponent>().First().SetAsActive();

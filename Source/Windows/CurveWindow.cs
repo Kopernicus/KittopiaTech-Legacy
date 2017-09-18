@@ -25,7 +25,7 @@ namespace Kopernicus
             /// </summary>
             protected override String Title()
             {
-                return "KittopiaTech - Curve Editor";
+                return $"KittopiaTech - {Localization.LOC_KITTOPIATECH_CURVEWINDOW}";
             }
 
             /// <summary>
@@ -73,7 +73,7 @@ namespace Kopernicus
 
                 // Exit
                 Callback?.Invoke(Current);
-                Button("Exit", () => UIController.Instance.DisableWindow(KittopiaWindows.Curve));
+                Button(Localization.LOC_KITTOPIATECH_EXIT, () => UIController.Instance.DisableWindow(KittopiaWindows.Curve));
 
                 // End Scroll
                 EndScrollView();

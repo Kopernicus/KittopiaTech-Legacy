@@ -58,7 +58,7 @@ namespace Kopernicus
 
                 // Menu
                 Enabled(() => position > 0, () => Button("<<", () => position--, new Rect(20, index * distance + 10, 30, 20))); index--;
-                Button("Add new Ring", () =>
+                Button(Localization.LOC_KITTOPIATECH_RINGEDITOR_ADD, () =>
                 {
                     // Add a new Ring
                     GameObject gameObject = new GameObject(Current.name + "Ring");
@@ -85,7 +85,7 @@ namespace Kopernicus
                 index++;
 
                 // Rebuild the Ring
-                Button("Rebuild Ring", () =>
+                Button(Localization.LOC_KITTOPIATECH_RINGEDITOR_UPDATE, () =>
                 {
                     UnityEngine.Object.DestroyImmediate(ring.GetComponent<MeshFilter>());
                     UnityEngine.Object.DestroyImmediate(ring.GetComponent<MeshRenderer>());
@@ -93,7 +93,7 @@ namespace Kopernicus
                 });
 
                 // Delete Ring
-                Button("Delete Ring", () =>
+                Button(Localization.LOC_KITTOPIATECH_RINGEDITOR_REMOVE, () =>
                 {
                     UnityEngine.Object.Destroy(rings[position]);
                     rings = null;

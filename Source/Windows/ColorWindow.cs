@@ -23,7 +23,7 @@ namespace Kopernicus
             /// </summary>
             protected override String Title()
             {
-                return "KittopiaTech - Color Editor";
+                return $"KittopiaTech - {Localization.LOC_KITTOPIATECH_COLORWINDOW}";
             }
 
             /// <summary>
@@ -58,7 +58,7 @@ namespace Kopernicus
 
                 // Save
                 Callback?.Invoke(Current);
-                Button("Exit", () => UIController.Instance.DisableWindow(KittopiaWindows.Color), new Rect(10, 150, 200, 50));
+                Button(Localization.LOC_KITTOPIATECH_EXIT, () => UIController.Instance.DisableWindow(KittopiaWindows.Color), new Rect(10, 150, 200, 50));
             }
         }
     }
