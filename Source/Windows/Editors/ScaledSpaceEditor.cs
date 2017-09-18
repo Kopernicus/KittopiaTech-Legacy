@@ -4,6 +4,7 @@
  * Licensed under the Terms of a custom License, see LICENSE file
  */
 
+using Kopernicus.UI.Enumerations;
 using System;
 using System.Threading;
 using UnityEngine;
@@ -17,6 +18,8 @@ namespace Kopernicus
         /// </summary>
         public class ScaledSpaceEditor : Editor<GameObject>
         {
+            private ExportMode exportMode = ExportMode.ALL;
+
             // Whether maps should be left transparent (oceans)
             private Boolean transparentMaps = true;
 
@@ -29,7 +32,7 @@ namespace Kopernicus
                 base.Render(id);
 
                 // Scroll
-                BeginScrollView(250, Utils.GetScrollSize<MeshFilter>() + Utils.GetScrollSize<MeshRenderer>() + Utils.GetScrollSize<ScaledSpaceFader>() + 180, 20);
+                BeginScrollView(250, Utils.GetScrollSize<MeshFilter>() + Utils.GetScrollSize<MeshRenderer>() + Utils.GetScrollSize<ScaledSpaceFader>() + 205, 20);
 
                 // Index
                 index = 0;
@@ -55,12 +58,18 @@ namespace Kopernicus
                     Label("transparentMaps");
                     index--;
                     TextField(transparentMaps, v => transparentMaps = v, new Rect(200, index * distance + 10, 170, 20));
+                    Label("exportMode");
+                    index--;
+                    Button(Localization.LOC_KITTOPIATECH_EDIT, () => {
+                        UIController.Instance.SetEditedObject(KittopiaWindows.Enum, exportMode, c => exportMode = c);
+                        UIController.Instance.EnableWindow(KittopiaWindows.Enum);
+                    }, new Rect(200, index * distance + 10, 170, 20));
                 }
 
                 // Update Orbit
                 index++;
                 Button(Localization.LOC_KITTOPIATECH_SCALEDEDITOR_UPDATEMESH, () => Utils.GenerateScaledSpace(Utils.FindCB(Current.name), Current.GetComponent<MeshFilter>().sharedMesh));
-                Enabled(() => body.pqsController != null, () => Button(Localization.LOC_KITTOPIATECH_SCALEDEDITOR_UPDATETEX, () => UIController.Instance.StartCoroutine(Utils.GeneratePQSMaps(Utils.FindCB(Current.name), transparentMaps))));
+                Enabled(() => body.pqsController != null, () => Button(Localization.LOC_KITTOPIATECH_SCALEDEDITOR_UPDATETEX, () => UIController.Instance.StartCoroutine(Utils.GeneratePQSMaps(Utils.FindCB(Current.name), transparentMaps, exportMode))));
 
                 // End Scroll
                 EndScrollView();

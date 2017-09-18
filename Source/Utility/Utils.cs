@@ -9,6 +9,7 @@ using System.Threading;
 using Kopernicus.UI.Extensions;
 using UnityEngine;
 using UnityEngine.UI;
+using Kopernicus.UI.Enumerations;
 
 namespace Kopernicus
 {
@@ -177,7 +178,7 @@ namespace Kopernicus
             /// <summary>
             /// Generate the scaled space Textures using PQS in a Coroutine
             /// </summary>
-            public static IEnumerator GeneratePQSMaps(CelestialBody body, Boolean transparentMaps)
+            public static IEnumerator GeneratePQSMaps(CelestialBody body, Boolean transparentMaps, ExportMode mode)
             {
                 // Get time
                 DateTime now = DateTime.Now;
@@ -230,56 +231,78 @@ namespace Kopernicus
                         };
 
                         // Build from the Mods 
-                        modOnVertexBuildHeight(data);
-                        modOnVertexBuild(data);
+                        double height = Double.MinValue;
+                        if (mode != ExportMode.COLOR)
+                        {
+                            modOnVertexBuildHeight(data);
 
-                        // Adjust the height
-                        double height = (data.vertHeight - pqs.radius)*(1d/pqs.mapMaxHeight);
-                        if (height < 0)
-                            height = 0;
-                        else if (height > 1)
-                            height = 1;
+                            // Adjust the height
+                            height = (data.vertHeight - pqs.radius) * (1d / pqs.mapMaxHeight);
+                            if (height < 0)
+                                height = 0;
+                            else if (height > 1)
+                                height = 1;
+                            
+                            // Set the Pixels
+                            heightMapValues[(y * pqs.mapFilesize) + x] = new Color((Single)height, (Single)height, (Single)height);
 
-                        // Adjust the Color
-                        Color color = data.vertColor;
-                        if (!pqs.mapOcean)
-                            color.a = 1f;
-                        else if (height > pqs.mapOceanHeight)
-                            color.a = transparentMaps ? 0f : 1f;
-                        else
-                            color = pqs.mapOceanColor.A(1f);
+                        }
+                        if (mode == ExportMode.COLOR || mode == ExportMode.ALL)
+                        {
+                            modOnVertexBuild(data);
 
-                        // Set the Pixels
-                        colorMapValues[(y*pqs.mapFilesize) + x] = color;
-                        heightMapValues[(y*pqs.mapFilesize) + x] = new Color((Single) height, (Single) height, (Single) height);
+                            // Adjust the Color
+                            Color color = data.vertColor;
+                            if (!pqs.mapOcean)
+                                color.a = 1f;
+                            else if (height > pqs.mapOceanHeight)
+                                color.a = transparentMaps ? 0f : 1f;
+                            else
+                                color = pqs.mapOceanColor.A(1f);
+
+                            // Set the Pixels
+                            colorMapValues[(y * pqs.mapFilesize) + x] = color;
+                        }
                     }
                     yield return null;
                 }
 
                 // Apply the maps
-                colorMap.SetPixels(colorMapValues);
-                colorMap.Apply();
-                heightMap.SetPixels(heightMapValues);
+                if (mode == ExportMode.COLOR || mode == ExportMode.ALL)
+                {
+                    colorMap.SetPixels(colorMapValues);
+                    colorMap.Apply();
+                }
+                if (mode != ExportMode.COLOR)
+                    heightMap.SetPixels(heightMapValues);
                 yield return null;
 
                 // Close the Renderer
                 pqs.isBuildingMaps = false;
                 pqs.isFakeBuild = false;
 
-                // Bump to Normal Map
-                Texture2D normalMap = Utility.BumpToNormalMap(heightMap, UIController.NormalStrength);
-
                 // Serialize them to disk
                 string path = KSPUtil.ApplicationRootPath + "/GameData/KittopiaTech/Textures/" + body.name + "/";
                 Directory.CreateDirectory(path);
-                File.WriteAllBytes(path + body.name + "_Color.png", colorMap.EncodeToPNG());
-                File.WriteAllBytes(path + body.name + "_Height.png", heightMap.EncodeToPNG());
-                File.WriteAllBytes(path + body.name + "_Normal.png", normalMap.EncodeToPNG());
-                yield return null;
+                if (mode == ExportMode.COLOR || mode == ExportMode.ALL)
+                {
+                    File.WriteAllBytes(path + body.name + "_Color.png", colorMap.EncodeToPNG());
 
-                // Apply them to the ScaledVersion
-                body.scaledBody.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", colorMap);
-                body.scaledBody.GetComponent<MeshRenderer>().material.SetTexture("_BumpMap", normalMap);
+                    // Apply them to the ScaledVersion
+                    body.scaledBody.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", colorMap);
+                }
+                if (mode != ExportMode.COLOR)
+                    File.WriteAllBytes(path + body.name + "_Height.png", heightMap.EncodeToPNG());
+                if (mode == ExportMode.HEIGHTNORMAL || mode == ExportMode.ALL)
+                {
+                    // Bump to Normal Map
+                    Texture2D normalMap = Utility.BumpToNormalMap(heightMap, UIController.NormalStrength);
+                    File.WriteAllBytes(path + body.name + "_Normal.png", normalMap.EncodeToPNG());
+
+                    // Apply them to the ScaledVersion
+                    body.scaledBody.GetComponent<MeshRenderer>().material.SetTexture("_BumpMap", normalMap);
+                }
+                yield return null;
 
                 // Declare that we're done
                 ScreenMessages.RemoveMessage(message);
