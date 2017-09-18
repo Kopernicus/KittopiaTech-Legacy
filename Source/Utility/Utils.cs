@@ -257,6 +257,8 @@ namespace Kopernicus
                                 color.a = 1f;
                             else if (height > pqs.mapOceanHeight)
                                 color.a = transparentMaps ? 0f : 1f;
+                            else if (mode == ExportMode.COLOR)
+                                color.a = 1f;
                             else
                                 color = pqs.mapOceanColor.A(1f);
 
