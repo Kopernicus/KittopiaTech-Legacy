@@ -17,7 +17,7 @@ CODE := $(CURRENT_DIR)/src
 
 # Assembly References
 CORLIB := $(MONO_ASSEMBLIES)/mscorlib.dll,$(MONO_ASSEMBLIES)/System.dll,$(MONO_ASSEMBLIES)/System.Core.dll
-REFS := $(CORLIB),Assembly-CSharp.dll,UnityEngine.dll,UnityEngine.UI.dll,Kopernicus.dll,Kopernicus.OnDemand.dll,Kopernicus.Components.dll,Kopernicus.Parser.dll
+REFS := $(CORLIB),deps/Assembly-CSharp.dll,deps/UnityEngine.dll,deps/UnityEngine.UI.dll,deps/Kopernicus.dll,deps/Kopernicus.OnDemand.dll,deps/Kopernicus.Components.dll,deps/Kopernicus.Parser.dll
 
 # Zip File
 ZIP_NAME := KittopiaTech-$(shell git describe --tags)-$(shell date "+%Y-%m-%d").zip
