@@ -311,7 +311,7 @@ namespace Kopernicus
                         Button(Localization.LOC_KITTOPIATECH_LOAD_CBMAP, () =>
                         {
                             FileWindow.type = FieldType;
-                            UIController.Instance.SetEditedObject(KittopiaWindows.Files, value == null ? "" : ConfigIO.Format(value as UnityEngine.Object), location =>
+                            UIController.Instance.SetEditedObject(KittopiaWindows.Files, value == null ? "" : PlanetExporter.Format(value as UnityEngine.Object), location =>
                             {
                                 if (File.Exists(location))
                                 {
@@ -345,7 +345,7 @@ namespace Kopernicus
                         Button(Localization.LOC_KITTOPIATECH_LOAD_TEXTURE, () =>
                         {
                             FileWindow.type = FieldType;
-                            UIController.Instance.SetEditedObject(KittopiaWindows.Files, value == null ? "" : ConfigIO.Format(value as UnityEngine.Object), location =>
+                            UIController.Instance.SetEditedObject(KittopiaWindows.Files, value == null ? "" : PlanetExporter.Format(value as UnityEngine.Object), location =>
                             {
                                 if (File.Exists(location))
                                 {
@@ -435,7 +435,7 @@ namespace Kopernicus
                         Button(Localization.LOC_KITTOPIATECH_LOAD_MAPSO, () =>
                         {
                             FileWindow.type = FieldType;
-                            UIController.Instance.SetEditedObject(KittopiaWindows.Files, value == null ? "" : ConfigIO.Format(value as UnityEngine.Object), location =>
+                            UIController.Instance.SetEditedObject(KittopiaWindows.Files, value == null ? "" : PlanetExporter.Format(value as UnityEngine.Object), location =>
                             {
                                 if (File.Exists(location))
                                 {
@@ -508,7 +508,7 @@ namespace Kopernicus
                         Button(Localization.LOC_KITTOPIATECH_EDIT_MESH, () =>
                         {
                             FileWindow.type = FieldType;
-                            UIController.Instance.SetEditedObject(KittopiaWindows.Files, value == null ? "" : ConfigIO.Format(value as UnityEngine.Object), location =>
+                            UIController.Instance.SetEditedObject(KittopiaWindows.Files, value == null ? "" : PlanetExporter.Format(value as UnityEngine.Object), location =>
                             {
                                 if (File.Exists(location))
                                 {

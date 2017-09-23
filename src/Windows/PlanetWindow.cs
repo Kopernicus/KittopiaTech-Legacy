@@ -74,7 +74,7 @@ namespace Kopernicus
                 index++;
 
                 // Special Stuff
-                Button(Localization.LOC_KITTOPIATECH_PLANETWINDOW_SAVE, () => ConfigIO.SaveCelestial(Current));
+                Button(Localization.LOC_KITTOPIATECH_PLANETWINDOW_SAVE, () => PlanetExporter.SaveCelestial(Current));
                 Button(Localization.LOC_KITTOPIATECH_PLANETWINDOW_INSTANTIATE, () => Utils.Instantiate(Utility.FindBody(PSystemManager.Instance.systemPrefab.rootBody, Current.transform.name), "Body" + new Random().Next(1000)));
 
                 // Scroll

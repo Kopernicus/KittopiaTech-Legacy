@@ -48,14 +48,14 @@ local.properties
 [Rr]eleases/
 x64/
 x86/
-build/
+build/Debug
 bld/
 [Bb]in/
 [Oo]bj/
+deps/
 
 # Roslyn cache directories
 *.ide/
-*.dll
 *.mdb
 
 # MSTest test Results

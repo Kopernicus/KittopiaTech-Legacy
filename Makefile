@@ -7,13 +7,13 @@ MONO_ASSEMBLIES := /usr/lib/mono/2.0
 
 # Build Outputs
 CURRENT_DIR := $(shell pwd)
-PLUGIN_DIR := $(CURRENT_DIR)/Distribution/Development/KittopiaTech/Plugins
-RELEASE_DIR := $(CURRENT_DIR)/Distribution/Release
-BUILD_DIR := $(RELEASE_DIR)/KittopiaTech/Plugins
+PLUGIN_DIR := $(CURRENT_DIR)/build/Debug/GameData/KittopiaTech/Plugins
+RELEASE_DIR := $(CURRENT_DIR)/build/Release
+BUILD_DIR := $(RELEASE_DIR)/GameData/KittopiaTech/Plugins
 PLUGIN := $(PLUGIN_DIR)/KittopiaTech.dll
 
 # Code paths
-CODE := $(CURRENT_DIR)/Source
+CODE := $(CURRENT_DIR)/src
 
 # Assembly References
 CORLIB := $(MONO_ASSEMBLIES)/mscorlib.dll,$(MONO_ASSEMBLIES)/System.dll,$(MONO_ASSEMBLIES)/System.Core.dll

@@ -25,7 +25,7 @@ namespace Kopernicus
         /// <summary>
         /// Class to save a CelestialBody as a Kopernicus-configuration-file
         /// </summary>
-        public class ConfigIO
+        public class PlanetExporter
         {
             /// <summary>
             /// Types that need special manipulation
@@ -54,40 +54,51 @@ namespace Kopernicus
 
                 // Properties
                 ConfigNode properties = WriteObjectToConfigNode("Properties", ref body, new PropertiesLoader(planet));
+
+                // Properties.Biomes
                 if (planet.BiomeMap != null)
                 {
                     ConfigNode biomes = properties.AddNode("Biomes");
                     foreach (CBAttributeMapSO.MapAttribute biome in planet.BiomeMap.Attributes)
                         WriteObjectToConfigNode("Biome", ref biomes, new BiomeLoader(biome));
                 }
+
+                // Properties.ScienceValues
                 if (planet.scienceValues != null)
+                {
                     WriteObjectToConfigNode("ScienceValues", ref properties, new ScienceValuesLoader(planet.scienceValues));
+                }
 
                 // Orbit
                 if (planet.orbitDriver)
-                    WriteObjectToConfigNode("Orbit", ref body, new OrbitLoader(planet) { referenceBody = planet.orbit.referenceBody.name }); // Haha
+                    WriteObjectToConfigNode("Orbit", ref body, new OrbitLoader(planet));
 
                 // Atmosphere
                 if (planet.atmosphere)
                 {
-                    try
+                    ConfigNode atmo = WriteObjectToConfigNode("Atmosphere", ref body, new AtmosphereLoader(planet));
+
+                    // Atmosphere.AtmosphereFromGround
+                    if (planet.afg != null)
                     {
-                        ConfigNode atmo = WriteObjectToConfigNode("Atmosphere", ref body, new AtmosphereLoader(planet));
-                        WriteObjectToConfigNode("AtmosphereFromGround", ref atmo, new AtmosphereFromGroundLoader(planet) { afg = planet.afg }); // Haha
-                    }
-                    catch
-                    {
-                        // ignored
+                        WriteObjectToConfigNode("AtmosphereFromGround", ref atmo, new AtmosphereFromGroundLoader(planet));
                     }
                 }
 
                 // ScaledVersion
                 ScaledVersionLoader scaledLoader = new ScaledVersionLoader(planet);
                 ConfigNode scaled = WriteObjectToConfigNode("ScaledVersion", ref body, scaledLoader);
+
+                // ScaledVersion.Material
+                Material material = planet.scaledBody.GetComponent<Renderer>().sharedMaterial;
                 if (scaledLoader.type == BodyType.Star)
                 {
-                    WriteObjectToConfigNode("Material", ref scaled, new EmissiveMultiRampSunspotsLoader(planet.scaledBody.GetComponent<Renderer>().sharedMaterial));   
-                    WriteObjectToConfigNode("Light", ref scaled, new LightShifterLoader { lsc = planet.scaledBody.GetComponentsInChildren<LightShifter>(true)[0] });
+                    WriteObjectToConfigNode("Material", ref scaled, new EmissiveMultiRampSunspotsLoader(material));
+
+                    // ScaledVersion.Light
+                    WriteObjectToConfigNode("Light", ref scaled, new LightShifterLoader(planet));
+
+                    // ScaledVersion.Coronas
                     if (planet.scaledBody.GetComponentsInChildren<SunCoronas>().Length != 0)
                     {
                         ConfigNode coronas = scaled.AddNode("Coronas");
@@ -96,9 +107,13 @@ namespace Kopernicus
                     }
                 }
                 else if (scaledLoader.type == BodyType.Atmospheric)
-                    WriteObjectToConfigNode("Material", ref scaled, new ScaledPlanetRimAerialLoader(planet.scaledBody.GetComponent<Renderer>().sharedMaterial));
+                {
+                    WriteObjectToConfigNode("Material", ref scaled, new ScaledPlanetRimAerialLoader());
+                }
                 else
-                    WriteObjectToConfigNode("Material", ref scaled, new ScaledPlanetSimpleLoader(planet.scaledBody.GetComponent<Renderer>().sharedMaterial));
+                {
+                    WriteObjectToConfigNode("Material", ref scaled, new ScaledPlanetSimpleLoader(material));
+                }
 
                 // Particles
                 ConfigNode particles = body.AddNode("Particles");
@@ -118,11 +133,15 @@ namespace Kopernicus
 
                 // PQS
                 if (planet.pqsController)
+                {
                     WritePQSToConfigNode(planet.pqsController, ref body, false);
+                }
 
                 // Ocean
                 if (planet.ocean)
+                {
                     WritePQSToConfigNode(planet.pqsController.ChildSpheres[0], ref body, true);
+                }
 
                 // Save the node
                 Directory.CreateDirectory(KSPUtil.ApplicationRootPath + "/GameData/KittopiaTech/Config/");
@@ -151,69 +170,79 @@ namespace Kopernicus
                 // Crawl it's member infos
                 foreach (MemberInfo member in target.GetType().GetMembers(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public))
                 {
-                    // Get the parser target
+                    // Get the first parser target
                     ParserTarget[] targets = member.GetCustomAttributes(typeof(ParserTarget), false) as ParserTarget[];
                     if (targets.Length == 0)
                         continue;
 
-                    // Get stuff
-                    RequireConfigType[] types = (member.MemberType == MemberTypes.Field ? (member as FieldInfo).FieldType : (member as PropertyInfo).PropertyType).GetCustomAttributes(typeof(RequireConfigType), false) as RequireConfigType[];
+                    // Is this a node or a value?
+                    RequireConfigType[] configTypes = (member.MemberType == MemberTypes.Field ? (member as FieldInfo).FieldType : (member as PropertyInfo).PropertyType).GetCustomAttributes(typeof(RequireConfigType), false) as RequireConfigType[];
 
                     // Write
-                    object value = member.GetValue(target);
-                    Type targetType = member.GetMemberType();
+                    System.Object memberValue = member.GetValue(target);
+                    Type memberType = member.GetMemberType();
 
-                    if (value == null)
+                    if (memberValue == null)
                         continue;
 
                     // Type
-                    ConfigType type = types.Length == 1 ? types[0].type : targetType.Name.StartsWith("MapSOParser_") || targetType == typeof(string) ? ConfigType.Value : ConfigType.Node;
+                    ConfigType configType = configTypes.Length == 1 ? configTypes[0].type : memberType.Name.StartsWith("MapSOParser_") || memberType == typeof(string) ? ConfigType.Value : ConfigType.Node;
 
                     // Convert
-                    if (targetType != typeof(string) && (type == ConfigType.Value || targetType == typeof(FloatCurveParser)))
+                    if (memberType != typeof(string) && (configType == ConfigType.Value || memberType == typeof(FloatCurveParser)))
                     {
-                        value = targetType == typeof(PhysicsMaterialParser) ?
-                            targetType.GetProperty("material").GetValue(value, null) :
-                            targetType == typeof(FloatCurveParser) ?
-                                targetType.GetProperty("curve").GetValue(value, null) :
-                                targetType.GetField("value").GetValue(value);
-                        if (value == null || targetType == typeof(LandControl.LandClassScatterLoader.StockMaterialParser))
+                        memberValue = memberType == typeof(PhysicsMaterialParser) ?
+                            memberType.GetProperty("material").GetValue(memberValue, null) :
+                            memberType == typeof(FloatCurveParser) ?
+                                memberType.GetProperty("curve").GetValue(memberValue, null) :
+                                memberType.GetField("value").GetValue(memberValue);
+                        if (memberValue == null || memberType == typeof(LandControl.LandClassScatterLoader.StockMaterialParser))
+                        {
                             continue;
-                        if (value.GetType().GetInterface("IEnumerable") != null && targetType != typeof(string))
-                            value = String.Join(targetType == typeof (StringCollectionParser) ? "," : " ", (value as IEnumerable).Cast<System.Object>().Select(o => o.ToString()).ToArray());
+                        }
+                        if (memberValue.GetType().GetInterface("IEnumerable") != null && memberType != typeof(string))
+                        {
+                            memberValue = String.Join(memberType == typeof(StringCollectionParser) ? "," : " ", (memberValue as IEnumerable).Cast<System.Object>().Select(o => o.ToString()).ToArray());
+                        }
                     }
 
-                    // Do ConfigNode stuff
-                    if (writeableTypes.Contains(targetType))
+                    // Format Unity types
+                    if (writeableTypes.Contains(memberType))
                     {
-                        if (value is Vector2)
-                            value = ConfigNode.WriteVector((Vector2)value);
-                        if (value is Vector3)
-                            value = ConfigNode.WriteVector((Vector3)value);
-                        if (value is Vector3d)
-                            value = ConfigNode.WriteVector((Vector3d)value);
-                        if (value is Vector4)
-                            value = ConfigNode.WriteVector((Vector4)value);
-                        if (value is Quaternion)
-                            value = ConfigNode.WriteQuaternion((Quaternion)value);
-                        if (value is QuaternionD)
-                            value = ConfigNode.WriteQuaternion((QuaternionD)value);
-                        if (value is Color)
-                            value = ConfigNode.WriteColor((Color)value);
+                        if (memberValue is Vector2)
+                            memberValue = ConfigNode.WriteVector((Vector2)memberValue);
+                        if (memberValue is Vector3)
+                            memberValue = ConfigNode.WriteVector((Vector3)memberValue);
+                        if (memberValue is Vector3d)
+                            memberValue = ConfigNode.WriteVector((Vector3d)memberValue);
+                        if (memberValue is Vector4)
+                            memberValue = ConfigNode.WriteVector((Vector4)memberValue);
+                        if (memberValue is Quaternion)
+                            memberValue = ConfigNode.WriteQuaternion((Quaternion)memberValue);
+                        if (memberValue is QuaternionD)
+                            memberValue = ConfigNode.WriteQuaternion((QuaternionD)memberValue);
+                        if (memberValue is Color)
+                            memberValue = ConfigNode.WriteColor((Color)memberValue);
                     }
 
                     // Texture
                     Type[] textureTypes = { typeof(Mesh), typeof(Texture2D), typeof(Texture), typeof(MapSO), typeof(CBAttributeMapSO) };
-                    if (textureTypes.Contains(value.GetType()) || textureTypes.Contains(value.GetType().BaseType))
-                        value = Format(value as Object);
+                    if (textureTypes.Contains(memberValue.GetType()) || textureTypes.Contains(memberValue.GetType().BaseType))
+                        memberValue = Format(memberValue as Object);
 
                     // Write
-                    if (type == ConfigType.Value && value.GetType() != typeof(FloatCurve) && value.GetType() != typeof(AnimationCurve))
-                        config.AddValue(targets[0].fieldName, value);
-                    else if (value.GetType() == typeof(FloatCurve))
-                        (value as FloatCurve).Save(config.AddNode(targets[0].fieldName));
-                    else if (value is AnimationCurve)
-                        new FloatCurve((value as AnimationCurve).keys).Save(config.AddNode(targets[0].fieldName));
+                    if (configType == ConfigType.Value && memberValue.GetType() != typeof(FloatCurve) && memberValue.GetType() != typeof(AnimationCurve))
+                    {
+                        config.AddValue(targets[0].fieldName, memberValue);
+                    }
+                    else if (memberValue.GetType() == typeof(FloatCurve))
+                    {
+                        (memberValue as FloatCurve).Save(config.AddNode(targets[0].fieldName));
+                    }
+                    else if (memberValue is AnimationCurve)
+                    {
+                        new FloatCurve((memberValue as AnimationCurve).keys).Save(config.AddNode(targets[0].fieldName));
+                    }
                 }
                 return config;
             }

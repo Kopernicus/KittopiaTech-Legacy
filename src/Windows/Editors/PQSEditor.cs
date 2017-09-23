@@ -339,7 +339,7 @@ namespace Kopernicus
                 if (_mode == Modes.AddMod)
                 {
                     // Get all PQSMod types
-                    List<Type> types = Injector.ModTypes.Where(t => t.IsSubclassOf(typeof (PQSMod))).ToList();
+                    List<Type> types = Parser.ModTypes.Where(t => t.IsSubclassOf(typeof (PQSMod))).ToList();
 
                     // Begin Scroll
                     BeginScrollView(250, types.Count * 25, 20);

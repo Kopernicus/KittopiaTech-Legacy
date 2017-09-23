@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\Distribution\Development\KittopiaTech\Plugins\</OutputPath>
+    <OutputPath>..\build\Debug\GameData\KittopiaTech\Plugins\</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,39 +27,39 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\Distribution\Release\KittopiaTech\Plugins\</OutputPath>
+    <OutputPath>..\build\Release\GameData\KittopiaTech\Plugins\</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\deps\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Kopernicus">
-      <HintPath>..\Kopernicus.dll</HintPath>
+      <HintPath>..\deps\Kopernicus.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Kopernicus.Components">
-      <HintPath>..\Kopernicus.Components.dll</HintPath>
+      <HintPath>..\deps\Kopernicus.Components.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Kopernicus.OnDemand">
-      <HintPath>..\Kopernicus.OnDemand.dll</HintPath>
+      <HintPath>..\deps\Kopernicus.OnDemand.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Kopernicus.Parser">
-      <HintPath>..\Kopernicus.Parser.dll</HintPath>
+      <HintPath>..\deps\Kopernicus.Parser.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="UnityEngine">
-      <HintPath>..\UnityEngine.dll</HintPath>
+      <HintPath>..\deps\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>..\UnityEngine.UI.dll</HintPath>
+      <HintPath>..\deps\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -76,7 +76,7 @@
     <Compile Include="Interface\Window.UI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UIController.cs" />
-    <Compile Include="Utility\ConfigIO.cs" />
+    <Compile Include="Utility\PlanetExporter.cs" />
     <Compile Include="Interface\IWindow.cs" />
     <Compile Include="Interface\Position.cs" />
     <Compile Include="Utility\Utils.cs" />
@@ -101,7 +101,6 @@
     <Compile Include="Windows\SelectorWindow.cs" />
     <Compile Include="Windows\SimplexWindow.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
     <PostBuildEvent>"C:\Program Files (x86)\Mono\bin\mono.exe" "C:\Program Files (x86)\Mono\lib\mono\4.5\pdb2mdb.exe" "$(TargetFileName)"</PostBuildEvent>
