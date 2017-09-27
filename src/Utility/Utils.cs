@@ -321,6 +321,7 @@ namespace Kopernicus
                 typeof (Int32),
                 typeof (Single),
                 typeof (Double),
+                typeof (Enum),
                 typeof (Color),
                 typeof (Vector3),
                 typeof (Vector3d),
@@ -367,14 +368,14 @@ namespace Kopernicus
                     .Where(m => m.MemberType == MemberTypes.Field || m.MemberType == MemberTypes.Property)
                     .Where(m => !(m as FieldInfo)?.IsLiteral ?? true)
                     .Where(m => m is PropertyInfo ? (m as PropertyInfo).CanRead && (m as PropertyInfo).CanWrite : true)
-                    .Where(m => supportedTypes.Contains(m.GetMemberType()))
+                    .Where(m => supportedTypes.Any(type => type.IsAssignableFrom(m.GetMemberType())))
                     .ToArray();
 
                 // Get the count of the array
                 scrollSize += infos.Length * Window<System.Object>.distance;
 
                 // Handle special things
-                scrollSize += infos.Where(o => o.GetMemberType() == typeof(MapSO) || o.GetMemberType() == typeof(CBAttributeMapSO) || typeof(Enum).IsAssignableFrom(o.GetMemberType())).ToArray().Length * Window<System.Object>.distance;
+                scrollSize += infos.Where(o => o.GetMemberType() == typeof(MapSO) || o.GetMemberType() == typeof(CBAttributeMapSO)).ToArray().Length * Window<System.Object>.distance;
 
                 // Return the Scroll-Size
                 return scrollSize;

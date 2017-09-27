@@ -45,7 +45,7 @@ namespace Kopernicus
                 base.Render(id);
 
                 // Scroll
-                BeginScrollView(250, Utils.GetScrollSize<PlanetParticleEmitter>() + 175, 20);
+                BeginScrollView(250, Utils.GetScrollSize<PlanetParticleEmitter>() + distance * 7, 20);
 
                 // Get the list
                 if (particles == null)

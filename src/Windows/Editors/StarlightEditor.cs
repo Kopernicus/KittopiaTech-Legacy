@@ -41,7 +41,7 @@ namespace Kopernicus
                 base.Render(id);
 
                 // Scroll
-                BeginScrollView(250, Utils.GetScrollSize<LightShifter>() + Utils.GetScrollSize<EmissiveMultiRampSunspots>() + 75, 20);
+                BeginScrollView(250, Utils.GetScrollSize<LightShifter>() + Utils.GetScrollSize<EmissiveMultiRampSunspots>() + distance * 4, 20);
 
                 // Index
                 index = 0;

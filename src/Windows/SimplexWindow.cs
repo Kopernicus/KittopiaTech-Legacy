@@ -31,7 +31,7 @@ namespace Kopernicus
             protected override void Render(Int32 id)
             {
                 // Scroll
-                BeginScrollView(200, Utils.GetScrollSize<Simplex>() + 50, 10);
+                BeginScrollView(200, Utils.GetScrollSize<Simplex>() + distance * 2, 10);
 
                 // Render the editor
                 RenderObject(Current);

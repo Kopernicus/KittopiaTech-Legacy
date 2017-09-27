@@ -34,7 +34,7 @@ namespace Kopernicus
             protected override void Render(Int32 id)
             {
                 // Scroll
-                BeginScrollView(200, Current.Curve.keys.Length * 25 + 80);
+                BeginScrollView(200, Current.Curve.keys.Length * distance + distance * 2);
 
                 // Add default frames
                 if (Current.Curve.keys.Length == 0)

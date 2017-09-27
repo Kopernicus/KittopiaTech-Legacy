@@ -24,7 +24,7 @@ namespace Kopernicus
                 base.Render(id);
 
                 // Scroll
-                BeginScrollView(250, Utils.GetScrollSize<CelestialBody>() + 10, 20);
+                BeginScrollView(250, Utils.GetScrollSize<CelestialBody>() + distance, 20);
 
                 // Index
                 index = 0;

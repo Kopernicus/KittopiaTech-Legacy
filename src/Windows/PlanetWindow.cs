@@ -81,7 +81,7 @@ namespace Kopernicus
                 EndScrollView();
 
                 // Index
-                index = 230 / 25 + 2;
+                index = 230 / distance + 2;
 
                 // Design Hack
                 Boolean e = isError;

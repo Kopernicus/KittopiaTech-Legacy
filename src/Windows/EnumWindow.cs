@@ -33,7 +33,7 @@ namespace Kopernicus
             {
                 // Scroll
                 FieldInfo[] fields = Current.GetType().GetFields(BindingFlags.Static | BindingFlags.Public);
-                BeginScrollView((Int32)position.height - 30, fields.Length * 25 + 50, 10);
+                BeginScrollView((Int32)position.height - 30, fields.Length * distance + distance * 3, 10);
 
                 // Render possible values
                 foreach (FieldInfo obj in fields)

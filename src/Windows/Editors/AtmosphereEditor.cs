@@ -26,7 +26,7 @@ namespace Kopernicus
                 base.Render(id);
 
                 // Scroll
-                BeginScrollView(250, Utils.GetScrollSize<AtmosphereFromGround>() + 50, 20);
+                BeginScrollView(250, Utils.GetScrollSize<AtmosphereFromGround>() + distance * 3, 20);
 
                 // Index
                 index = 0;
@@ -34,7 +34,7 @@ namespace Kopernicus
                 // Check for existing AFG
                 if (Current.afg == null)
                 {
-                    Button(Localization.LOC_KITTOPIATECH_AFGEDITOR_ADD + Current.displayName.Replace("^N", ""), () =>
+                    Button(Localization.LOC_KITTOPIATECH_AFGEDITOR_ADD + " " + Current.displayName.Replace("^N", ""), () =>
                     {
                         // Create the atmosphere shell game object
                         GameObject scaledAtmosphere = new GameObject("Atmosphere");

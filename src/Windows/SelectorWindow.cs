@@ -38,7 +38,7 @@ namespace Kopernicus
             protected override void Render(Int32 id)
             {
                 // Scroll
-                BeginScrollView(300, Collection.Length * distance + 70);
+                BeginScrollView(300, Collection.Length * distance + distance * 3);
 
                 // Selectors
                 foreach (UnityEngine.Object o in Collection)

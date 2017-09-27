@@ -43,7 +43,7 @@ namespace Kopernicus
                 base.Render(id);
 
                 // Scroll
-                BeginScrollView(250, Utils.GetScrollSize<Ring>() + 150, 20);
+                BeginScrollView(250, Utils.GetScrollSize<Ring>() + distance * 7, 20);
 
                 // Get the list
                 if (rings == null)

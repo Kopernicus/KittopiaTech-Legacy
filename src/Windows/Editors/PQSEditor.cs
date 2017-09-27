@@ -152,7 +152,7 @@ namespace Kopernicus
                     IEnumerable<PQSMod> pqsModList = Current.GetComponentsInChildren<PQSMod>(true);
 
                     // Scroll
-                    BeginScrollView(250, (pqsList.Count() + pqsModList.Count()) * 25 + 115, 20);
+                    BeginScrollView(250, (pqsList.Count() + pqsModList.Count()) * distance + distance * 4, 20);
 
                     // Index
                     index = 0;
@@ -266,7 +266,7 @@ namespace Kopernicus
                 if (_mode == Modes.PQS)
                 {
                     // Scroll
-                    BeginScrollView(250, Utils.GetScrollSize<PQS>() + Utils.GetScrollSize<HazardousOcean>() + 65, 20);
+                    BeginScrollView(250, Utils.GetScrollSize<PQS>() + Utils.GetScrollSize<HazardousOcean>() + distance * 1, 20);
 
                     // Index
                     index = 0;
@@ -305,7 +305,7 @@ namespace Kopernicus
                 if (_mode == Modes.PQSMod)
                 {
                     // Scroll
-                    BeginScrollView(250, Utils.GetScrollSize(_mod.GetType()) + 115, 20);
+                    BeginScrollView(250, Utils.GetScrollSize(_mod.GetType()) + distance * 5, 20);
 
                     // Index
                     index = 0;
@@ -342,7 +342,7 @@ namespace Kopernicus
                     List<Type> types = Parser.ModTypes.Where(t => t.IsSubclassOf(typeof (PQSMod))).ToList();
 
                     // Begin Scroll
-                    BeginScrollView(250, types.Count * 25, 20);
+                    BeginScrollView(250, types.Count * distance + 10, 20);
 
                     // Index
                     index = 0;

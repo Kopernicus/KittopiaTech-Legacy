@@ -24,7 +24,7 @@ namespace Kopernicus
                 base.Render(id);
 
                 // Scroll
-                BeginScrollView(250, Utils.GetScrollSize<OrbitDriver>() + Utils.GetScrollSize<Orbit>() + Utils.GetScrollSize<OrbitRenderer>() + 50, 20);
+                BeginScrollView(250, Utils.GetScrollSize<OrbitDriver>() + Utils.GetScrollSize<Orbit>() + Utils.GetScrollSize<OrbitRenderer>(), 20);
 
                 // Index
                 index = 0;
@@ -35,6 +35,7 @@ namespace Kopernicus
                 RenderObject(Current.Renderer);
 
                 // Update Orbit
+                index++;
                 Button(Localization.LOC_KITTOPIATECH_ORBITEDITOR_UPDATE, () => Current.UpdateOrbit());
 
                 // End Scroll

@@ -60,7 +60,7 @@ namespace Kopernicus
             {
                 if (mode == Mode.Selection)
                 {
-                    BeginScrollView((Int32)position.height - 30, Collection.Count() * 25 + 100, 10);
+                    BeginScrollView((Int32)position.height - 30, Collection.Count() * distance + distance * 4, 10);
                     foreach (T obj in base.Current)
                         Button(Format(obj), () => { Current = obj; mode = Mode.Editor; }, width: position.width - 80);
                     RenderModifiers(id);
