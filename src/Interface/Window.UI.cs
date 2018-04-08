@@ -515,8 +515,8 @@ namespace Kopernicus
                                     String path = location.Replace(Path.Combine(Directory.GetCurrentDirectory(), "GameData") + Path.DirectorySeparatorChar, "");
                                     MeshParser parser = new MeshParser(value as Mesh);
                                     parser.SetFromString(path);
-                                    parser.value.name = path.Replace("\\", "/");
-                                    info.SetValue(@object, parser.value);
+                                    parser.Value.name = path.Replace("\\", "/");
+                                    info.SetValue(@object, parser.Value);
                                 }
                                 else
                                 {

@@ -119,7 +119,7 @@ namespace Kopernicus
                 ConfigNode particles = body.AddNode("Particles");
                 foreach (PlanetParticleEmitter e in planet.scaledBody.GetComponentsInChildren<PlanetParticleEmitter>(true))
                 {
-                    ParticleLoader loader = new ParticleLoader(planet, e.gameObject);
+                    ParticleLoader loader = new ParticleLoader(e);
                     WriteObjectToConfigNode("Particle", ref particles, loader);
                 }
 
@@ -186,17 +186,17 @@ namespace Kopernicus
                         continue;
 
                     // Type
-                    ConfigType configType = configTypes.Length == 1 ? configTypes[0].type : memberType.Name.StartsWith("MapSOParser_") || memberType == typeof(string) ? ConfigType.Value : ConfigType.Node;
+                    ConfigType configType = configTypes.Length == 1 ? configTypes[0].Type : memberType.Name.StartsWith("MapSOParser_") || memberType == typeof(string) ? ConfigType.Value : ConfigType.Node;
 
                     // Convert
                     if (memberType != typeof(string) && (configType == ConfigType.Value || memberType == typeof(FloatCurveParser)))
                     {
                         memberValue = memberType == typeof(PhysicsMaterialParser) ?
-                            memberType.GetProperty("material").GetValue(memberValue, null) :
+                            memberType.GetProperty("Value").GetValue(memberValue, null) :
                             memberType == typeof(FloatCurveParser) ?
-                                memberType.GetProperty("curve").GetValue(memberValue, null) :
-                                memberType.GetField("value").GetValue(memberValue);
-                        if (memberValue == null || memberType == typeof(LandControl.LandClassScatterLoader.StockMaterialParser))
+                                memberType.GetProperty("Value").GetValue(memberValue, null) :
+                                memberType.GetProperty("Value").GetValue(memberValue);
+                        if (memberValue == null || memberType == typeof(StockMaterialParser))
                         {
                             continue;
                         }
@@ -233,15 +233,15 @@ namespace Kopernicus
                     // Write
                     if (configType == ConfigType.Value && memberValue.GetType() != typeof(FloatCurve) && memberValue.GetType() != typeof(AnimationCurve))
                     {
-                        config.AddValue(targets[0].fieldName, memberValue);
+                        config.AddValue(targets[0].FieldName, memberValue);
                     }
                     else if (memberValue.GetType() == typeof(FloatCurve))
                     {
-                        (memberValue as FloatCurve).Save(config.AddNode(targets[0].fieldName));
+                        (memberValue as FloatCurve).Save(config.AddNode(targets[0].FieldName));
                     }
                     else if (memberValue is AnimationCurve)
                     {
-                        new FloatCurve((memberValue as AnimationCurve).keys).Save(config.AddNode(targets[0].fieldName));
+                        new FloatCurve((memberValue as AnimationCurve).keys).Save(config.AddNode(targets[0].FieldName));
                     }
                 }
                 return config;
@@ -255,17 +255,18 @@ namespace Kopernicus
                 ConfigNode pqs = null;
                 if (!ocean)
                 {
-                    PQSLoader pqsLoader = new PQSLoader(pqsVersion);
+                    CelestialBody cb = pqsVersion.GetComponentInParent<CelestialBody>();
+                    PQSLoader pqsLoader = new PQSLoader(cb);
                     pqs = WriteObjectToConfigNode("PQS", ref body, pqsLoader);
                     WriteObjectToConfigNode("Material", ref pqs, pqsLoader.surfaceMaterial);
                     WriteObjectToConfigNode("FallbackMaterial", ref pqs, pqsLoader.fallbackMaterial);
-                    if (pqsLoader.physicsMaterial.material != null)
+                    if (pqsLoader.physicsMaterial.Value != null)
                         WriteObjectToConfigNode("PhysicsMaterial", ref pqs, pqsLoader.physicsMaterial);
                 }
                 else
                 {
                     CelestialBody cb = pqsVersion.parentSphere.GetComponentInParent<CelestialBody>();
-                    OceanLoader oceanLoader = new OceanLoader(pqsVersion);
+                    OceanLoader oceanLoader = new OceanLoader(cb);
                     pqs = WriteObjectToConfigNode("Ocean", ref body, oceanLoader);
                     pqs.AddValue("ocean", pqsVersion.parentSphere.mapOcean && cb.ocean);
                     pqs.AddValue("oceanColor", pqsVersion.parentSphere.mapOceanColor);
@@ -323,24 +324,36 @@ namespace Kopernicus
                         {
                             ConfigNode landClasses = modNode.AddNode("LandClasses");
                             foreach (PQSMod_HeightColorMap2.LandClass landClass in hcm2.landClasses)
-                                WriteObjectToConfigNode("Class", ref landClasses, new HeightColorMap2.LandClassLoader2(landClass));
+                                WriteObjectToConfigNode("Class", ref landClasses, new HeightColorMap2.LandClassLoader(landClass));
                         }
                         PQSMod_HeightColorMapNoise hcmNoise = mod as PQSMod_HeightColorMapNoise;
                         if (hcmNoise?.landClasses != null)
                         {
                             ConfigNode landClasses = modNode.AddNode("LandClasses");
                             foreach (PQSMod_HeightColorMapNoise.LandClass landClass in hcmNoise.landClasses)
-                                WriteObjectToConfigNode("Class", ref landClasses, new HeightColorMapNoise.LandClassLoaderNoise(landClass));
+                                WriteObjectToConfigNode("Class", ref landClasses, new HeightColorMapNoise.LandClassLoader(landClass));
                         }
                         if (mod is PQSLandControl)
                         {
                             PQSLandControl lc = mod as PQSLandControl;
                             if (lc.altitudeSimplex != null)
-                                WriteObjectToConfigNode("altitudeSimplex", ref modNode, new LandControl.SimplexLoader(lc.altitudeSimplex));
+                            {
+                                KopernicusSimplexWrapper lcaltsimpwrap = new KopernicusSimplexWrapper(lc.altitudeBlend, lc.altitudeOctaves, lc.altitudePersistance, lc.altitudeFrequency);
+                                lcaltsimpwrap.seed = lc.altitudeSeed;
+                                WriteObjectToConfigNode("altitudeSimplex", ref modNode, new VertexPlanet.SimplexLoader(lcaltsimpwrap));
+                            }
                             if (lc.latitudeSimplex != null)
-                                WriteObjectToConfigNode("latitudeSimplex", ref modNode, new LandControl.SimplexLoader(lc.latitudeSimplex));
+                            {
+                                KopernicusSimplexWrapper lclatsimpwrap = new KopernicusSimplexWrapper(lc.latitudeBlend, lc.latitudeOctaves, lc.latitudePersistance, lc.latitudeFrequency);
+                                lclatsimpwrap.seed = lc.latitudeSeed;
+                                WriteObjectToConfigNode("latitudeSimplex", ref modNode, new VertexPlanet.SimplexLoader(lclatsimpwrap));
+                            }
                             if (lc.longitudeSimplex != null)
-                                WriteObjectToConfigNode("longitudeSimplex", ref modNode, new LandControl.SimplexLoader(lc.longitudeSimplex));
+                            {
+                                KopernicusSimplexWrapper lclongsimpwrap = new KopernicusSimplexWrapper(lc.longitudeBlend, lc.longitudeOctaves, lc.longitudePersistance, lc.longitudeFrequency);
+                                lclongsimpwrap.seed = lc.longitudeSeed;
+                                WriteObjectToConfigNode("longitudeSimplex", ref modNode, new VertexPlanet.SimplexLoader(lclongsimpwrap));
+                            }
                             if (lc.landClasses != null)
                             {
                                 ConfigNode landClasses = modNode.AddNode("landClasses");
@@ -348,11 +361,15 @@ namespace Kopernicus
                                 {
                                     ConfigNode lcNode = WriteObjectToConfigNode("Class", ref landClasses, new LandControl.LandClassLoader(landClass));
                                     WriteObjectToConfigNode("altitudeRange", ref lcNode, new LandControl.LerpRangeLoader(landClass.altitudeRange));
-                                    WriteObjectToConfigNode("coverageSimplex", ref lcNode, new LandControl.SimplexLoader(landClass.coverageSimplex));
+                                    KopernicusSimplexWrapper lccovsimpwrap = new KopernicusSimplexWrapper(landClass.coverageBlend, landClass.coverageOctaves, landClass.coveragePersistance, landClass.coverageFrequency);
+                                    lccovsimpwrap.seed = landClass.coverageSeed;
+                                    WriteObjectToConfigNode("coverageSimplex", ref lcNode, new VertexPlanet.SimplexLoader(lccovsimpwrap));
                                     WriteObjectToConfigNode("latitudeDoubleRange", ref lcNode, new LandControl.LerpRangeLoader(landClass.latitudeDoubleRange));
                                     WriteObjectToConfigNode("latitudeRange", ref lcNode, new LandControl.LerpRangeLoader(landClass.latitudeRange));
                                     WriteObjectToConfigNode("longitudeRange", ref lcNode, new LandControl.LerpRangeLoader(landClass.longitudeRange));
-                                    WriteObjectToConfigNode("noiseSimplex", ref lcNode, new LandControl.SimplexLoader(landClass.noiseSimplex));
+                                    KopernicusSimplexWrapper lcnoisesimpwrap = new KopernicusSimplexWrapper(landClass.noiseBlend, landClass.noiseOctaves, landClass.noisePersistance, landClass.noiseFrequency);
+                                    lcnoisesimpwrap.seed = landClass.noiseSeed;
+                                    WriteObjectToConfigNode("noiseSimplex", ref lcNode, new VertexPlanet.SimplexLoader(lcnoisesimpwrap));
                                     if (landClass.scatter != null)
                                     {
                                         ConfigNode amount = lcNode.AddNode("scatters");
@@ -388,25 +405,26 @@ namespace Kopernicus
                         if (mod is PQSMod_VertexPlanet)
                         {
                             PQSMod_VertexPlanet vp = mod as PQSMod_VertexPlanet;
-                            WriteObjectToConfigNode("ContinentalSimplex", ref modNode, new VertexPlanet.SimplexWrapper(vp.continental));
-                            WriteObjectToConfigNode("RuggednessSimplex", ref modNode, new VertexPlanet.SimplexWrapper(vp.continentalRuggedness));
-                            WriteObjectToConfigNode("SharpnessNoise", ref modNode, new VertexPlanet.NoiseModWrapper(vp.continentalSharpness));
-                            WriteObjectToConfigNode("SharpnessSimplexMap", ref modNode, new VertexPlanet.SimplexWrapper(vp.continentalSharpnessMap));
-                            WriteObjectToConfigNode("TerrainTypeSimplex", ref modNode, new VertexPlanet.SimplexWrapper(vp.terrainType));
+                            WriteObjectToConfigNode("ContinentalSimplex", ref modNode, new PQSMod_VertexPlanet.SimplexWrapper(vp.continental));
+                            WriteObjectToConfigNode("RuggednessSimplex", ref modNode, new PQSMod_VertexPlanet.SimplexWrapper(vp.continentalRuggedness));
+                            WriteObjectToConfigNode("SharpnessNoise", ref modNode, new PQSMod_VertexPlanet.NoiseModWrapper(vp.continentalSharpness));
+                            WriteObjectToConfigNode("SharpnessSimplexMap", ref modNode, new PQSMod_VertexPlanet.SimplexWrapper(vp.continentalSharpnessMap));
+                            WriteObjectToConfigNode("TerrainTypeSimplex", ref modNode, new PQSMod_VertexPlanet.SimplexWrapper(vp.terrainType));
                             if (vp.landClasses != null)
                             {
                                 ConfigNode landClasses = modNode.AddNode("LandClasses");
                                 foreach (PQSMod_VertexPlanet.LandClass landClass in vp.landClasses)
                                 {
                                     ConfigNode classNode = WriteObjectToConfigNode("Class", ref landClasses, new VertexPlanet.LandClassLoader(landClass));
-                                    WriteObjectToConfigNode("SimplexNoiseMap", ref classNode, new VertexPlanet.SimplexWrapper(landClass.colorNoiseMap));
+                                    WriteObjectToConfigNode("SimplexNoiseMap", ref classNode, new PQSMod_VertexPlanet.SimplexWrapper(landClass.colorNoiseMap));
                                 }
                             }
                         }
                         if (!(mod is PQSMod_OceanFX)) continue;
-                        ConfigNode watermain = modNode.AddNode((loader as OceanFX).watermain);
-                        foreach (ConfigNode.Value value in watermain.values)
-                            value.value = Format(Resources.FindObjectsOfTypeAll<Texture2D>().First(o => o.name == value.value));
+                        List<Texture2DParser> wm = (loader as OceanFX).watermain;
+                        ConfigNode watermain = modNode.AddNode("Watermain");
+                        foreach (Texture2DParser texture in wm)
+                            watermain.AddValue("waterTex-" + wm.ToList().IndexOf(texture), texture.Value.name);
                     }
                 }
             }

@@ -1,7 +1,7 @@
 KittopiaTech - a Kopernicus Visual Editor
 =========================
 Plugin for Kerbal Space Program to support the alternation of planets ingame.
-This uses the Kopernicus API in version 1.3.0-7+. Older versions may work, but aren't supported.
+This uses the Kopernicus API in version 1.4.2-1+. Older versions may work, but aren't supported.
 
 ### Credits
 - Thomas P. (Update for KSP 1.0, portation to Kopernicus as a base API, modular UI-Code, multiple improvements)
