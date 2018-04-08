@@ -255,7 +255,7 @@ namespace Kopernicus
                 ConfigNode pqs = null;
                 if (!ocean)
                 {
-                    CelestialBody cb = pqsVersion.parentSphere.GetComponentInParent<CelestialBody>();
+                    CelestialBody cb = pqsVersion.GetComponentInParent<CelestialBody>();
                     PQSLoader pqsLoader = new PQSLoader(cb);
                     pqs = WriteObjectToConfigNode("PQS", ref body, pqsLoader);
                     WriteObjectToConfigNode("Material", ref pqs, pqsLoader.surfaceMaterial);
