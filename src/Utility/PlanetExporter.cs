@@ -192,10 +192,10 @@ namespace Kopernicus
                     if (memberType != typeof(string) && (configType == ConfigType.Value || memberType == typeof(FloatCurveParser)))
                     {
                         memberValue = memberType == typeof(PhysicsMaterialParser) ?
-                            memberType.GetProperty("material").GetValue(memberValue, null) :
+                            memberType.GetProperty("Value").GetValue(memberValue, null) :
                             memberType == typeof(FloatCurveParser) ?
-                                memberType.GetProperty("curve").GetValue(memberValue, null) :
-                                memberType.GetField("value").GetValue(memberValue);
+                                memberType.GetProperty("Value").GetValue(memberValue, null) :
+                                memberType.GetProperty("Value").GetValue(memberValue);
                         if (memberValue == null || memberType == typeof(StockMaterialParser))
                         {
                             continue;
